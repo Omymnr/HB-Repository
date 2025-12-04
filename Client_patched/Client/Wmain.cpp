@@ -1045,35 +1045,22 @@ int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	srand((unsigned)time(NULL));
 	char *pJammer = new char[(rand() % 100) +1];
 	
-    // ===== VERIFICAR SI SALTAR LAUNCHER =====
-	// Si se ejecuta con el parámetro -nolauncher, salta directamente al juego
-	// Esto permite que un launcher externo maneje las actualizaciones
-	BOOL bSkipLauncher = FALSE;
-	if (lpCmdLine != NULL && strlen(lpCmdLine) > 0) {
-		if (strstr(lpCmdLine, "-nolauncher") != NULL || 
-		    strstr(lpCmdLine, "/nolauncher") != NULL) {
-			bSkipLauncher = TRUE;
-			// Cargar configuración guardada del registro
-			LoadLauncherSettings();
-			
-			// Sobreescribir con parámetros de línea de comandos si están presentes
-			if (strstr(lpCmdLine, "-borderless") != NULL || 
-			    strstr(lpCmdLine, "/borderless") != NULL) {
-				g_bBorderlessMode = TRUE;
-			}
-			else if (strstr(lpCmdLine, "-fullscreen") != NULL || 
-			         strstr(lpCmdLine, "/fullscreen") != NULL) {
-				g_bBorderlessMode = FALSE;
-			}
-		}
-	}
+    // ===== LAUNCHER DESHABILITADO - IR DIRECTO AL JUEGO =====
+	// El launcher ahora es un ejecutable separado (Launcher.exe)
+	// Game.exe siempre inicia directamente el juego
 	
-	// ===== MOSTRAR LAUNCHER =====
-	if (!bSkipLauncher) {
-		if (!ShowLauncher(hInstance)) {
-			// Usuario canceló o cerró el launcher
-			delete[] pJammer;
-			return 0;
+	// Cargar configuración guardada del registro (del Launcher externo)
+	LoadLauncherSettings();
+	
+	// Permitir sobreescribir con parámetros de línea de comandos
+	if (lpCmdLine != NULL && strlen(lpCmdLine) > 0) {
+		if (strstr(lpCmdLine, "-borderless") != NULL || 
+		    strstr(lpCmdLine, "/borderless") != NULL) {
+			g_bBorderlessMode = TRUE;
+		}
+		else if (strstr(lpCmdLine, "-fullscreen") != NULL || 
+		         strstr(lpCmdLine, "/fullscreen") != NULL) {
+			g_bBorderlessMode = FALSE;
 		}
 	}
 	
