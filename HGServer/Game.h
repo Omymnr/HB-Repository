@@ -89,6 +89,14 @@
 #define DEF_MAXSKILLPOINTS		700			// ��ų ����Ʈ�� ���� 
 #define DEF_NIGHTTIME			30
 
+// ========== RAGNAROS BOSS CONSTANTS ==========
+#define DEF_RAGNAROS_PHASE2_HP_PERCENT      30      // Fase 2 al 30% HP
+#define DEF_RAGNAROS_WRATH_INTERVAL         15000   // 15 segundos entre Wrath
+#define DEF_RAGNAROS_PHASE2_WRATH_INTERVAL  10000   // 10 segundos en fase 2
+#define DEF_RAGNAROS_SONS_MIN               2       // Mínimo Sons of Flame
+#define DEF_RAGNAROS_SONS_MAX               4       // Máximo Sons of Flame
+#define DEF_RAGNAROS_KNOCKBACK_DIST         3       // Distancia de knockback
+
 #define DEF_CHARPOINTLIMIT		1000		// ������ Ư��ġ�� �ִ밪 
 #define DEF_RAGPROTECTIONTIME	7000		// �� �� �̻� ������ ������ ���� ��ȣ�� �޴��� 
 #define DEF_MAXREWARDGOLD		99999999	// ����� �ִ�ġ 
@@ -795,6 +803,14 @@ public:
 	void WorldBossProcessor();
 	BOOL bSpawnWorldBoss();
 	void CheckWorldBossDeath(int iNpcH);
+	
+	// ========== RAGNAROS BOSS SYSTEM ==========
+	void NpcBehavior_Ragnaros(int iNpcH);
+	void Ragnaros_WrathOfRagnaros(int iNpcH);
+	void Ragnaros_SummonSonsOfFlame(int iNpcH);
+	void Ragnaros_SulfurasSmash(int iNpcH, short dX, short dY);
+	BOOL Ragnaros_IsInPhase2(int iNpcH);
+	void Ragnaros_OnDeath(int iNpcH, short sAttackerH, char cAttackerType);
 	
 	// Invasion System
 	void InvasionProcessor();

@@ -12272,6 +12272,24 @@ void CGame::NpcBehavior_Attack(int iNpcH)
 					iMagicType = 81; // Metoer Strike
 				break;
 
+			case 14: // RAGNAROS - Boss especial con comportamiento único
+				// Verificar si es Ragnaros por nombre
+				if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Ragnaros", 8) == 0) {
+					// Usar comportamiento especial de Ragnaros
+					NpcBehavior_Ragnaros(iNpcH);
+					return;
+				}
+				// Fallback para otros NPCs con MagicLevel 14 - usar ataques de fuego
+				if ((m_pMagicConfigList[81]->m_sValue1 <= m_pNpcList[iNpcH]->m_iMana) && (iDice(1,3) == 2)) 
+					iMagicType = 81; // Meteor Strike
+				else if ((m_pMagicConfigList[70]->m_sValue1 <= m_pNpcList[iNpcH]->m_iMana) && (iDice(1,3) == 2)) 
+					iMagicType = 70; // Mass Fire Strike
+				else if (m_pMagicConfigList[61]->m_sValue1 <= m_pNpcList[iNpcH]->m_iMana) 
+					iMagicType = 61; // Fire Strike
+				else if (m_pMagicConfigList[43]->m_sValue1 <= m_pNpcList[iNpcH]->m_iMana) 
+					iMagicType = 43; // Fire Ball
+				break;
+
 			}
 
 			if (iMagicType != -1) {
@@ -51632,6 +51650,138 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 		return;
 	}
 
+	// ========== RAGNAROS SPECIAL LOOT ==========
+	// Verificar si es Ragnaros por nombre (loot especial garantizado)
+	if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Ragnaros", 8) == 0) {
+		// Ragnaros tiene múltiples drops garantizados
+		wsprintf(G_cTxt, "(!) RAGNAROS LOOT: Generating special drops for attacker %d", sAttackerH);
+		PutLogList(G_cTxt);
+		
+		// Drop 1: Gold masivo (50000-100000)
+		pItem = new class CItem;
+		if (_bInitItemAttr(pItem, 90) == TRUE) { // Gold
+			pItem->m_dwCount = 50000 + iDice(1, 50000);
+			m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->bSetItem(
+				m_pNpcList[iNpcH]->m_sX, m_pNpcList[iNpcH]->m_sY, pItem);
+			SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, 
+				m_pNpcList[iNpcH]->m_cMapIndex,
+				m_pNpcList[iNpcH]->m_sX, m_pNpcList[iNpcH]->m_sY,
+				pItem->m_sIDnum, NULL, pItem->m_cItemColor, pItem->m_dwAttribute);
+		} else {
+			delete pItem;
+		}
+		
+		// Drop 2-6: Items especiales de Ragnaros (5 rolls)
+		for (int iRagDrop = 0; iRagDrop < 5; iRagDrop++) {
+			iItemID = 0;
+			int iRagRoll = iDice(1, 100);
+			
+			if (iRagRoll <= 2) {
+				// 2% - Items legendarios
+				switch (iDice(1, 3)) {
+				case 1: iItemID = 616; break; // DemonSlayer
+				case 2: iItemID = 20;  break; // Excalibur (si existe)
+				case 3: iItemID = 735; break; // RingOfDragonpower
+				}
+			}
+			else if (iRagRoll <= 7) {
+				// 5% - Sulfuron items (Blood weapons como representación)
+				switch (iDice(1, 3)) {
+				case 1: iItemID = 490; break; // BloodSword
+				case 2: iItemID = 491; break; // BloodAxe
+				case 3: iItemID = 492; break; // BloodRapier
+				}
+			}
+			else if (iRagRoll <= 17) {
+				// 10% - Anillos de poder
+				switch (iDice(1, 4)) {
+				case 1: iItemID = 633; break; // RingofDemonpower
+				case 2: iItemID = 631; break; // RingoftheAbaddon
+				case 3: iItemID = 630; break; // RingoftheXelima
+				case 4: iItemID = 734; break; // RingOfArcmage
+				}
+			}
+			else if (iRagRoll <= 32) {
+				// 15% - Collares elementales
+				switch (iDice(1, 3)) {
+				case 1: iItemID = 645; break; // KnecklaceOfEfreet
+				case 2: iItemID = 644; break; // KnecklaceOfAirEle
+				case 3: iItemID = 648; break; // NecklaceOfLiche
+				}
+			}
+			else if (iRagRoll <= 52) {
+				// 20% - Manuales de magia de alto nivel
+				switch (iDice(1, 4)) {
+				case 1: iItemID = 381; break; // MassFireStrikeManual
+				case 2: iItemID = 382; break; // BloodyShockWaveManual
+				case 3: iItemID = 380; break; // IceStormManual
+				case 4: iItemID = 852; break; // CancelManual
+				}
+			}
+			else if (iRagRoll <= 72) {
+				// 20% - Armaduras de alto nivel
+				switch (iDice(1, 4)) {
+				case 1: iItemID = 621; break; // MerienPlateMailM
+				case 2: iItemID = 622; break; // MerienPlateMailW
+				case 3: iItemID = 620; break; // MerienShield
+				case 4: iItemID = 618; break; // DarkElfBow
+				}
+			}
+			else {
+				// 28% - Pociones premium
+				switch (iDice(1, 3)) {
+				case 1: iItemID = 390; break; // PowerGreenPotion
+				case 2: iItemID = 391; break; // SuperPowerGreenPotion
+				case 3: iItemID = 94;  break; // BigBluePotion
+				}
+			}
+			
+			if (iItemID > 0) {
+				pItem = new class CItem;
+				if (_bInitItemAttr(pItem, iItemID) == TRUE) {
+					// Aplicar atributos especiales a armas/armaduras
+					if (pItem->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK ||
+						pItem->m_sItemEffectType == DEF_ITEMEFFECTTYPE_DEFENSE) {
+						// Atributo de fuego (tipo 1) con valor alto (10-12)
+						dwType = 1; // Critical
+						dwValue = 8 + iDice(1, 5); // 8-12
+						dwType = dwType << 20;
+						dwValue = dwValue << 16;
+						pItem->m_dwAttribute = dwType | dwValue;
+						pItem->m_cItemColor = 5; // Color especial
+					}
+					
+					pItem->m_sTouchEffectType = DEF_ITET_ID;
+					pItem->m_sTouchEffectValue1 = iDice(1, 100000);
+					pItem->m_sTouchEffectValue2 = iDice(1, 100000);
+					SYSTEMTIME SysTime;
+					GetLocalTime(&SysTime);
+					char cTemp[256];
+					wsprintf(cTemp, "%d%2d", (short)SysTime.wMonth, (short)SysTime.wDay);
+					pItem->m_sTouchEffectValue3 = atoi(cTemp);
+					
+					// Posición aleatoria cercana para evitar stacking
+					short sDropX = m_pNpcList[iNpcH]->m_sX + iDice(1, 3) - 2;
+					short sDropY = m_pNpcList[iNpcH]->m_sY + iDice(1, 3) - 2;
+					
+					m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->bSetItem(sDropX, sDropY, pItem);
+					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, 
+						m_pNpcList[iNpcH]->m_cMapIndex, sDropX, sDropY,
+						pItem->m_sIDnum, NULL, pItem->m_cItemColor, pItem->m_dwAttribute);
+					
+					_bItemLog(DEF_ITEMLOG_NEWGENDROP, NULL, NULL, pItem);
+				} else {
+					delete pItem;
+				}
+			}
+		}
+		
+		// Llamar evento de muerte de Ragnaros
+		Ragnaros_OnDeath(iNpcH, sAttackerH, cAttackerType);
+		return; // Ragnaros tiene su propio sistema de loot
+	}
+	// ========== FIN RAGNAROS SPECIAL LOOT ==========
+
 	// 6500 default; the lower the greater the Weapon/Armor/Wand Drop
 	if (iDice(1,10000) >= m_iPrimaryDropRate) {
 		// 35% Drop 60% of that is gold
@@ -61524,3 +61674,321 @@ spawn_wave:
 		}
 	}
 }
+
+// ============================================================================
+// RAGNAROS BOSS SYSTEM - Señor del Fuego
+// ============================================================================
+
+// Verifica si Ragnaros está en fase 2 (30% HP o menos)
+BOOL CGame::Ragnaros_IsInPhase2(int iNpcH)
+{
+	if (m_pNpcList[iNpcH] == NULL) return FALSE;
+	if (m_pNpcList[iNpcH]->m_iMaxHP <= 0) return FALSE;
+	
+	int iHPPercent = (m_pNpcList[iNpcH]->m_iHP * 100) / m_pNpcList[iNpcH]->m_iMaxHP;
+	return (iHPPercent <= DEF_RAGNAROS_PHASE2_HP_PERCENT);
+}
+
+// Comportamiento principal de Ragnaros
+void CGame::NpcBehavior_Ragnaros(int iNpcH)
+{
+	if (m_pNpcList[iNpcH] == NULL) return;
+	if (m_pNpcList[iNpcH]->m_bIsKilled == TRUE) return;
+	if (m_pNpcList[iNpcH]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] != 0) return;
+	
+	DWORD dwCurrentTime = timeGetTime();
+	
+	// m_iV1 almacena: bit 0 = fase2 activada, bits 1-31 = último tiempo de Wrath
+	BOOL bPhase2Activated = (m_pNpcList[iNpcH]->m_iV1 & 0x01) != 0;
+	
+	// Verificar transición a Fase 2
+	if (!bPhase2Activated && Ragnaros_IsInPhase2(iNpcH)) {
+		// Activar fase 2
+		m_pNpcList[iNpcH]->m_iV1 |= 0x01;
+		bPhase2Activated = TRUE;
+		
+		// Invocar Sons of Flame
+		Ragnaros_SummonSonsOfFlame(iNpcH);
+		
+		// Mensaje global a todos los jugadores en el mapa
+		int iMapIndex = m_pNpcList[iNpcH]->m_cMapIndex;
+		for (int i = 1; i < DEF_MAXCLIENTS; i++) {
+			if (m_pClientList[i] != NULL && m_pClientList[i]->m_cMapIndex == iMapIndex) {
+				SendNotifyMsg(NULL, i, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, 
+					"Ragnaros: BY FIRE BE PURGED! Phase 2 begins!");
+			}
+		}
+		
+		wsprintf(G_cTxt, "(!) RAGNAROS: Entered Phase 2 at %d%% HP", 
+			(m_pNpcList[iNpcH]->m_iHP * 100) / m_pNpcList[iNpcH]->m_iMaxHP);
+		PutLogList(G_cTxt);
+	}
+	
+	// Wrath of Ragnaros - AoE periódico
+	static DWORD dwLastWrathTime[DEF_MAXNPCS] = {0};
+	DWORD dwWrathInterval = bPhase2Activated ? DEF_RAGNAROS_PHASE2_WRATH_INTERVAL : DEF_RAGNAROS_WRATH_INTERVAL;
+	
+	if (dwCurrentTime - dwLastWrathTime[iNpcH] >= dwWrathInterval) {
+		dwLastWrathTime[iNpcH] = dwCurrentTime;
+		Ragnaros_WrathOfRagnaros(iNpcH);
+	}
+	
+	// Buscar objetivo si no tiene uno
+	if (m_pNpcList[iNpcH]->m_iTargetIndex == NULL) {
+		short sTarget;
+		char cTargetType;
+		TargetSearch(iNpcH, &sTarget, &cTargetType);
+		if (sTarget != NULL) {
+			m_pNpcList[iNpcH]->m_iTargetIndex = sTarget;
+			m_pNpcList[iNpcH]->m_cTargetType = cTargetType;
+		} else {
+			return; // No hay objetivo
+		}
+	}
+	
+	// Obtener posición del objetivo
+	short sX = m_pNpcList[iNpcH]->m_sX;
+	short sY = m_pNpcList[iNpcH]->m_sY;
+	short dX, dY;
+	
+	switch (m_pNpcList[iNpcH]->m_cTargetType) {
+	case DEF_OWNERTYPE_PLAYER:
+		if (m_pClientList[m_pNpcList[iNpcH]->m_iTargetIndex] == NULL) {
+			m_pNpcList[iNpcH]->m_iTargetIndex = NULL;
+			m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_MOVE;
+			return;
+		}
+		dX = m_pClientList[m_pNpcList[iNpcH]->m_iTargetIndex]->m_sX;
+		dY = m_pClientList[m_pNpcList[iNpcH]->m_iTargetIndex]->m_sY;
+		break;
+		
+	case DEF_OWNERTYPE_NPC:
+		if (m_pNpcList[m_pNpcList[iNpcH]->m_iTargetIndex] == NULL) {
+			m_pNpcList[iNpcH]->m_iTargetIndex = NULL;
+			m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_MOVE;
+			return;
+		}
+		dX = m_pNpcList[m_pNpcList[iNpcH]->m_iTargetIndex]->m_sX;
+		dY = m_pNpcList[m_pNpcList[iNpcH]->m_iTargetIndex]->m_sY;
+		break;
+		
+	default:
+		return;
+	}
+	
+	// Calcular dirección
+	char cDir = m_Misc.cGetNextMoveDir(sX, sY, dX, dY);
+	if (cDir == 0) return;
+	m_pNpcList[iNpcH]->m_cDir = cDir;
+	
+	// Distancia al objetivo
+	int iDist = max(abs(sX - dX), abs(sY - dY));
+	
+	// Si está en rango de ataque melee (1 tile), usar Sulfuras Smash
+	if (iDist <= 1) {
+		Ragnaros_SulfurasSmash(iNpcH, dX, dY);
+	}
+	// Si está en rango de magia, usar ataques de fuego
+	else if (iDist <= m_pNpcList[iNpcH]->m_iAttackRange) {
+		// Elegir ataque de fuego
+		int iMagicType;
+		if (bPhase2Activated) {
+			// En fase 2, usar Meteor Strike (81) más frecuentemente
+			if (iDice(1, 3) == 1 && m_pMagicConfigList[81]->m_sValue1 <= m_pNpcList[iNpcH]->m_iMana) {
+				iMagicType = 81; // Meteor Strike
+			} else if (m_pMagicConfigList[70]->m_sValue1 <= m_pNpcList[iNpcH]->m_iMana) {
+				iMagicType = 70; // Mass Fire Strike
+			} else {
+				iMagicType = 61; // Fire Strike
+			}
+		} else {
+			// Fase 1: ataques menos devastadores
+			if (iDice(1, 5) == 1 && m_pMagicConfigList[70]->m_sValue1 <= m_pNpcList[iNpcH]->m_iMana) {
+				iMagicType = 70; // Mass Fire Strike
+			} else if (m_pMagicConfigList[61]->m_sValue1 <= m_pNpcList[iNpcH]->m_iMana) {
+				iMagicType = 61; // Fire Strike
+			} else if (m_pMagicConfigList[43]->m_sValue1 <= m_pNpcList[iNpcH]->m_iMana) {
+				iMagicType = 43; // Fire Ball
+			} else {
+				iMagicType = 30; // Fire Field
+			}
+		}
+		
+		SendEventToNearClient_TypeA(iNpcH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, 
+			DEF_OBJECTATTACK, dX, dY, 1);
+		NpcMagicHandler(iNpcH, dX, dY, iMagicType);
+		m_pNpcList[iNpcH]->m_dwTime = dwCurrentTime + 2000;
+	}
+	// Si está lejos, moverse hacia el objetivo
+	else {
+		m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_MOVE;
+	}
+}
+
+// Wrath of Ragnaros - Explosión de fuego AoE
+void CGame::Ragnaros_WrathOfRagnaros(int iNpcH)
+{
+	if (m_pNpcList[iNpcH] == NULL) return;
+	if (m_pNpcList[iNpcH]->m_bIsKilled == TRUE) return;
+	
+	short sCenterX = m_pNpcList[iNpcH]->m_sX;
+	short sCenterY = m_pNpcList[iNpcH]->m_sY;
+	int iMapIndex = m_pNpcList[iNpcH]->m_cMapIndex;
+	
+	// Mensaje de advertencia a jugadores cercanos
+	for (int i = 1; i < DEF_MAXCLIENTS; i++) {
+		if (m_pClientList[i] != NULL && m_pClientList[i]->m_cMapIndex == iMapIndex) {
+			int iDistX = abs(m_pClientList[i]->m_sX - sCenterX);
+			int iDistY = abs(m_pClientList[i]->m_sY - sCenterY);
+			if (iDistX <= 12 && iDistY <= 10) {
+				SendNotifyMsg(NULL, i, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, 
+					"Ragnaros channels WRATH OF RAGNAROS!");
+			}
+		}
+	}
+	
+	// Usar Mass Fire Strike (70) centrado en Ragnaros
+	m_pNpcList[iNpcH]->m_iMagicHitRatio = 1000; // 100% hit rate
+	NpcMagicHandler(iNpcH, sCenterX, sCenterY, 70); // Mass Fire Strike
+	
+	wsprintf(G_cTxt, "(!) RAGNAROS: Wrath of Ragnaros cast at (%d, %d)", sCenterX, sCenterY);
+	PutLogList(G_cTxt);
+}
+
+// Sulfuras Smash - Ataque melee devastador con knockback
+void CGame::Ragnaros_SulfurasSmash(int iNpcH, short dX, short dY)
+{
+	if (m_pNpcList[iNpcH] == NULL) return;
+	
+	// Enviar animación de ataque
+	SendEventToNearClient_TypeA(iNpcH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, 
+		DEF_OBJECTATTACK, dX, dY, 1);
+	
+	// Calcular daño físico (ataque normal multiplicado)
+	iCalculateAttackEffect(m_pNpcList[iNpcH]->m_iTargetIndex, 
+		m_pNpcList[iNpcH]->m_cTargetType, iNpcH, DEF_OWNERTYPE_NPC, dX, dY, 1, TRUE);
+	
+	// Knockback effect - empujar al objetivo
+	if (m_pNpcList[iNpcH]->m_cTargetType == DEF_OWNERTYPE_PLAYER) {
+		int iTargetH = m_pNpcList[iNpcH]->m_iTargetIndex;
+		if (m_pClientList[iTargetH] != NULL && m_pClientList[iTargetH]->m_bIsKilled == FALSE) {
+			// Calcular dirección de knockback (alejándose de Ragnaros)
+			short sRagX = m_pNpcList[iNpcH]->m_sX;
+			short sRagY = m_pNpcList[iNpcH]->m_sY;
+			short sTargX = m_pClientList[iTargetH]->m_sX;
+			short sTargY = m_pClientList[iTargetH]->m_sY;
+			
+			int iDirX = (sTargX > sRagX) ? 1 : ((sTargX < sRagX) ? -1 : 0);
+			int iDirY = (sTargY > sRagY) ? 1 : ((sTargY < sRagY) ? -1 : 0);
+			
+			// Mover al jugador DEF_RAGNAROS_KNOCKBACK_DIST tiles
+			for (int k = 0; k < DEF_RAGNAROS_KNOCKBACK_DIST; k++) {
+				short sNewX = m_pClientList[iTargetH]->m_sX + iDirX;
+				short sNewY = m_pClientList[iTargetH]->m_sY + iDirY;
+				
+				// Verificar si la nueva posición es válida
+				if (m_pMapList[m_pClientList[iTargetH]->m_cMapIndex] != NULL) {
+					class CTile * pTile = (class CTile *)m_pMapList[m_pClientList[iTargetH]->m_cMapIndex]->m_pTile;
+					if (pTile != NULL) {
+						int iTileIndex = sNewX + sNewY * m_pMapList[m_pClientList[iTargetH]->m_cMapIndex]->m_sSizeY;
+						if (pTile[iTileIndex].m_bIsMoveAllowed == TRUE && 
+							pTile[iTileIndex].m_sOwner == NULL) {
+							// Mover al jugador
+							m_pMapList[m_pClientList[iTargetH]->m_cMapIndex]->ClearOwner(
+								0, iTargetH, DEF_OWNERTYPE_PLAYER, 
+								m_pClientList[iTargetH]->m_sX, m_pClientList[iTargetH]->m_sY);
+							m_pClientList[iTargetH]->m_sX = sNewX;
+							m_pClientList[iTargetH]->m_sY = sNewY;
+							m_pMapList[m_pClientList[iTargetH]->m_cMapIndex]->SetOwner(
+								iTargetH, DEF_OWNERTYPE_PLAYER, sNewX, sNewY);
+						} else {
+							break; // Bloqueado, dejar de empujar
+						}
+					}
+				}
+			}
+			
+			// Notificar al jugador del knockback
+			SendNotifyMsg(NULL, iTargetH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, 
+				"Sulfuras Smash knocks you back!");
+		}
+	}
+}
+
+// Invocar Sons of Flame (Hellhounds mejorados)
+void CGame::Ragnaros_SummonSonsOfFlame(int iNpcH)
+{
+	if (m_pNpcList[iNpcH] == NULL) return;
+	
+	int iNumSons = DEF_RAGNAROS_SONS_MIN + (iDice(1, DEF_RAGNAROS_SONS_MAX - DEF_RAGNAROS_SONS_MIN + 1) - 1);
+	
+	short sCenterX = m_pNpcList[iNpcH]->m_sX;
+	short sCenterY = m_pNpcList[iNpcH]->m_sY;
+	int iMapIndex = m_pNpcList[iNpcH]->m_cMapIndex;
+	char* cMapName = m_pMapList[iMapIndex]->m_cName;
+	
+	int iSonsSpawned = 0;
+	
+	for (int i = 0; i < iNumSons; i++) {
+		int pX = sCenterX + iDice(1, 7) - 4;
+		int pY = sCenterY + iDice(1, 7) - 4;
+		
+		// Invocar Hellhound como "Son of Flame"
+		int iSonH = bCreateNewNpc("Hellbound", "Son-of-Flame", cMapName, 
+			0, 7, DEF_MOVETYPE_RANDOM, &pX, &pY, 
+			NULL, NULL, NULL, -1, FALSE, TRUE, TRUE);
+		
+		if (iSonH != FALSE && m_pNpcList[iSonH] != NULL) {
+			// Mejorar stats del Son of Flame
+			m_pNpcList[iSonH]->m_iMaxHP *= 2;
+			m_pNpcList[iSonH]->m_iHP = m_pNpcList[iSonH]->m_iMaxHP;
+			m_pNpcList[iSonH]->m_iHitRatio *= 2;
+			m_pNpcList[iSonH]->m_cAttribute = 1; // Atributo fuego
+			m_pNpcList[iSonH]->m_cSpecialAbility = 7; // Explosive
+			iSonsSpawned++;
+		}
+	}
+	
+	wsprintf(G_cTxt, "(!) RAGNAROS: Summoned %d Sons of Flame!", iSonsSpawned);
+	PutLogList(G_cTxt);
+	
+	// Notificar a jugadores
+	for (int i = 1; i < DEF_MAXCLIENTS; i++) {
+		if (m_pClientList[i] != NULL && m_pClientList[i]->m_cMapIndex == iMapIndex) {
+			SendNotifyMsg(NULL, i, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, 
+				"Ragnaros summons Sons of Flame!");
+		}
+	}
+}
+
+// Evento cuando Ragnaros muere
+void CGame::Ragnaros_OnDeath(int iNpcH, short sAttackerH, char cAttackerType)
+{
+	if (m_pNpcList[iNpcH] == NULL) return;
+	
+	// Mensaje global del servidor
+	char cKillerName[20];
+	ZeroMemory(cKillerName, sizeof(cKillerName));
+	
+	if (cAttackerType == DEF_OWNERTYPE_PLAYER && m_pClientList[sAttackerH] != NULL) {
+		memcpy(cKillerName, m_pClientList[sAttackerH]->m_cCharName, 10);
+	} else {
+		strcpy(cKillerName, "Unknown");
+	}
+	
+	// Mensaje a todos los jugadores del servidor
+	for (int i = 1; i < DEF_MAXCLIENTS; i++) {
+		if (m_pClientList[i] != NULL) {
+			char cMsg[128];
+			wsprintf(cMsg, "RAGNAROS, LORD OF FIRE has been defeated by %s!", cKillerName);
+			SendNotifyMsg(NULL, i, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cMsg);
+		}
+	}
+	
+	wsprintf(G_cTxt, "(!) RAGNAROS DEFEATED by %s!", cKillerName);
+	PutLogList(G_cTxt);
+	
+	// Reset del estado de fase
+	m_pNpcList[iNpcH]->m_iV1 = 0;
+}
+
