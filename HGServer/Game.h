@@ -97,6 +97,38 @@
 #define DEF_RAGNAROS_SONS_MAX               4       // Máximo Sons of Flame
 #define DEF_RAGNAROS_KNOCKBACK_DIST         3       // Distancia de knockback
 
+// ========== TELEGRAPHED FIRE ZONES SYSTEM ==========
+#define DEF_RAGNAROS_FIREZONE_WARNING_TIME  3000    // 3 segundos de advertencia
+#define DEF_RAGNAROS_FIREZONE_DURATION      10000   // 10 segundos de fuego activo
+#define DEF_RAGNAROS_FIREZONE_MIN_COUNT     3       // Mínimo zonas por umbral
+#define DEF_RAGNAROS_FIREZONE_MAX_COUNT     5       // Máximo zonas por umbral
+#define DEF_RAGNAROS_FIREZONE_RADIUS        6       // Radio en tiles
+#define DEF_RAGNAROS_FIREZONE_DAMAGE        25      // Daño por tick
+#define DEF_RAGNAROS_MAX_PENDING_ZONES      50      // Max zonas pendientes
+
+// Estructura para zonas de fuego pendientes (advertencia -> ejecución)
+struct stPendingFireZone {
+	BOOL    bActive;            // Está activa esta entrada
+	short   sOwnerNpcH;         // Handle del NPC dueño (Ragnaros)
+	char    cMapIndex;          // Índice del mapa
+	short   sX, sY;             // Coordenadas
+	DWORD   dwWarningTime;      // Timestamp cuando se creó la advertencia
+	int     iWarningObjectID;   // ID del dynamic object de advertencia
+};
+
+// Estructura para flags de umbrales de HP (uno por cada 10%)
+struct stRagnarosHPThresholds {
+	BOOL bTriggered90;
+	BOOL bTriggered80;
+	BOOL bTriggered70;
+	BOOL bTriggered60;
+	BOOL bTriggered50;
+	BOOL bTriggered40;
+	BOOL bTriggered30;
+	BOOL bTriggered20;
+	BOOL bTriggered10;
+};
+
 #define DEF_CHARPOINTLIMIT		1000		// ������ Ư��ġ�� �ִ밪 
 #define DEF_RAGPROTECTIONTIME	7000		// �� �� �̻� ������ ������ ���� ��ȣ�� �޴��� 
 #define DEF_MAXREWARDGOLD		99999999	// ����� �ִ�ġ 
@@ -812,6 +844,13 @@ public:
 	BOOL Ragnaros_IsInPhase2(int iNpcH);
 	void Ragnaros_OnDeath(int iNpcH, short sAttackerH, char cAttackerType);
 	
+	// ========== TELEGRAPHED FIRE ZONES SYSTEM ==========
+	void Ragnaros_CheckHPThresholds(int iNpcH);           // Detecta cruce de umbrales HP
+	void Ragnaros_SpawnFireZoneWarnings(int iNpcH);       // Fase 1: Spawnea markers de advertencia
+	void Ragnaros_ProcessPendingFireZones();              // Chequea y ejecuta Fase 2
+	void Ragnaros_ResetThresholds(int iNpcH);             // Reset al morir/respawn
+	int  Ragnaros_GetHPPercentage(int iNpcH);             // Obtener % HP actual
+	
 	// Invasion System
 	void InvasionProcessor();
 	void StartInvasion();
@@ -932,6 +971,10 @@ public:
 	class CNpcItem * m_pTempNpcItem[DEF_MAXNPCITEMS];
 	class CDynamicObject * m_pDynamicObjectList[DEF_MAXDYNAMICOBJECTS];
 	class CDelayEvent    * m_pDelayEventList[DEF_MAXDELAYEVENTS];
+	
+	// ========== RAGNAROS TELEGRAPHED FIRE ZONES DATA ==========
+	stPendingFireZone m_stPendingFireZones[DEF_RAGNAROS_MAX_PENDING_ZONES];
+	stRagnarosHPThresholds m_stRagnarosThresholds[DEF_MAXNPCS]; // Por NPC para soporte multi-boss
 
 	class CMsg    * m_pMsgQuene[DEF_MSGQUENESIZE];
 	int             m_iQueneHead, m_iQueneTail;

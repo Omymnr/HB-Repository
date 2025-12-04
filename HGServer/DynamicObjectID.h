@@ -13,3 +13,7 @@
 #define DEF_DYNAMICOBJECT_PCLOUD_END	12
 #define DEF_DYNAMICOBJECT_FIRE2			13
 #define DEF_DYNAMICOBJECT_FIRE3			14
+
+// ========== RAGNAROS TELEGRAPHED FIRE ZONES ==========
+#define DEF_DYNAMICOBJECT_FIRE_WARNING	15	// Visual warning marker (no damage)
+#define DEF_DYNAMICOBJECT_FIRE_INTENSE	16	// Intense fire zone (high damage)

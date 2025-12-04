@@ -228,6 +228,20 @@ CGame::CGame(HWND hWnd)
 		m_pCraftingConfigList[i] = NULL;// Crafting
 	}
 
+	// ========== INITIALIZE RAGNAROS TELEGRAPHED FIRE ZONES ==========
+	for (i = 0; i < DEF_RAGNAROS_MAX_PENDING_ZONES; i++) {
+		m_stPendingFireZones[i].bActive = FALSE;
+		m_stPendingFireZones[i].sOwnerNpcH = 0;
+		m_stPendingFireZones[i].cMapIndex = 0;
+		m_stPendingFireZones[i].sX = 0;
+		m_stPendingFireZones[i].sY = 0;
+		m_stPendingFireZones[i].dwWarningTime = 0;
+		m_stPendingFireZones[i].iWarningObjectID = 0;
+	}
+	for (i = 0; i < DEF_MAXNPCS; i++) {
+		ZeroMemory(&m_stRagnarosThresholds[i], sizeof(stRagnarosHPThresholds));
+	}
+
 //	/for (i = 0; i < DEF_MAXTELEPORTTYPE; i++)
 //		m_pTeleportConfigList[i] = NULL;
 
@@ -1753,6 +1767,165 @@ void CGame::ProcessConsoleCommand(char * pCmd)
 
 		SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_LEVELUP, NULL, NULL, NULL, NULL);
 		wsprintf(cBuff, "[CMD] Set %s level from %d to %d", cArg1, iOldLevel, iLevel);
+		PutLogList(cBuff);
+	}
+	// ========== COMANDO SETALLSKILLS ==========
+	else if (strcmp(cCommand, "setallskills") == 0) {
+		// setallskills PlayerName
+		if (strlen(cArg1) == 0) {
+			PutLogList("[CMD] Usage: setallskills <Player>");
+			return;
+		}
+
+		int iClientH = -1;
+		for (int i = 1; i < DEF_MAXCLIENTS; i++) {
+			if (m_pClientList[i] != NULL && _stricmp(m_pClientList[i]->m_cCharName, cArg1) == 0) {
+				iClientH = i;
+				break;
+			}
+		}
+
+		if (iClientH == -1) {
+			wsprintf(cBuff, "[CMD] Player '%s' not found online!", cArg1);
+			PutLogList(cBuff);
+			return;
+		}
+
+		for (int j = 0; j < DEF_MAXSKILLTYPE; j++) {
+			m_pClientList[iClientH]->m_cSkillMastery[j] = 100;
+		}
+		for (int j = 0; j < 24; j++) {
+			SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, j, 100, NULL, NULL);
+		}
+		CalcTotalItemEffect(iClientH, -1, FALSE);
+		wsprintf(cBuff, "[CMD] Set ALL skills to 100%% for %s", cArg1);
+		PutLogList(cBuff);
+	}
+	// ========== COMANDO SETSKILL ==========
+	else if (strcmp(cCommand, "setskill") == 0) {
+		// setskill PlayerName SkillNumber
+		if (strlen(cArg1) == 0 || strlen(cArg2) == 0) {
+			PutLogList("[CMD] Usage: setskill <Player> <SkillNumber>");
+			return;
+		}
+
+		int iClientH = -1;
+		for (int i = 1; i < DEF_MAXCLIENTS; i++) {
+			if (m_pClientList[i] != NULL && _stricmp(m_pClientList[i]->m_cCharName, cArg1) == 0) {
+				iClientH = i;
+				break;
+			}
+		}
+
+		if (iClientH == -1) {
+			wsprintf(cBuff, "[CMD] Player '%s' not found online!", cArg1);
+			PutLogList(cBuff);
+			return;
+		}
+
+		int iSkillNum = atoi(cArg2);
+		if (iSkillNum < 0) iSkillNum = 0;
+		if (iSkillNum >= DEF_MAXSKILLTYPE) iSkillNum = DEF_MAXSKILLTYPE - 1;
+
+		m_pClientList[iClientH]->m_cSkillMastery[iSkillNum] = 100;
+		SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, iSkillNum, 100, NULL, NULL);
+		CalcTotalItemEffect(iClientH, -1, FALSE);
+		wsprintf(cBuff, "[CMD] Set skill %d to 100%% for %s", iSkillNum, cArg1);
+		PutLogList(cBuff);
+	}
+	// ========== COMANDO SETCONTRIBUTION ==========
+	else if (strcmp(cCommand, "setcontribution") == 0) {
+		// setcontribution PlayerName Amount
+		if (strlen(cArg1) == 0 || strlen(cArg2) == 0) {
+			PutLogList("[CMD] Usage: setcontribution <Player> <Amount>");
+			return;
+		}
+
+		int iClientH = -1;
+		for (int i = 1; i < DEF_MAXCLIENTS; i++) {
+			if (m_pClientList[i] != NULL && _stricmp(m_pClientList[i]->m_cCharName, cArg1) == 0) {
+				iClientH = i;
+				break;
+			}
+		}
+
+		if (iClientH == -1) {
+			wsprintf(cBuff, "[CMD] Player '%s' not found online!", cArg1);
+			PutLogList(cBuff);
+			return;
+		}
+
+		int iAmount = atoi(cArg2);
+		if (iAmount < 0) iAmount = 0;
+
+		m_pClientList[iClientH]->m_iContribution = iAmount;
+		wsprintf(cBuff, "Your contribution has been set to %d by Console.", iAmount);
+		SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cBuff);
+		wsprintf(cBuff, "[CMD] Set contribution to %d for %s", iAmount, cArg1);
+		PutLogList(cBuff);
+	}
+	// ========== COMANDO SETEK ==========
+	else if (strcmp(cCommand, "setek") == 0) {
+		// setek PlayerName Amount
+		if (strlen(cArg1) == 0 || strlen(cArg2) == 0) {
+			PutLogList("[CMD] Usage: setek <Player> <Amount>");
+			return;
+		}
+
+		int iClientH = -1;
+		for (int i = 1; i < DEF_MAXCLIENTS; i++) {
+			if (m_pClientList[i] != NULL && _stricmp(m_pClientList[i]->m_cCharName, cArg1) == 0) {
+				iClientH = i;
+				break;
+			}
+		}
+
+		if (iClientH == -1) {
+			wsprintf(cBuff, "[CMD] Player '%s' not found online!", cArg1);
+			PutLogList(cBuff);
+			return;
+		}
+
+		int iAmount = atoi(cArg2);
+		if (iAmount < 0) iAmount = 0;
+
+		m_pClientList[iClientH]->m_iEnemyKillCount = iAmount;
+		SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ENEMYKILLS, m_pClientList[iClientH]->m_iEnemyKillCount, NULL, NULL, NULL);
+		wsprintf(cBuff, "Your Enemy Kills have been set to %d by Console.", iAmount);
+		SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cBuff);
+		wsprintf(cBuff, "[CMD] Set EK to %d for %s", iAmount, cArg1);
+		PutLogList(cBuff);
+	}
+	// ========== COMANDO SETMAJESTIC ==========
+	else if (strcmp(cCommand, "setmajestic") == 0) {
+		// setmajestic PlayerName Amount
+		if (strlen(cArg1) == 0 || strlen(cArg2) == 0) {
+			PutLogList("[CMD] Usage: setmajestic <Player> <Amount>");
+			return;
+		}
+
+		int iClientH = -1;
+		for (int i = 1; i < DEF_MAXCLIENTS; i++) {
+			if (m_pClientList[i] != NULL && _stricmp(m_pClientList[i]->m_cCharName, cArg1) == 0) {
+				iClientH = i;
+				break;
+			}
+		}
+
+		if (iClientH == -1) {
+			wsprintf(cBuff, "[CMD] Player '%s' not found online!", cArg1);
+			PutLogList(cBuff);
+			return;
+		}
+
+		int iAmount = atoi(cArg2);
+		if (iAmount < 0) iAmount = 0;
+
+		m_pClientList[iClientH]->m_iGizonItemUpgradeLeft = iAmount;
+		SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMUPGRADELEFT, m_pClientList[iClientH]->m_iGizonItemUpgradeLeft, NULL, NULL, NULL);
+		wsprintf(cBuff, "Your Majestic Points have been set to %d by Console.", iAmount);
+		SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cBuff);
+		wsprintf(cBuff, "[CMD] Set Majestic Points to %d for %s", iAmount, cArg1);
 		PutLogList(cBuff);
 	}
 	// ========== COMANDO SETGOLD ==========
@@ -10841,6 +11014,35 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, DWORD dwMsgSize)
 
 		if (memcmp(cp, "/enableadmincommand ", 20) == 0) {
 			AdminOrder_EnableAdminCommand(iClientH, cp, dwMsgSize - 21);
+			return;
+		}
+
+		// GM invincibility toggle: /gm on (immune) or /gm off (can take damage)
+		if (memcmp(cp, "/gm ", 4) == 0) {
+			if (m_pClientList[iClientH]->m_iAdminUserLevel > 0) {
+				char cArg[16];
+				ZeroMemory(cArg, sizeof(cArg));
+				memcpy(cArg, cp + 4, 10);
+				
+				// Convert to lowercase for comparison
+				for (int k = 0; cArg[k]; k++) cArg[k] = tolower(cArg[k]);
+				
+				if (memcmp(cArg, "on", 2) == 0) {
+					m_pClientList[iClientH]->m_bGMInvincible = TRUE;
+					SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "GM Mode: Invincible ON");
+					wsprintf(G_cTxt, "(!) GM(%s) enabled invincibility", m_pClientList[iClientH]->m_cCharName);
+					PutLogList(G_cTxt);
+				}
+				else if (memcmp(cArg, "off", 3) == 0) {
+					m_pClientList[iClientH]->m_bGMInvincible = FALSE;
+					SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "GM Mode: Invincible OFF - You can now take damage!");
+					wsprintf(G_cTxt, "(!) GM(%s) disabled invincibility - can now take damage", m_pClientList[iClientH]->m_cCharName);
+					PutLogList(G_cTxt);
+				}
+				else {
+					SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "Usage: /gm on (immune) or /gm off (take damage)");
+				}
+			}
 			return;
 		}
 
@@ -27896,6 +28098,7 @@ int CGame::iAddDynamicObjectList(short sOwner, char cOwnerType, short sType, cha
 	switch (sType) {	
 	case DEF_DYNAMICOBJECT_FIRE3:
 	case DEF_DYNAMICOBJECT_FIRE:
+	case DEF_DYNAMICOBJECT_FIRE_INTENSE: // Ragnaros intense fire zone
 		if (m_pMapList[cMapIndex]->bGetIsMoveAllowedTile(sX, sY) == FALSE)
 			return NULL;
 		if (dwLastTime != NULL)  {
@@ -27907,6 +28110,12 @@ int CGame::iAddDynamicObjectList(short sOwner, char cOwnerType, short sType, cha
 
 			if (dwLastTime == NULL) dwLastTime = 1000;
 		}
+		break;
+	
+	case DEF_DYNAMICOBJECT_FIRE_WARNING: // Ragnaros warning marker (no damage)
+		if (m_pMapList[cMapIndex]->bGetIsMoveAllowedTile(sX, sY) == FALSE)
+			return NULL;
+		// No weather effect on warning markers
 		break;
 	
 	case DEF_DYNAMICOBJECT_FISHOBJECT:
@@ -33132,6 +33341,7 @@ void CGame::DynamicObjectEffectProcessor()
 		
 		case DEF_DYNAMICOBJECT_FIRE3:
 		case DEF_DYNAMICOBJECT_FIRE:
+		case DEF_DYNAMICOBJECT_FIRE_INTENSE: // Ragnaros intense fire - same damage behavior
 			// Fire-Wall·ùÀÇ Å¸´Â ºÒ²É
 			if (m_pDynamicObjectList[i]->m_iCount == 1) {
 				// ±ÙÃ³¿¡ Å¸´Â ¹°°ÇÀÌ ÀÖ´Ù¸é ¹øÁø´Ù. 
@@ -47640,7 +47850,8 @@ void CGame::DoMeteorStrikeDamageHandler(int iMapIndex)
 			iDamage = 0;
 		}
 		
-		if (m_pClientList[i]->m_iAdminUserLevel > 0) { // Admins get no damage
+		// GM invincibility check - only immune if m_bGMInvincible is TRUE
+		if ((m_pClientList[i]->m_iAdminUserLevel > 0) && (m_pClientList[i]->m_bGMInvincible == TRUE)) {
 			iDamage = 0;
 		}
 
@@ -50472,6 +50683,10 @@ if ((dwTime - m_dwGameTime2) > 1000) {
 		SpecialEventHandler();
 		EnergySphereProcessor();
 		TheEndlessRiftProcessor();
+		
+		// ========== RAGNAROS: Procesar zonas de fuego pendientes ==========
+		Ragnaros_ProcessPendingFireZones();
+		
 		m_dwGameTime3 = dwTime;
 	}
 
@@ -57283,7 +57498,8 @@ DWORD CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAtt
 		
 		if ((m_pClientList[sTargetH]->m_sX != tdX) || (m_pClientList[sTargetH]->m_sY != tdY)) return 0;
 
-		if (m_pClientList[sTargetH]->m_iAdminUserLevel > 0) return 0;
+		// GM invincibility check - only immune if m_bGMInvincible is TRUE
+		if ((m_pClientList[sTargetH]->m_iAdminUserLevel > 0) && (m_pClientList[sTargetH]->m_bGMInvincible == TRUE)) return 0;
 
 		if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH]->m_bIsNeutral == TRUE) 
 			&& (m_pClientList[sTargetH]->m_iPKCount == 0)) return 0;
@@ -61698,6 +61914,10 @@ void CGame::NpcBehavior_Ragnaros(int iNpcH)
 	
 	DWORD dwCurrentTime = timeGetTime();
 	
+	// ========== SISTEMA DE ZONAS DE FUEGO TELEGRAFIADAS ==========
+	// Chequear umbrales de HP cada tick - activará zonas de advertencia
+	Ragnaros_CheckHPThresholds(iNpcH);
+	
 	// m_iV1 almacena: bit 0 = fase2 activada, bits 1-31 = último tiempo de Wrath
 	BOOL bPhase2Activated = (m_pNpcList[iNpcH]->m_iV1 & 0x01) != 0;
 	
@@ -61990,5 +62210,308 @@ void CGame::Ragnaros_OnDeath(int iNpcH, short sAttackerH, char cAttackerType)
 	
 	// Reset del estado de fase
 	m_pNpcList[iNpcH]->m_iV1 = 0;
+	
+	// Reset de flags de umbrales HP
+	Ragnaros_ResetThresholds(iNpcH);
+}
+
+// ============================================================================
+// SISTEMA DE ZONAS DE FUEGO TELEGRAFIADAS - RAGNAROS
+// ============================================================================
+
+// Obtiene el porcentaje de HP actual del NPC
+int CGame::Ragnaros_GetHPPercentage(int iNpcH)
+{
+	if (m_pNpcList[iNpcH] == NULL) return 100;
+	if (m_pNpcList[iNpcH]->m_iMaxHP <= 0) return 100;
+	
+	return (m_pNpcList[iNpcH]->m_iHP * 100) / m_pNpcList[iNpcH]->m_iMaxHP;
+}
+
+// Reset de todos los flags de umbral para un NPC específico
+void CGame::Ragnaros_ResetThresholds(int iNpcH)
+{
+	if (iNpcH < 0 || iNpcH >= DEF_MAXNPCS) return;
+	
+	m_stRagnarosThresholds[iNpcH].bTriggered90 = FALSE;
+	m_stRagnarosThresholds[iNpcH].bTriggered80 = FALSE;
+	m_stRagnarosThresholds[iNpcH].bTriggered70 = FALSE;
+	m_stRagnarosThresholds[iNpcH].bTriggered60 = FALSE;
+	m_stRagnarosThresholds[iNpcH].bTriggered50 = FALSE;
+	m_stRagnarosThresholds[iNpcH].bTriggered40 = FALSE;
+	m_stRagnarosThresholds[iNpcH].bTriggered30 = FALSE;
+	m_stRagnarosThresholds[iNpcH].bTriggered20 = FALSE;
+	m_stRagnarosThresholds[iNpcH].bTriggered10 = FALSE;
+	
+	// También limpiar zonas pendientes de este NPC
+	for (int i = 0; i < DEF_RAGNAROS_MAX_PENDING_ZONES; i++) {
+		if (m_stPendingFireZones[i].bActive && m_stPendingFireZones[i].sOwnerNpcH == iNpcH) {
+			// Eliminar el objeto de advertencia si existe
+			if (m_stPendingFireZones[i].iWarningObjectID > 0) {
+				int iObjID = m_stPendingFireZones[i].iWarningObjectID;
+				if (m_pDynamicObjectList[iObjID] != NULL) {
+					SendEventToNearClient_TypeB(MSGID_DYNAMICOBJECT, DEF_MSGTYPE_REJECT, 
+						m_pDynamicObjectList[iObjID]->m_cMapIndex,
+						m_pDynamicObjectList[iObjID]->m_sX, 
+						m_pDynamicObjectList[iObjID]->m_sY,
+						m_pDynamicObjectList[iObjID]->m_sType, iObjID, NULL, (short)0);
+					m_pMapList[m_pDynamicObjectList[iObjID]->m_cMapIndex]->SetDynamicObject(NULL, NULL, 
+						m_pDynamicObjectList[iObjID]->m_sX, 
+						m_pDynamicObjectList[iObjID]->m_sY, timeGetTime());
+					delete m_pDynamicObjectList[iObjID];
+					m_pDynamicObjectList[iObjID] = NULL;
+				}
+			}
+			m_stPendingFireZones[i].bActive = FALSE;
+		}
+	}
+	
+	wsprintf(G_cTxt, "(!) RAGNAROS: HP Thresholds reset for NPC %d", iNpcH);
+	PutLogList(G_cTxt);
+}
+
+// Chequea si algún umbral de HP ha sido cruzado y dispara las zonas de fuego
+void CGame::Ragnaros_CheckHPThresholds(int iNpcH)
+{
+	if (m_pNpcList[iNpcH] == NULL) return;
+	if (m_pNpcList[iNpcH]->m_bIsKilled == TRUE) return;
+	if (iNpcH < 0 || iNpcH >= DEF_MAXNPCS) return;
+	
+	int iHPPercent = Ragnaros_GetHPPercentage(iNpcH);
+	BOOL bTriggerFireZones = FALSE;
+	int iThresholdCrossed = 0;
+	
+	// Chequear cada umbral de 10% - Solo se activa una vez por combate
+	if (iHPPercent <= 90 && !m_stRagnarosThresholds[iNpcH].bTriggered90) {
+		m_stRagnarosThresholds[iNpcH].bTriggered90 = TRUE;
+		bTriggerFireZones = TRUE;
+		iThresholdCrossed = 90;
+	}
+	else if (iHPPercent <= 80 && !m_stRagnarosThresholds[iNpcH].bTriggered80) {
+		m_stRagnarosThresholds[iNpcH].bTriggered80 = TRUE;
+		bTriggerFireZones = TRUE;
+		iThresholdCrossed = 80;
+	}
+	else if (iHPPercent <= 70 && !m_stRagnarosThresholds[iNpcH].bTriggered70) {
+		m_stRagnarosThresholds[iNpcH].bTriggered70 = TRUE;
+		bTriggerFireZones = TRUE;
+		iThresholdCrossed = 70;
+	}
+	else if (iHPPercent <= 60 && !m_stRagnarosThresholds[iNpcH].bTriggered60) {
+		m_stRagnarosThresholds[iNpcH].bTriggered60 = TRUE;
+		bTriggerFireZones = TRUE;
+		iThresholdCrossed = 60;
+	}
+	else if (iHPPercent <= 50 && !m_stRagnarosThresholds[iNpcH].bTriggered50) {
+		m_stRagnarosThresholds[iNpcH].bTriggered50 = TRUE;
+		bTriggerFireZones = TRUE;
+		iThresholdCrossed = 50;
+	}
+	else if (iHPPercent <= 40 && !m_stRagnarosThresholds[iNpcH].bTriggered40) {
+		m_stRagnarosThresholds[iNpcH].bTriggered40 = TRUE;
+		bTriggerFireZones = TRUE;
+		iThresholdCrossed = 40;
+	}
+	else if (iHPPercent <= 30 && !m_stRagnarosThresholds[iNpcH].bTriggered30) {
+		m_stRagnarosThresholds[iNpcH].bTriggered30 = TRUE;
+		bTriggerFireZones = TRUE;
+		iThresholdCrossed = 30;
+	}
+	else if (iHPPercent <= 20 && !m_stRagnarosThresholds[iNpcH].bTriggered20) {
+		m_stRagnarosThresholds[iNpcH].bTriggered20 = TRUE;
+		bTriggerFireZones = TRUE;
+		iThresholdCrossed = 20;
+	}
+	else if (iHPPercent <= 10 && !m_stRagnarosThresholds[iNpcH].bTriggered10) {
+		m_stRagnarosThresholds[iNpcH].bTriggered10 = TRUE;
+		bTriggerFireZones = TRUE;
+		iThresholdCrossed = 10;
+	}
+	
+	// Si cruzamos un umbral, spawnear zonas de advertencia
+	if (bTriggerFireZones) {
+		wsprintf(G_cTxt, "(!) RAGNAROS: HP crossed %d%% threshold - spawning fire zones!", iThresholdCrossed);
+		PutLogList(G_cTxt);
+		
+		// Notificar a jugadores cercanos
+		int iMapIndex = m_pNpcList[iNpcH]->m_cMapIndex;
+		for (int i = 1; i < DEF_MAXCLIENTS; i++) {
+			if (m_pClientList[i] != NULL && m_pClientList[i]->m_cMapIndex == iMapIndex) {
+				int iDistX = abs(m_pClientList[i]->m_sX - m_pNpcList[iNpcH]->m_sX);
+				int iDistY = abs(m_pClientList[i]->m_sY - m_pNpcList[iNpcH]->m_sY);
+				if (iDistX <= 15 && iDistY <= 15) {
+					SendNotifyMsg(NULL, i, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, 
+						"WARNING: Fire eruptions incoming! Move away from the glowing marks!");
+				}
+			}
+		}
+		
+		Ragnaros_SpawnFireZoneWarnings(iNpcH);
+	}
+}
+
+// FASE 1: Spawnea los markers de advertencia visual (sin daño)
+void CGame::Ragnaros_SpawnFireZoneWarnings(int iNpcH)
+{
+	if (m_pNpcList[iNpcH] == NULL) return;
+	
+	short sCenterX = m_pNpcList[iNpcH]->m_sX;
+	short sCenterY = m_pNpcList[iNpcH]->m_sY;
+	char cMapIndex = m_pNpcList[iNpcH]->m_cMapIndex;
+	DWORD dwCurrentTime = timeGetTime();
+	
+	// Calcular cuántas zonas crear (3-5 aleatorio)
+	int iZoneCount = DEF_RAGNAROS_FIREZONE_MIN_COUNT + 
+		(iDice(1, DEF_RAGNAROS_FIREZONE_MAX_COUNT - DEF_RAGNAROS_FIREZONE_MIN_COUNT + 1) - 1);
+	
+	int iZonesCreated = 0;
+	int iAttempts = 0;
+	int iMaxAttempts = iZoneCount * 5; // Máximo intentos para evitar loop infinito
+	
+	while (iZonesCreated < iZoneCount && iAttempts < iMaxAttempts) {
+		iAttempts++;
+		
+		// Generar coordenada aleatoria dentro del radio
+		short sOffsetX = (short)(iDice(1, DEF_RAGNAROS_FIREZONE_RADIUS * 2 + 1) - DEF_RAGNAROS_FIREZONE_RADIUS - 1);
+		short sOffsetY = (short)(iDice(1, DEF_RAGNAROS_FIREZONE_RADIUS * 2 + 1) - DEF_RAGNAROS_FIREZONE_RADIUS - 1);
+		short sTargetX = sCenterX + sOffsetX;
+		short sTargetY = sCenterY + sOffsetY;
+		
+		// Verificar que la posición sea válida y caminable
+		if (m_pMapList[cMapIndex] == NULL) continue;
+		if (m_pMapList[cMapIndex]->bGetIsMoveAllowedTile(sTargetX, sTargetY) == FALSE) continue;
+		
+		// Verificar que no haya ya un dynamic object en esa posición
+		short sExistingType;
+		DWORD dwExistingTime;
+		if (m_pMapList[cMapIndex]->bGetDynamicObject(sTargetX, sTargetY, &sExistingType, &dwExistingTime)) {
+			if (sExistingType != NULL) continue; // Ya hay algo aquí
+		}
+		
+		// Buscar un slot libre en el array de zonas pendientes
+		int iFreeSlot = -1;
+		for (int i = 0; i < DEF_RAGNAROS_MAX_PENDING_ZONES; i++) {
+			if (!m_stPendingFireZones[i].bActive) {
+				iFreeSlot = i;
+				break;
+			}
+		}
+		
+		if (iFreeSlot == -1) {
+			wsprintf(G_cTxt, "(!) RAGNAROS: No free slots for pending fire zones!");
+			PutLogList(G_cTxt);
+			break; // No hay slots libres
+		}
+		
+		// Crear el objeto de advertencia visual (usa FIRE3 o PCLOUD_BEGIN como visual temporal)
+		// El cliente verá esto como una advertencia de fuego
+		int iWarningObjID = iAddDynamicObjectList(
+			iNpcH,                          // Owner = Ragnaros
+			DEF_OWNERTYPE_NPC,              // Tipo de owner
+			DEF_DYNAMICOBJECT_FIRE_WARNING, // Tipo de objeto (nuevo)
+			cMapIndex,                      // Mapa
+			sTargetX, sTargetY,             // Coordenadas
+			DEF_RAGNAROS_FIREZONE_WARNING_TIME + 1000, // Duración (3s + buffer)
+			0                               // iV1
+		);
+		
+		// Si no se pudo crear (por ejemplo, ya existe objeto), usar PCLOUD_BEGIN como fallback
+		if (iWarningObjID == NULL) {
+			iWarningObjID = iAddDynamicObjectList(
+				iNpcH, DEF_OWNERTYPE_NPC,
+				DEF_DYNAMICOBJECT_PCLOUD_BEGIN, // Fallback visual
+				cMapIndex, sTargetX, sTargetY,
+				DEF_RAGNAROS_FIREZONE_WARNING_TIME + 1000, 0
+			);
+		}
+		
+		if (iWarningObjID != NULL) {
+			// Registrar en la estructura de zonas pendientes
+			m_stPendingFireZones[iFreeSlot].bActive = TRUE;
+			m_stPendingFireZones[iFreeSlot].sOwnerNpcH = (short)iNpcH;
+			m_stPendingFireZones[iFreeSlot].cMapIndex = cMapIndex;
+			m_stPendingFireZones[iFreeSlot].sX = sTargetX;
+			m_stPendingFireZones[iFreeSlot].sY = sTargetY;
+			m_stPendingFireZones[iFreeSlot].dwWarningTime = dwCurrentTime;
+			m_stPendingFireZones[iFreeSlot].iWarningObjectID = iWarningObjID;
+			
+			iZonesCreated++;
+			
+			wsprintf(G_cTxt, "(!) RAGNAROS: Fire warning %d placed at (%d, %d)", 
+				iZonesCreated, sTargetX, sTargetY);
+			PutLogList(G_cTxt);
+		}
+	}
+	
+	wsprintf(G_cTxt, "(!) RAGNAROS: Spawned %d fire zone warnings (Fase 1)", iZonesCreated);
+	PutLogList(G_cTxt);
+}
+
+// FASE 2: Procesa las zonas pendientes - Llamar desde el game loop principal
+// Esta función debe ejecutarse cada tick del servidor
+void CGame::Ragnaros_ProcessPendingFireZones()
+{
+	DWORD dwCurrentTime = timeGetTime();
+	
+	for (int i = 0; i < DEF_RAGNAROS_MAX_PENDING_ZONES; i++) {
+		if (!m_stPendingFireZones[i].bActive) continue;
+		
+		// Verificar si han pasado los 3 segundos de advertencia
+		DWORD dwElapsed = dwCurrentTime - m_stPendingFireZones[i].dwWarningTime;
+		
+		if (dwElapsed >= DEF_RAGNAROS_FIREZONE_WARNING_TIME) {
+			// ¡Es hora de ejecutar la Fase 2!
+			short sX = m_stPendingFireZones[i].sX;
+			short sY = m_stPendingFireZones[i].sY;
+			char cMapIndex = m_stPendingFireZones[i].cMapIndex;
+			int iWarningObjID = m_stPendingFireZones[i].iWarningObjectID;
+			
+			// 1. Eliminar el objeto de advertencia
+			if (iWarningObjID > 0 && m_pDynamicObjectList[iWarningObjID] != NULL) {
+				SendEventToNearClient_TypeB(MSGID_DYNAMICOBJECT, DEF_MSGTYPE_REJECT, 
+					cMapIndex, sX, sY, 
+					m_pDynamicObjectList[iWarningObjID]->m_sType, 
+					iWarningObjID, NULL, (short)0);
+				m_pMapList[cMapIndex]->SetDynamicObject(NULL, NULL, sX, sY, dwCurrentTime);
+				delete m_pDynamicObjectList[iWarningObjID];
+				m_pDynamicObjectList[iWarningObjID] = NULL;
+			}
+			
+			// 2. Crear el área de fuego real con daño
+			// Usamos DEF_DYNAMICOBJECT_FIRE3 que causa daño periódico
+			int iFireObjID = iAddDynamicObjectList(
+				m_stPendingFireZones[i].sOwnerNpcH,
+				DEF_OWNERTYPE_NPC,
+				DEF_DYNAMICOBJECT_FIRE3,    // Fuego real con daño
+				cMapIndex,
+				sX, sY,
+				DEF_RAGNAROS_FIREZONE_DURATION,  // 10 segundos
+				DEF_RAGNAROS_FIREZONE_DAMAGE     // Daño por tick en iV1
+			);
+			
+			if (iFireObjID != NULL) {
+				wsprintf(G_cTxt, "(!) RAGNAROS: Fire zone ACTIVATED at (%d, %d) - Fase 2!", sX, sY);
+				PutLogList(G_cTxt);
+				
+				// Notificar a jugadores muy cercanos a la zona (están en peligro)
+				for (int j = 1; j < DEF_MAXCLIENTS; j++) {
+					if (m_pClientList[j] != NULL && m_pClientList[j]->m_cMapIndex == cMapIndex) {
+						int iDistX = abs(m_pClientList[j]->m_sX - sX);
+						int iDistY = abs(m_pClientList[j]->m_sY - sY);
+						if (iDistX <= 1 && iDistY <= 1) {
+							// El jugador está muy cerca de la explosión
+							SendNotifyMsg(NULL, j, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, 
+								"FIRE ERUPTS BENEATH YOU!");
+						}
+					}
+				}
+			}
+			
+			// 3. Marcar la zona pendiente como inactiva
+			m_stPendingFireZones[i].bActive = FALSE;
+			m_stPendingFireZones[i].sOwnerNpcH = 0;
+			m_stPendingFireZones[i].iWarningObjectID = 0;
+		}
+	}
 }
 

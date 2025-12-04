@@ -1690,10 +1690,20 @@ int CMapData::iObjectFrameCounter(char * cPlayerName, short sViewPointX, short s
 
 				case DEF_DYNAMICOBJECT_FIRE:// Firewall
 				case DEF_DYNAMICOBJECT_FIRE3: // by Snoopy(FireBow)
+				case DEF_DYNAMICOBJECT_FIRE_INTENSE: // Ragnaros intense fire zone
 					if (m_pData[dX][dY].m_cDynamicObjectFrame >= 24)
 						m_pData[dX][dY].m_cDynamicObjectFrame = 0;
 					if (m_pData[dX][dY].m_cDynamicObjectFrame == 1)
 					{	m_pGame->PlaySound('E', 9, sDist);
+					}
+					break;
+				
+				case DEF_DYNAMICOBJECT_FIRE_WARNING: // Ragnaros fire warning marker (pulsing glow)
+					if (m_pData[dX][dY].m_cDynamicObjectFrame >= 10)
+						m_pData[dX][dY].m_cDynamicObjectFrame = 0;
+					// Optional: Add pulsing visual effect here
+					if ((m_pData[dX][dY].m_cDynamicObjectFrame % 5) == 0)
+					{	m_pGame->bAddNewEffect(65, (m_sPivotX+dX)*32, (m_sPivotY+dY)*32, NULL, NULL, NULL, 0); // Spark effect
 					}
 					break;
 

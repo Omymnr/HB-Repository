@@ -41,7 +41,7 @@ CClient::CClient(HWND hWnd)
 	m_iLU_Pool = 0;
 	m_cAura = 0;
 
-	// v1.432 »ç¿ëÇÏÁö ¾Ê´Â´Ù.
+	// v1.432 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
 	//m_iHitRatio_ItemEffect_SM = 0;
 	//m_iHitRatio_ItemEffect_L  = 0;
 	m_cVar = 0;
@@ -64,25 +64,25 @@ CClient::CClient(HWND hWnd)
 		m_stRepairAll[i].price = 0;
 	}
 
-	// ¾ÆÀÌÅÛ ÀåÂø »óÅÂ ÃÊ±âÈ­ÇÑ ÈÄ ¼³Á¤ÇÑ´Ù.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	for (i = 0; i < DEF_MAXITEMEQUIPPOS; i++) 
 		m_sItemEquipmentStatus[i] = -1;
 	
-	// ¾ÆÀÌÅÛ ¸®½ºÆ® ÃÊ±âÈ­ 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ê±ï¿½È­ 
 	for (i = 0; i < DEF_MAXITEMS; i++) {
 		m_pItemList[i]       = NULL;
 		m_ItemPosList[i].x   = 40;
 		m_ItemPosList[i].y   = 30;
 		m_bIsItemEquipped[i] = FALSE;
 	}
-	m_cArrowIndex = -1;	// È­»ì ¾ÆÀÌÅÛ ÀÎµ¦½º´Â ÇÒ´çµÇÁö ¾ÊÀº »óÅÂ 
+	m_cArrowIndex = -1;	// È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò´ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 
 
-	// ¸Ã°Ü³í ¾ÆÀÌÅÛ ¸®½ºÆ® ÃÊ±âÈ­.
+	// ï¿½Ã°Ü³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ê±ï¿½È­.
 	for (i = 0; i < DEF_MAXBANKITEMS; i++) {
 		m_pItemInBankList[i] = NULL;
 	}
 
-	// Magic - Skill ¼÷·Ãµµ ¸®½ºÆ® ÃÊ±âÈ­ 
+	// Magic - Skill ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ê±ï¿½È­ 
 	for (i = 0; i < DEF_MAXMAGICTYPE; i++)
 		m_cMagicMastery[i] = NULL;
 	
@@ -114,14 +114,14 @@ CClient::CClient(HWND hWnd)
 	m_cHairColor  = 0;
 	m_cUnderwear  = 0;
 
-	m_cAttackDiceThrow_SM = 0;	// °ø°ÝÄ¡ ÁÖ»çÀ§ ´øÁö´Â È¸¼ö @@@@@@@@@@@@@
+	m_cAttackDiceThrow_SM = 0;	// ï¿½ï¿½ï¿½ï¿½Ä¡ ï¿½Ö»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ @@@@@@@@@@@@@
 	m_cAttackDiceRange_SM = 0;
-	m_cAttackDiceThrow_L = 0;	// °ø°ÝÄ¡ ÁÖ»çÀ§ ´øÁö´Â È¸¼ö @@@@@@@@@@@@@
+	m_cAttackDiceThrow_L = 0;	// ï¿½ï¿½ï¿½ï¿½Ä¡ ï¿½Ö»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ @@@@@@@@@@@@@
 	m_cAttackDiceRange_L = 0;
 	m_cAttackBonus_SM    = 0;
 	m_cAttackBonus_L     = 0;
 	
-	// ÇÃ·¹ÀÌ¾îÀÇ ¼Ò¼Ó ¸¶À»¿¡ µû¶ó¼­ »çÀÌµå°¡ °áÁ¤µÇ¸ç ÀÌ°ÍÀ» º¸°í NPC°¡ °ø°Ý¿©ºÎ¸¦ °áÁ¤ÇÒ °ÍÀÌ´Ù. 
+	// ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½Ò¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµå°¡ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½ ï¿½Ì°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ NPCï¿½ï¿½ ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½Î¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½. 
 	m_cSide = 0;
 
 	m_iHitRatio = 0;
@@ -139,7 +139,7 @@ CClient::CClient(HWND hWnd)
 	m_iWhisperPlayerIndex = -1;
 	ZeroMemory(m_cWhisperPlayerName, sizeof(m_cWhisperPlayerName));
 
-	m_iHungerStatus  = 100;  // ÃÖ´ë°ªÀº 100
+	m_iHungerStatus  = 100;  // ï¿½Ö´ë°ªï¿½ï¿½ 100
 	
 	m_bIsWarLocation = FALSE;
 
@@ -171,7 +171,7 @@ CClient::CClient(HWND hWnd)
 	m_iSuperAttackLeft  = 0;
 	m_iSuperAttackCount = 0;
 
-	m_sUsingWeaponSkill = 5; // ±âº»ÀûÀ¸·Î ¸Ç¼Õ°ÝÅõ 
+	m_sUsingWeaponSkill = 5; // ï¿½âº»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç¼Õ°ï¿½ï¿½ï¿½ 
 
 	m_iManaSaveRatio   = 0;
 	m_iAddResistMagic  = 0;
@@ -180,7 +180,7 @@ CClient::CClient(HWND hWnd)
 	m_bIsLuckyEffect     = FALSE;
 	m_iSideEffect_MaxHPdown = 0;
 
-	m_iAddAbsAir   = 0;	// ¼Ó¼ºº° ´ë¹ÌÁö Èí¼ö
+	m_iAddAbsAir   = 0;	// ï¿½Ó¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	m_iAddAbsEarth = 0;
 	m_iAddAbsFire  = 0;
 	m_iAddAbsWater = 0;
@@ -215,14 +215,14 @@ CClient::CClient(HWND hWnd)
 	//hbest
 	isForceSet = FALSE;
 
-	// v1.4311-3 Ãß°¡ º¯¼ö ÃÊ±âÈ­ »çÅõÀå ¿¹¾à °ü·Ã º¯¼ö 
+	// v1.4311-3 ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 
     m_iFightZoneTicketNumber =	m_iFightzoneNumber = m_iReserveTime = 0 ;            
 
 	m_iPenaltyBlockYear = m_iPenaltyBlockMonth = m_iPenaltyBlockDay = 0; // v1.4
 
-	m_iExchangeH = NULL;											// ±³È¯ÇÒ ´ë»óÀÇ ÀÎµ¦½º 
-	ZeroMemory(m_cExchangeName, sizeof(m_cExchangeName));			// ±³È¯ÇÒ ´ë»óÀÇ ÀÌ¸§ 
-	ZeroMemory(m_cExchangeItemName, sizeof(m_cExchangeItemName));	// ±³È¯ÇÒ ¾ÆÀÌÅÛ ÀÌ¸§ 
+	m_iExchangeH = NULL;											// ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ 
+	ZeroMemory(m_cExchangeName, sizeof(m_cExchangeName));			// ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ 
+	ZeroMemory(m_cExchangeItemName, sizeof(m_cExchangeItemName));	// ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ 
 
 	for(i=0; i<4; i++){
 		m_cExchangeItemIndex[i]  = -1; 
@@ -231,16 +231,16 @@ CClient::CClient(HWND hWnd)
 
 	m_bIsExchangeConfirm = FALSE;
 
-	m_iQuest		 = NULL; // ÇöÀç ÇÒ´çµÈ Quest 
+	m_iQuest		 = NULL; // ï¿½ï¿½ï¿½ï¿½ ï¿½Ò´ï¿½ï¿½ Quest 
 	m_iQuestID       = NULL; // QuestID
-	m_iAskedQuest	 = NULL; // ¹°¾îº» Äù½ºÆ® 
-	m_iCurQuestCount = NULL; // ÇöÀç Äù½ºÆ® »óÅÂ 
+	m_iAskedQuest	 = NULL; // ï¿½ï¿½ï¿½îº» ï¿½ï¿½ï¿½ï¿½Æ® 
+	m_iCurQuestCount = NULL; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ 
 
-	m_iQuestRewardType	 = NULL; // Äù½ºÆ® ÇØ°á½Ã »óÇ° Á¾·ù -> ¾ÆÀÌÅÛÀÇ ID°ªÀÌ´Ù.
-	m_iQuestRewardAmount = NULL; // »óÇ° °¹¼ö 
+	m_iQuestRewardType	 = NULL; // ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ø°ï¿½ï¿½ ï¿½ï¿½Ç° ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ IDï¿½ï¿½ï¿½Ì´ï¿½.
+	m_iQuestRewardAmount = NULL; // ï¿½ï¿½Ç° ï¿½ï¿½ï¿½ï¿½ 
 
-	m_iContribution = NULL;			// °øÇåµµ 
-	m_bQuestMatchFlag_Loc = FALSE;  // Äù½ºÆ® Àå¼Ò È®ÀÎ¿ë ÇÃ·¡±×.
+	m_iContribution = NULL;			// ï¿½ï¿½ï¿½åµµ 
+	m_bQuestMatchFlag_Loc = FALSE;  // ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ È®ï¿½Î¿ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½.
 	m_bIsQuestCompleted   = FALSE;
 
 	m_cHeroArmourBonus = 0;
@@ -248,18 +248,18 @@ CClient::CClient(HWND hWnd)
 	m_bIsNeutral      = FALSE;
 	m_bIsObserverMode = FALSE;
 
-	// 2000.8.1 ÀÌº¥Æ® »óÇ° ¼ö¿© È®ÀÎ¿ë 
+	// 2000.8.1 ï¿½Ìºï¿½Æ® ï¿½ï¿½Ç° ï¿½ï¿½ï¿½ï¿½ È®ï¿½Î¿ï¿½ 
 	m_iSpecialEventID = 200081;
 
-	m_iSpecialWeaponEffectType  = 0;	// Èñ±Í ¾ÆÀÌÅÛ È¿°ú Á¾·ù: 0-None 1-ÇÊ»ì±â´ë¹ÌÁöÃß°¡ 2-Áßµ¶È¿°ú 3-Á¤ÀÇÀÇ 4-ÀúÁÖÀÇ
-	m_iSpecialWeaponEffectValue = 0;	// Èñ±Í ¾ÆÀÌÅÛ È¿°ú °ª
+	m_iSpecialWeaponEffectType  = 0;	// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: 0-None 1-ï¿½Ê»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß°ï¿½ 2-ï¿½ßµï¿½È¿ï¿½ï¿½ 3-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 4-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	m_iSpecialWeaponEffectValue = 0;	// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ ï¿½ï¿½
 
 	m_iAddHP = m_iAddSP = m_iAddMP = 0; 
 	m_iAddAR = m_iAddPR = m_iAddDR = 0;
 	m_iAddAbsPD = m_iAddAbsMD = 0;
 	m_iAddCD = m_iAddExp = m_iAddGold = 0;
 		
-	m_iSpecialAbilityTime = DEF_SPECABLTYTIMESEC;		// DEF_SPECABLTYTIMESEC ÃÊ¸¶´Ù ÇÑ¹ø¾¿ Æ¯¼ö ´É·ÂÀ» ¾µ ¼ö ÀÖ´Ù.
+	m_iSpecialAbilityTime = DEF_SPECABLTYTIMESEC;		// DEF_SPECABLTYTIMESEC ï¿½Ê¸ï¿½ï¿½ï¿½ ï¿½Ñ¹ï¿½ï¿½ï¿½ Æ¯ï¿½ï¿½ ï¿½É·ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½.
 	m_iSpecialAbilityType = NULL;
 	m_bIsSpecialAbilityEnabled = FALSE;
 	m_iSpecialAbilityLastSec   = 0;
@@ -272,6 +272,7 @@ CClient::CClient(HWND hWnd)
 	m_iSkillMsgRecvCount  = 0;
 
 	m_bIsAdminCommandEnabled = FALSE;
+	m_bGMInvincible = TRUE;					// GM starts invincible by default
 	m_iAlterItemDropIndex = -1;
 
 	m_iAutoExpAmount = 0;
