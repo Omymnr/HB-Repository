@@ -1,10 +1,13 @@
 // -------------------------------------------------------------- 
-//                      Helbreath Client 						  
+//                 Helbreath Apocalypse Launcher
 //
-//                      1998.10 by Soph
-//
+//          Launcher separado que ejecuta Game.exe
 // --------------------------------------------------------------
 
+// Evita advertencias de funciones "inseguras" de la CRT (strcpy, strcat, sprintf, fopen...)
+// DEBE ir ANTES de los includes
+#define _CRT_SECURE_NO_WARNINGS
+#pragma warning(disable: 4996)
 
 #include <windows.h>
 #include <windowsx.h>
@@ -12,29 +15,13 @@
 #include <stdlib.h> 
 #include <string.h>
 #include <winbase.h>
-#include <mmsystem.h>
-#include <process.h>
-#include <intrin.h>  // Para _mm_pause()
-#include <commctrl.h> // Para controles modernos
-#include <gdiplus.h>   // Para cargar PNG
-#include <DbgHelp.h>
+#include <commctrl.h>
+#include <gdiplus.h>
+#include <shellapi.h>
 #include "resource.h"
-#include "XSocket.h"
-#include "winmain.h"
-#include "Game.h"
-#include "GlobalDef.h"
 
 #pragma comment(lib, "comctl32.lib")
 #pragma comment(lib, "gdiplus.lib")
-#pragma comment(lib, "Dbghelp.lib")
-
-// ===== FORZAR USO DE GPU DEDICADA (NVIDIA/AMD) =====
-// Estos exports hacen que los drivers de NVIDIA y AMD 
-// detecten automáticamente que esta aplicación necesita la GPU dedicada
-extern "C" {
-    __declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;                  // NVIDIA Optimus
-    __declspec(dllexport) DWORD AmdPowerXpressRequestHighPerformance = 0x00000001; // AMD PowerXpress/Enduro
-}
 
 // ===== LAUNCHER CONFIGURATION =====
 #define LAUNCHER_DEFAULT_WIDTH 500
@@ -70,10 +57,7 @@ HFONT g_hFontButton = NULL;
 HFONT g_hFontMedieval = NULL;
 HBITMAP g_hLauncherImage = NULL;
 HWND g_hTooltip = NULL;
-
-// Variables cacheadas para el tamaño del cliente (evita llamar GetClientRect cada frame)
-int g_iCachedClientWidth = 800;
-int g_iCachedClientHeight = 600;
+HINSTANCE g_hInstance = NULL;
 
 // ===== CONFIGURACIÓN DE SERVIDORES =====
 // Server Online (para amigos conectando remotamente)
@@ -86,6 +70,9 @@ int g_iCachedClientHeight = 600;
 
 // Clave del registro para guardar configuración
 #define LAUNCHER_REG_KEY "SOFTWARE\\HelbreathApocalypse\\Launcher"
+
+// Nombre del ejecutable del juego
+#define GAME_EXECUTABLE "Game.exe"
 
 // Cargar configuración del launcher desde el Registro de Windows
 void LoadLauncherSettings()
@@ -162,6 +149,58 @@ void WriteLoginConfig()
         fprintf(fp, "game-server-mode    = LAN\n");
         fclose(fp);
     }
+}
+
+// Ejecutar el juego (Game.exe) con los parámetros adecuados
+BOOL LaunchGame()
+{
+    char szPath[MAX_PATH];
+    char szParams[256];
+    char szWorkingDir[MAX_PATH];
+    
+    // Obtener directorio actual
+    GetCurrentDirectory(MAX_PATH, szWorkingDir);
+    
+    // Construir ruta completa al ejecutable
+    sprintf(szPath, "%s\\%s", szWorkingDir, GAME_EXECUTABLE);
+    
+    // Construir parámetros
+    // -nolauncher: indica al juego que no muestre su propio launcher
+    // -borderless o -fullscreen: modo de pantalla
+    if (g_bBorderlessMode) {
+        strcpy(szParams, "-nolauncher -borderless");
+    } else {
+        strcpy(szParams, "-nolauncher -fullscreen");
+    }
+    
+    // Verificar que el ejecutable existe
+    if (GetFileAttributes(szPath) == INVALID_FILE_ATTRIBUTES) {
+        char szError[512];
+        sprintf(szError, "No se encontró el archivo del juego:\n%s\n\nAsegúrate de que Launcher.exe está en la misma carpeta que Game.exe", szPath);
+        MessageBox(NULL, szError, "Error - Helbreath Apocalypse", MB_ICONERROR | MB_OK);
+        return FALSE;
+    }
+    
+    // Ejecutar el juego
+    SHELLEXECUTEINFO sei = {0};
+    sei.cbSize = sizeof(SHELLEXECUTEINFO);
+    sei.fMask = SEE_MASK_NOCLOSEPROCESS;
+    sei.hwnd = NULL;
+    sei.lpVerb = "open";
+    sei.lpFile = szPath;
+    sei.lpParameters = szParams;
+    sei.lpDirectory = szWorkingDir;
+    sei.nShow = SW_SHOW;
+    
+    if (!ShellExecuteEx(&sei)) {
+        DWORD dwError = GetLastError();
+        char szError[256];
+        sprintf(szError, "Error al iniciar el juego (código: %d)", dwError);
+        MessageBox(NULL, szError, "Error - Helbreath Apocalypse", MB_ICONERROR | MB_OK);
+        return FALSE;
+    }
+    
+    return TRUE;
 }
 
 // Dibujar botón personalizado estilo medieval
@@ -316,7 +355,6 @@ LRESULT CALLBACK LauncherWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
         g_hBrushBGLight = CreateSolidBrush(COLOR_BG_LIGHT);
         
         // Calcular posiciones basadas en tamaño de ventana
-        // Imagen base: 490x140, contentStartY = imageDisplayHeight + 25 + 22 (linea)
         RECT rc;
         GetClientRect(hWnd, &rc);
         int centerX = rc.right / 2;
@@ -328,9 +366,9 @@ LRESULT CALLBACK LauncherWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
         int imageDisplayHeight = (int)(180 * scale);
         
         // Los controles van debajo de la etiqueta + línea
-        int contentY = imageDisplayHeight + 25 + 25;  // imagen + etiqueta + linea + margen
+        int contentY = imageDisplayHeight + 25 + 25;
         
-        // Radio buttons para selección de servidor (sin IPs visibles)
+        // Radio buttons para selección de servidor
         hRadioOnline = CreateWindow("BUTTON", "  Servidor Principal",
             WS_VISIBLE | WS_CHILD | BS_AUTORADIOBUTTON | WS_GROUP,
             centerX - 100, contentY, 200, 25, hWnd, (HMENU)ID_RADIO_ONLINE, NULL, NULL);
@@ -344,8 +382,7 @@ LRESULT CALLBACK LauncherWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
         // Seleccionar el radio button según configuración guardada
         SendMessage(g_bTestServer ? hRadioTest : hRadioOnline, BM_SETCHECK, BST_CHECKED, 0);
         
-        // Checkbox para modo ventana (debajo de la segunda línea divisoria)
-        // optionsY en paint = contentStartY + 95, luego + 22 para la linea + margen
+        // Checkbox para modo ventana
         int optionsY = contentY + 95 + 25;
         hCheckBorderless = CreateWindow("BUTTON", "  Modo Ventana",
             WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
@@ -353,7 +390,7 @@ LRESULT CALLBACK LauncherWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
         SendMessage(hCheckBorderless, WM_SETFONT, (WPARAM)g_hFontNormal, TRUE);
         SendMessage(hCheckBorderless, BM_SETCHECK, g_bBorderlessMode ? BST_CHECKED : BST_UNCHECKED, 0);
         
-        // Crear tooltip para el checkbox de modo ventana
+        // Crear tooltip
         g_hTooltip = CreateTooltip(hWnd, hCheckBorderless, "Modo ventana sin bordes");
         
         return 0;
@@ -428,19 +465,19 @@ LRESULT CALLBACK LauncherWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
         // Fondo
         FillRect(hdcMem, &rcClient, g_hBrushBG);
         
-        // Tamaño base de la imagen: 490x180, se escala proporcionalmente con la ventana
+        // Tamaño base de la imagen
         int baseImageWidth = 490;
         int baseImageHeight = 180;
         
-        // Calcular escala basada en el ancho de la ventana
+        // Calcular escala
         float scale = (float)(width - 20) / (float)baseImageWidth;
-        if (scale > 1.5f) scale = 1.5f;  // Limitar escala máxima
-        if (scale < 0.8f) scale = 0.8f;  // Limitar escala mínima
+        if (scale > 1.5f) scale = 1.5f;
+        if (scale < 0.8f) scale = 0.8f;
         
         int imageDisplayWidth = (int)(baseImageWidth * scale);
         int imageDisplayHeight = (int)(baseImageHeight * scale);
         
-        // Dibujar imagen del launcher en la parte superior (estilo Olympia)
+        // Dibujar imagen del launcher
         if (g_hLauncherImage) {
             HDC hdcImg = CreateCompatibleDC(hdcMem);
             SelectObject(hdcImg, g_hLauncherImage);
@@ -448,11 +485,9 @@ LRESULT CALLBACK LauncherWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
             BITMAP bm;
             GetObject(g_hLauncherImage, sizeof(bm), &bm);
             
-            // Centrar horizontalmente
             int imgX = (width - imageDisplayWidth) / 2;
             int imgY = 10;
             
-            // Dibujar imagen escalada con alta calidad
             SetStretchBltMode(hdcMem, HALFTONE);
             StretchBlt(hdcMem, imgX, imgY, imageDisplayWidth, imageDisplayHeight, 
                       hdcImg, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY);
@@ -485,7 +520,7 @@ LRESULT CALLBACK LauncherWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
         SelectObject(hdcMem, hPenGold);
         Rectangle(hdcMem, 6, 6, width - 6, height - 6);
         
-        // Posición del contenido (debajo de la imagen)
+        // Posición del contenido
         int contentStartY = imageDisplayHeight + 25;
         
         // Líneas decorativas y etiquetas
@@ -494,7 +529,7 @@ LRESULT CALLBACK LauncherWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
         SetTextColor(hdcMem, COLOR_ACCENT);
         SelectObject(hdcMem, g_hFontMedieval);
         
-        // Etiqueta "Seleccionar Reino" (ENCIMA de la línea)
+        // Etiqueta "Seleccionar Reino"
         RECT rcServerLabel = {0, contentStartY, width, contentStartY + 20};
         DrawText(hdcMem, "- Seleccionar Reino -", -1, &rcServerLabel, DT_CENTER | DT_SINGLELINE);
         
@@ -506,7 +541,7 @@ LRESULT CALLBACK LauncherWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
         // Línea de opciones
         int optionsY = contentStartY + 95;
         
-        // Etiqueta "Opciones" (ENCIMA de la línea)
+        // Etiqueta "Opciones"
         RECT rcOptionsLabel = {0, optionsY, width, optionsY + 20};
         DrawText(hdcMem, "- Opciones -", -1, &rcOptionsLabel, DT_CENTER | DT_SINGLELINE);
         
@@ -518,7 +553,7 @@ LRESULT CALLBACK LauncherWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
         DeleteObject(hPenBorder);
         DeleteObject(hPenGold);
         
-        // Calcular posición de botones basado en tamaño actual
+        // Calcular posición de botones
         int btnWidth = 150;
         int btnHeight = 40;
         int btnY = height - 90;
@@ -568,7 +603,7 @@ LRESULT CALLBACK LauncherWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
             if (pt.y < border) return HTTOP;
             if (pt.y > rc.bottom - border) return HTBOTTOM;
             
-            // Área de título para arrastrar (parte superior)
+            // Área de título para arrastrar
             if (pt.y < 30) return HTCAPTION;
         }
         return hit;
@@ -633,8 +668,12 @@ LRESULT CALLBACK LauncherWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
             
             SaveLauncherSettings();
             WriteLoginConfig();
-            g_bLauncherResult = TRUE;
-            DestroyWindow(hWnd);
+            
+            // Ejecutar el juego
+            if (LaunchGame()) {
+                g_bLauncherResult = TRUE;
+                DestroyWindow(hWnd);
+            }
         }
         // Click en Salir
         else if (x >= (width - exitBtnWidth) / 2 && x <= (width + exitBtnWidth) / 2 && 
@@ -681,9 +720,21 @@ LRESULT CALLBACK LauncherWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
     return 0;
 }
 
-// Mostrar el Launcher y esperar resultado
-BOOL ShowLauncher(HINSTANCE hInstance)
+// Punto de entrada principal
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+                     LPSTR lpCmdLine, int nCmdShow)
 {
+    g_hInstance = hInstance;
+    
+    // DPI Awareness - Evita escalado borroso en monitores HiDPI
+    HMODULE hUser32 = GetModuleHandleA("user32.dll");
+    if (hUser32) {
+        typedef BOOL (WINAPI *SetProcessDPIAwareFunc)(void);
+        SetProcessDPIAwareFunc pSetProcessDPIAware = 
+            (SetProcessDPIAwareFunc)GetProcAddress(hUser32, "SetProcessDPIAware");
+        if (pSetProcessDPIAware) pSetProcessDPIAware();
+    }
+    
     // Cargar configuración previa
     LoadLauncherSettings();
     
@@ -706,7 +757,8 @@ BOOL ShowLauncher(HINSTANCE hInstance)
     wcLauncher.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
     
     if (!RegisterClassEx(&wcLauncher)) {
-        return FALSE;
+        MessageBox(NULL, "Error al registrar la clase de ventana", "Error", MB_ICONERROR);
+        return 1;
     }
     
     // Calcular tamaño de ventana con bordes
@@ -721,23 +773,24 @@ BOOL ShowLauncher(HINSTANCE hInstance)
     int posX = (screenW - windowW) / 2;
     int posY = (screenH - windowH) / 2;
     
-    // Crear ventana del launcher (con bordes para redimensionar)
+    // Crear ventana del launcher
     HWND hLauncher = CreateWindowEx(
         WS_EX_LAYERED,
         "HelbreathLauncher",
-        "Helbreath Apocalypse",
+        "Helbreath Apocalypse - Launcher",
         WS_POPUP | WS_VISIBLE | WS_THICKFRAME,
         posX, posY, windowW, windowH,
         NULL, NULL, hInstance, NULL);
     
     if (!hLauncher) {
-        return FALSE;
+        MessageBox(NULL, "Error al crear la ventana del launcher", "Error", MB_ICONERROR);
+        return 1;
     }
     
-    // Hacer la ventana ligeramente transparente para efecto moderno
+    // Hacer la ventana ligeramente transparente
     SetLayeredWindowAttributes(hLauncher, 0, 245, LWA_ALPHA);
     
-    // Loop de mensajes del launcher
+    // Loop de mensajes
     MSG msg;
     while (GetMessage(&msg, NULL, 0, 0)) {
         TranslateMessage(&msg);
@@ -746,544 +799,5 @@ BOOL ShowLauncher(HINSTANCE hInstance)
     
     UnregisterClass("HelbreathLauncher", hInstance);
     
-    return g_bLauncherResult;
+    return 0;
 }
-
-extern "C" __declspec( dllimport) int __FindHackingDll__(char *);
-
-// --------------------------------------------------------------
-
-#define WM_USER_TIMERSIGNAL		WM_USER + 500
-#define WM_USER_CALCSOCKETEVENT WM_USER + 600
-
-int				G_iAddTable31[64][510], G_iAddTable63[64][510]; 
-int				G_iAddTransTable31[510][64], G_iAddTransTable63[510][64]; 
-
-long    G_lTransG100[64][64], G_lTransRB100[64][64];
-long    G_lTransG70[64][64], G_lTransRB70[64][64];
-long    G_lTransG50[64][64], G_lTransRB50[64][64];
-long    G_lTransG25[64][64], G_lTransRB25[64][64];
-long    G_lTransG2[64][64], G_lTransRB2[64][64];
-
-char			szAppClass[32];
-HWND			G_hWnd = NULL;
-HWND			G_hEditWnd = NULL;
-HINSTANCE       G_hInstance = NULL;
-MMRESULT		G_mmTimer;
-char   G_cSpriteAlphaDegree;
-class CGame * G_pGame;
-class XSocket * G_pCalcSocket = NULL;
-BOOL  G_bIsCalcSocketConnected = TRUE;
-DWORD G_dwCalcSocketTime = NULL, G_dwCalcSocketSendTime = NULL;
-
-char G_cCmdLine[256], G_cCmdLineTokenA[120], G_cCmdLineTokenA_Lowercase[120], G_cCmdLineTokenB[120], G_cCmdLineTokenC[120], G_cCmdLineTokenD[120], G_cCmdLineTokenE[120];
-
-// ===== TIMER DE ALTA PRECISIÓN PARA CPUs MODERNAS =====
-LARGE_INTEGER G_PerformanceFrequency;
-BOOL G_bUseHighPrecisionTimer = FALSE;
-
-// ===== FPS LIMITER =====
-#define TARGET_FPS 144
-#define TARGET_FRAME_TIME_MS (1000.0 / TARGET_FPS)  // ~6.944ms per frame
-LARGE_INTEGER G_LastFrameTime;
-
-// Función de tiempo de alta precisión - usa QueryPerformanceCounter si está disponible
-inline DWORD GetHighPrecisionTime()
-{
-	if (G_bUseHighPrecisionTimer) {
-		LARGE_INTEGER counter;
-		QueryPerformanceCounter(&counter);
-		return (DWORD)((counter.QuadPart * 1000) / G_PerformanceFrequency.QuadPart);
-	}
-	return timeGetTime();
-}
-
-// Función para obtener tiempo en microsegundos (más preciso para frame limiting)
-inline double GetHighPrecisionTimeUs()
-{
-	if (G_bUseHighPrecisionTimer) {
-		LARGE_INTEGER counter;
-		QueryPerformanceCounter(&counter);
-		return (double)(counter.QuadPart * 1000000.0) / G_PerformanceFrequency.QuadPart;
-	}
-	return (double)timeGetTime() * 1000.0;
-}
-
-// Frame limiter preciso - limita a TARGET_FPS
-inline void LimitFrameRate()
-{
-	if (!G_bUseHighPrecisionTimer) {
-		// Fallback: usar Sleep simple si no hay timer de alta precisión
-		Sleep(1);
-		return;
-	}
-	
-	static double lastFrameTimeUs = 0;
-	static const double targetFrameTimeUs = 1000000.0 / TARGET_FPS;  // microsegundos por frame
-	
-	double currentTimeUs = GetHighPrecisionTimeUs();
-	double elapsedUs = currentTimeUs - lastFrameTimeUs;
-	double remainingUs = targetFrameTimeUs - elapsedUs;
-	
-	if (remainingUs > 0) {
-		// Si queda más de 1.5ms, dormir para ahorrar CPU
-		if (remainingUs > 1500) {
-			Sleep((DWORD)((remainingUs - 1000) / 1000));  // Dejar 1ms de margen
-		}
-		
-		// Spin-wait para el tiempo restante (más preciso que Sleep)
-		while (GetHighPrecisionTimeUs() - lastFrameTimeUs < targetFrameTimeUs) {
-			// Busy wait - muy preciso pero usa CPU
-			_mm_pause();  // Pausa el CPU brevemente para reducir consumo
-		}
-	}
-	
-	lastFrameTimeUs = GetHighPrecisionTimeUs();
-}
-
-// --------------------------------------------------------------
-
-LRESULT CALLBACK WndProc(HWND hWnd,UINT message,WPARAM wParam, LPARAM lParam)
-{ 
-	if(G_pGame->GetText( hWnd, message, wParam, lParam)) return 0;
-
-	switch (message) {
-    case WM_INPUT:
-        // route raw input to DXC_dinput handler
-        if (G_pGame) G_pGame->m_DInput.HandleRawInput(lParam);
-        break;
-    
-    // High-frequency cursor update for smoother movement on 144Hz+ monitors
-    case WM_MOUSEMOVE:
-        if (G_pGame) {
-            int x = LOWORD(lParam);
-            int y = HIWORD(lParam);
-            // Usar tamaño cacheado en lugar de llamar GetClientRect cada frame
-            G_pGame->m_DInput.UpdateFromWindowsMessage(x, y, g_iCachedClientWidth, g_iCachedClientHeight);
-        }
-        break;
-    
-    // Actualizar tamaño cacheado cuando cambia la ventana
-    case WM_SIZE:
-        if (wParam != SIZE_MINIMIZED) {
-            g_iCachedClientWidth = LOWORD(lParam);
-            g_iCachedClientHeight = HIWORD(lParam);
-            if (g_iCachedClientWidth <= 0) g_iCachedClientWidth = 800;
-            if (g_iCachedClientHeight <= 0) g_iCachedClientHeight = 600;
-        }
-        break;
-    
-    // Mouse wheel support for windowed/borderless mode
-    case WM_MOUSEWHEEL:
-        if (G_pGame) {
-            short zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-            G_pGame->m_DInput.m_sZ = zDelta;
-        }
-        break;
-        
-	case WM_USER_CALCSOCKETEVENT:
-		G_pGame->_CalcSocketClosed();
-		break;
-	
-	case WM_CLOSE:
-		if ( (G_pGame->m_cGameMode == DEF_GAMEMODE_ONMAINGAME) && ( G_pGame->m_bForceDisconn == FALSE ) )
-		{
-			if (strcmp(G_pGame->m_cMapName, "cityhall_1") == 0 || strcmp(G_pGame->m_cMapName, "cityhall_2") == 0 ||
-				strcmp(G_pGame->m_cMapName, "bsmith_1") == 0 || strcmp(G_pGame->m_cMapName, "bsmith_1f") == 0 ||
-				strcmp(G_pGame->m_cMapName, "bsmith_2") == 0 || strcmp(G_pGame->m_cMapName, "bsmith_2f") == 0 ||
-				strcmp(G_pGame->m_cMapName, "gshop_1") == 0 || strcmp(G_pGame->m_cMapName, "gshop_1f") == 0 ||
-				strcmp(G_pGame->m_cMapName, "gshop_2") == 0 || strcmp(G_pGame->m_cMapName, "gshop_2f") == 0 ||
-				strcmp(G_pGame->m_cMapName, "arewrhus") == 0 || strcmp(G_pGame->m_cMapName, "elvwrhus") == 0 ||
-				strcmp(G_pGame->m_cMapName, "wrhus_1") == 0 || strcmp(G_pGame->m_cMapName, "wrhus_1f") == 0 ||
-				strcmp(G_pGame->m_cMapName, "wrhus_2") == 0 || strcmp(G_pGame->m_cMapName, "wrhus_2f") == 0) {
-
-				if (G_pGame->m_cLogOutCount == -1 || G_pGame->m_cLogOutCount > 1) G_pGame->m_cLogOutCount = 1;
-			}
-			else {
-#ifdef _DEBUG
-				if (G_pGame->m_cLogOutCount == -1 || G_pGame->m_cLogOutCount > 2) G_pGame->m_cLogOutCount = 1;
-#else
-				if (G_pGame->m_cLogOutCount == -1 || G_pGame->m_cLogOutCount > 11) G_pGame->m_cLogOutCount = 11;
-#endif
-			}
-
-		}
-			else if (G_pGame->m_cGameMode == DEF_GAMEMODE_ONLOADING) return (DefWindowProc(hWnd, message, wParam, lParam));
-			else if (G_pGame->m_cGameMode == DEF_GAMEMODE_ONMAINMENU) G_pGame->ChangeGameMode(DEF_GAMEMODE_ONQUIT);
-		break;
-	
-	case WM_SYSCOMMAND:
-		if((wParam&0xFFF0)==SC_SCREENSAVE || (wParam&0xFFF0)==SC_MONITORPOWER) 
-			return 0; 
-		return DefWindowProc(hWnd, message, wParam, lParam);
-			
-	case WM_USER_TIMERSIGNAL:
-		G_pGame->OnTimer();
-		break;
-
-	case WM_KEYDOWN:
-		G_pGame->OnKeyDown(wParam);
-		return (DefWindowProc(hWnd, message, wParam, lParam));
-		
-	case WM_KEYUP:
-		G_pGame->OnKeyUp(wParam);
-		return (DefWindowProc(hWnd, message, wParam, lParam));
-
-	case WM_SYSKEYDOWN:
-		G_pGame->OnSysKeyDown(wParam);
-		return (DefWindowProc(hWnd, message, wParam, lParam));
-		break;
-
-	case WM_SYSKEYUP:
-		G_pGame->OnSysKeyUp(wParam);
-		return (DefWindowProc(hWnd, message, wParam, lParam));
-		break;
-
-	case WM_ACTIVATEAPP:
-		if( wParam == 0 ) 
-		{	G_pGame->m_bIsProgramActive = FALSE;
-			G_pGame->m_DInput.SetAcquire(FALSE);
-		}else 
-		{	G_pGame->m_bIsProgramActive = TRUE;
-			G_pGame->m_DInput.SetAcquire(TRUE);
-			G_pGame->m_bCtrlPressed = FALSE;
-			
-			G_pGame->m_bIsRedrawPDBGS = TRUE;
-			G_pGame->m_DDraw.ChangeDisplayMode(G_hWnd);
-
-			if (G_pGame->bCheckImportantFile() == FALSE) 
-			{	MessageBox(G_pGame->m_hWnd, "File checksum error! Get Update again please!", "ERROR1", MB_ICONEXCLAMATION | MB_OK);
-				PostQuitMessage(0);
-				return 0;
-			}			
-			if (__FindHackingDll__("CRCCHECK") != 1) 
-			{	G_pGame->ChangeGameMode(DEF_GAMEMODE_ONQUIT);
-				return NULL;
-		}	}
-		return DefWindowProc(hWnd, message, wParam, lParam);
-
-	case WM_SETCURSOR:
-		SetCursor(NULL);
-		return TRUE;
-
-	case WM_DESTROY:
-		OnDestroy();
-		return DefWindowProc(hWnd, message, wParam, lParam);
-		break;
-		
-	case WM_USER_GAMESOCKETEVENT:
-		G_pGame->OnGameSocketEvent(wParam, lParam);
-		break;
-
-	case WM_USER_LOGSOCKETEVENT:
-		G_pGame->OnLogSocketEvent(wParam, lParam);
-		break;
-		
-	default: 
-		return (DefWindowProc(hWnd, message, wParam, lParam));
-	}	
-	return NULL;
-}
-
-// --- Crash handler: write minidump on unhandled exception ---
-LONG WINAPI HelbreathUnhandledExceptionFilter(EXCEPTION_POINTERS* pExceptionInfo)
-{
-    const char* dumpPath = "helbreath_crash.dmp";
-    const char* logPath = "helbreath_crash.log";
-    HANDLE hFile = CreateFileA(dumpPath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-    if (hFile != INVALID_HANDLE_VALUE) {
-        MINIDUMP_EXCEPTION_INFORMATION mei;
-        mei.ThreadId = GetCurrentThreadId();
-        mei.ExceptionPointers = pExceptionInfo;
-        mei.ClientPointers = FALSE;
-        MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), hFile, MiniDumpNormal, &mei, NULL, NULL);
-        CloseHandle(hFile);
-    }
-    FILE* f = fopen(logPath, "a");
-    if (f) {
-        fprintf(f, "Unhandled exception at time %u\n", (unsigned)time(NULL));
-        if (pExceptionInfo && pExceptionInfo->ExceptionRecord)
-            fprintf(f, "ExceptionCode=0x%08X, Address=%p\n", (unsigned)pExceptionInfo->ExceptionRecord->ExceptionCode, pExceptionInfo->ExceptionRecord->ExceptionAddress);
-        fclose(f);
-    }
-    return EXCEPTION_EXECUTE_HANDLER;
-}
-
-int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
-               LPSTR lpCmdLine, int nCmdShow )
-{
-    FILE* fLog = fopen("helbreath_boot.log", "w");
-    if (fLog) { fprintf(fLog, "[WinMain] Inicio launcher\n"); fclose(fLog); }
-
-    // ===== OPTIMIZACIONES PARA HARDWARE MODERNO =====
-	
-	// 1. DPI Awareness - Evita escalado borroso en monitores HiDPI (4K, 1440p, etc)
-	HMODULE hUser32 = GetModuleHandleA("user32.dll");
-	if (hUser32) {
-		typedef BOOL (WINAPI *SetProcessDPIAwareFunc)(void);
-		SetProcessDPIAwareFunc pSetProcessDPIAware = 
-			(SetProcessDPIAwareFunc)GetProcAddress(hUser32, "SetProcessDPIAware");
-		if (pSetProcessDPIAware) pSetProcessDPIAware();
-	}
-	
-	// 2. Deshabilitar Priority Boost para timing más consistente en CPUs modernas
-	SetProcessPriorityBoost(GetCurrentProcess(), TRUE);
-	
-	// 3. Prioridad Above Normal - mejor respuesta en sistemas modernos multi-tarea
-	SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
-	
-	// 4. Afinidad de CPU: Asignar núcleos 4-15 (resto de P-cores y E-cores) al cliente para gráficos
-	//SetProcessAffinityMask(GetCurrentProcess(), 0xFFF0);  // Núcleos 4-15
-	
-	// 5. Inicializar timer de alta precisión si está disponible
-	if (QueryPerformanceFrequency(&G_PerformanceFrequency)) {
-		G_bUseHighPrecisionTimer = TRUE;
-	}
-	
-	// ===== FIN OPTIMIZACIONES =====
-
-	srand((unsigned)time(NULL));
-	char *pJammer = new char[(rand() % 100) +1];
-	
-    // ===== VERIFICAR SI SALTAR LAUNCHER =====
-	// Si se ejecuta con el parámetro -nolauncher, salta directamente al juego
-	// Esto permite que un launcher externo maneje las actualizaciones
-	BOOL bSkipLauncher = FALSE;
-	if (lpCmdLine != NULL && strlen(lpCmdLine) > 0) {
-		if (strstr(lpCmdLine, "-nolauncher") != NULL || 
-		    strstr(lpCmdLine, "/nolauncher") != NULL) {
-			bSkipLauncher = TRUE;
-			// Cargar configuración guardada del registro
-			LoadLauncherSettings();
-			
-			// Sobreescribir con parámetros de línea de comandos si están presentes
-			if (strstr(lpCmdLine, "-borderless") != NULL || 
-			    strstr(lpCmdLine, "/borderless") != NULL) {
-				g_bBorderlessMode = TRUE;
-			}
-			else if (strstr(lpCmdLine, "-fullscreen") != NULL || 
-			         strstr(lpCmdLine, "/fullscreen") != NULL) {
-				g_bBorderlessMode = FALSE;
-			}
-		}
-	}
-	
-	// ===== MOSTRAR LAUNCHER =====
-	if (!bSkipLauncher) {
-		if (!ShowLauncher(hInstance)) {
-			// Usuario canceló o cerró el launcher
-			delete[] pJammer;
-			return 0;
-		}
-	}
-	
-    // Crear el juego después del launcher
-    fLog = fopen("helbreath_boot.log", "a");
-    if (fLog) { fprintf(fLog, "[WinMain] Creando objeto CGame\n"); fclose(fLog); }
-    G_pGame = new class CGame;
-
-    // Declaraciones necesarias para DLL
-    HINSTANCE hDll;
-    char cSearchDll[] = "rd`qbg-ckk";
-    char cRealName[12];
-
-    ZeroMemory(cRealName, sizeof(cRealName));
-    strcpy(cRealName, cSearchDll);
-    for (WORD i = 0; i < strlen(cRealName); i++)
-        if (cRealName[i] != NULL) cRealName[i]++;
-
-    hDll = LoadLibrary(cRealName);
-    if( hDll == NULL ) 
-    {   MessageBox(NULL, "don't find search.dll", "ERROR!", MB_OK);
-        return 0;
-    }
-
-#ifdef DEF_USING_WIN_IME
-	HINSTANCE hRichDll = LoadLibrary( "Riched20.dll" );
-#endif
-
-	typedef int (MYPROC)(char *) ;
-	MYPROC *pFindHook; 
-	pFindHook = (MYPROC *) GetProcAddress(hDll, "__FindHackingDll__") ;
-
-	if (pFindHook== NULL) 
-	{	MessageBox(NULL, "can't find search.dll", "ERROR!", MB_OK);
-		return 0 ;
-	}else if ((*pFindHook)("CRCCHECK") != 1) 
-	{	return 0 ;
-	}
-	FreeLibrary(hDll);
-	sprintf( szAppClass, "Client-I%d", hInstance);
-    fLog = fopen("helbreath_boot.log", "a");
-    if (fLog) { fprintf(fLog, "[WinMain] InitApplication\n"); fclose(fLog); }
-    if (!InitApplication( hInstance))        return (FALSE);
-    fLog = fopen("helbreath_boot.log", "a");
-    if (fLog) { fprintf(fLog, "[WinMain] InitInstance\n"); fclose(fLog); }
-    if (!InitInstance(hInstance, nCmdShow)) return (FALSE);
-
-    // AHORA aplicar configuración del launcher (después de que la ventana existe)
-    fLog = fopen("helbreath_boot.log", "a");
-    if (fLog) { fprintf(fLog, "[WinMain] Configuración launcher aplicada\n"); fclose(fLog); }
-    if (g_bBorderlessMode) {
-        G_pGame->m_DDraw.SetFullMode(FALSE);
-        G_pGame->m_DInput.SetWindowedMode(TRUE);
-    } else {
-        G_pGame->m_DDraw.SetFullMode(TRUE);
-        G_pGame->m_DInput.SetWindowedMode(FALSE);
-    }
-
-    fLog = fopen("helbreath_boot.log", "a");
-    if (fLog) { fprintf(fLog, "[WinMain] Initialize\n"); fclose(fLog); }
-    Initialize((char *)lpCmdLine);
-
-/* [PATCHED] Multiclient mutex check removed at startup. */
-	
-	EventLoop();
-
-/* [PATCHED] Multiclient mutex release removed at shutdown. */
-
-	delete[] pJammer;
-	delete G_pGame;
-
-#ifdef DEF_USING_WIN_IME
-	FreeLibrary(hRichDll);
-#endif
-
-	return 0;
-}
-
-BOOL InitApplication( HINSTANCE hInstance)
-{WNDCLASS  wc;
-	wc.style = (CS_HREDRAW | CS_VREDRAW | CS_OWNDC | CS_DBLCLKS);
-	wc.lpfnWndProc   = (WNDPROC)WndProc;             
-	wc.cbClsExtra    = 0;                            
-	wc.cbWndExtra    = sizeof (int);
-	wc.hInstance     = hInstance;
-	wc.hIcon         = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
-	wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
-	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
-	wc.lpszMenuName  = NULL;
-	wc.lpszClassName = szAppClass;        
-	return (RegisterClass(&wc));
-}
-
-BOOL InitInstance( HINSTANCE hInstance, int nCmdShow )
-{
-    int cx = GetSystemMetrics(SM_CXFULLSCREEN)/2;
-    int cy = GetSystemMetrics(SM_CYFULLSCREEN)/2;
-    if(cy> 340) cy -= 40;
-    G_hWnd = CreateWindowEx(NULL, szAppClass, "Helbreath", WS_POPUP, cx- 400, cy- 300,
-                            800, 600, NULL, NULL, hInstance, NULL);
-    if (!G_hWnd) return FALSE;
-    G_hInstance = hInstance;
-
-    // Inicializar tamaño cacheado del cliente
-    g_iCachedClientWidth = 800;
-    g_iCachedClientHeight = 600;
-
-    ShowWindow(G_hWnd, SW_SHOWDEFAULT);
-    UpdateWindow(G_hWnd);
-    return TRUE;
-}
-
-// Simple timer helper (used by EventLoop / OnDestroy)
-void CALLBACK _TimerFunc(UINT wID, UINT wUser, DWORD dwUser, DWORD dw1, DWORD dw2)
-{
-    PostMessage(G_hWnd, WM_USER_TIMERSIGNAL, wID, 0);
-}
-
-MMRESULT _StartTimer(DWORD dwTime)
-{
-    TIMECAPS caps;
-    timeGetDevCaps(&caps, sizeof(caps));
-    timeBeginPeriod(caps.wPeriodMin);
-    return timeSetEvent(dwTime, 0, _TimerFunc, 0, (UINT)TIME_PERIODIC);
-}
-
-void _StopTimer(MMRESULT timerid)
-{
-    TIMECAPS caps;
-    if (timerid != 0) {
-        timeKillEvent(timerid);
-        timeGetDevCaps(&caps, sizeof(caps));
-        timeEndPeriod(caps.wPeriodMin);
-    }
-}
-
-void Initialize(char * pCmdLine)
-{
-    int iX, iY, iSum;
-    WORD wVersionRequested = MAKEWORD(2, 2);
-    WSADATA wsaData;
-    int iErrCode = WSAStartup(wVersionRequested, &wsaData);
-    if (iErrCode) {
-        MessageBox(G_hWnd, "Winsock-V1.1 not found! Cannot execute program.", "ERROR", MB_ICONEXCLAMATION | MB_OK);
-        PostQuitMessage(0);
-        return;
-    }
-    
-    // CRITICAL: Initialize the game (DirectDraw, DirectInput, sprites, etc.)
-    if (G_pGame->bInit(G_hWnd, G_hInstance, pCmdLine) == FALSE) {
-        PostQuitMessage(0);
-        return;
-    }
-    
-    // Start the game timer
-    G_mmTimer = _StartTimer(1000);
-    
-    // Initialize lookup tables for color blending
-    for (iX = 0; iX < 64; iX++)
-    for (iY = 0; iY < 510; iY++) {
-        iSum = iX + (iY - 255);
-        if (iSum <= 0)  iSum = 1;
-        if (iSum >= 31) iSum = 31;
-        G_iAddTable31[iX][iY] = iSum;
-        iSum = iX + (iY - 255);
-        if (iSum <= 0)  iSum = 1;
-        if (iSum >= 63) iSum = 63;
-        G_iAddTable63[iX][iY] = iSum;
-        if ((iY - 255) < iX) G_iAddTransTable31[iY][iX] = iX;
-        else if ((iY - 255) > 31) G_iAddTransTable31[iY][iX] = 31;
-        else G_iAddTransTable31[iY][iX] = iY - 255;
-        if ((iY - 255) < iX) G_iAddTransTable63[iY][iX] = iX;
-        else if ((iY - 255) > 63) G_iAddTransTable63[iY][iX] = 63;
-        else G_iAddTransTable63[iY][iX] = iY - 255;
-    }
-}
-
-void EventLoop()
-{
-    MSG msg;
-    while (1) {
-        if (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)) {
-            if (!GetMessage(&msg, NULL, 0, 0)) return;
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-        else if (G_pGame && (G_pGame->m_bIsProgramActive || !G_pGame->m_DDraw.m_bFullMode)) {
-            G_pGame->UpdateScreen();
-            LimitFrameRate();
-        }
-        else if (G_pGame && G_pGame->m_cGameMode == DEF_GAMEMODE_ONLOADING) {
-            G_pGame->UpdateScreen_OnLoading(FALSE);
-            LimitFrameRate();
-        }
-        else {
-            Sleep(10);
-            WaitMessage();
-        }
-    }
-}
-
-void OnDestroy()
-{
-    if (G_pGame) {
-        G_pGame->m_bIsProgramActive = FALSE;
-        _StopTimer(G_mmTimer);
-        G_pGame->m_DInput.RegisterRawInput(G_hWnd, FALSE);
-        G_pGame->Quit();
-    }
-    WSACleanup();
-    PostQuitMessage(0);
-}
-////////////////////////////////////////////////////////////////////////
