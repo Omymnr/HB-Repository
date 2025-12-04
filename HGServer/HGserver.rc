@@ -1,0 +1,96 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_MAINICON            ICON    DISCARDABLE     "icono.ico"
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE MOVEABLE PURE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE MOVEABLE PURE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE MOVEABLE PURE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ACCOUNT_CREATOR DIALOG DISCARDABLE  0, 0, 220, 180
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Account Creator"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Account Name:",-1,15,15,60,8
+    EDITTEXT        IDC_ACC_NAME,80,12,120,14,ES_AUTOHSCROLL
+    LTEXT           "Password:",-1,15,35,60,8
+    EDITTEXT        IDC_ACC_PASS,80,32,120,14,ES_PASSWORD | ES_AUTOHSCROLL
+    LTEXT           "Confirm Pass:",-1,15,55,60,8
+    EDITTEXT        IDC_ACC_PASS_CONFIRM,80,52,120,14,ES_PASSWORD | ES_AUTOHSCROLL
+    LTEXT           "E-mail:",-1,15,75,60,8
+    EDITTEXT        IDC_ACC_EMAIL,80,72,120,14,ES_AUTOHSCROLL
+    LTEXT           "Quiz:",-1,15,95,60,8
+    EDITTEXT        IDC_ACC_QUIZ,80,92,120,14,ES_AUTOHSCROLL
+    LTEXT           "Answer:",-1,15,115,60,8
+    EDITTEXT        IDC_ACC_ANSWER,80,112,120,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Create Account",IDC_ACC_CREATE_BTN,35,145,70,14
+    PUSHBUTTON      "Cancel",IDC_ACC_CANCEL_BTN,115,145,70,14
+END
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

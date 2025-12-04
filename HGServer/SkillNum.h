@@ -1,0 +1,10 @@
+
+// Al final de SkillNum.h
+#define DEF_TALENT_SHORTSWORDSMAN   5001
+#define DEF_TALENT_LONGSWORDSMAN    5002
+#define DEF_TALENT_AXEMASTER        5003
+#define DEF_TALENT_LIFELEECH        5004
+
+#define DEF_TALENT_ARMORED          5040
+#define DEF_TALENT_BERSERKER        5041
+#define DEF_TALENT_TACTICAL         5042

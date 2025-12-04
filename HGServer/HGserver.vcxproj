@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <SccProjectName>"$/HGserver", KDAAAAAA</SccProjectName>
+    <SccLocalPath>.</SccLocalPath>
+    <ProjectGuid>{E8966E8D-F08D-4A15-88E4-A482F41B9E33}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>17.0.35527.80</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>.\Release\</OutDir>
+    <IntDir>.\Release\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>.\Debug\</OutDir>
+    <IntDir>.\Debug\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader />
+      <PrecompiledHeaderOutputFile>.\Release/HGserver.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>.\Release/</AssemblerListingLocation>
+      <ObjectFileName>.\Release/</ObjectFileName>
+      <ProgramDataBaseFileName>.\Release/</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </ClCompile>
+    <Link>
+      <AdditionalOptions>/MACHINE:I386 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>.\Release/HGserver.exe</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <ProgramDatabaseFile>.\Release/HGserver.pdb</ProgramDatabaseFile>
+      <SubSystem>Windows</SubSystem>
+      <LargeAddressAware>true</LargeAddressAware>
+    </Link>
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TargetEnvironment>Win32</TargetEnvironment>
+      <TypeLibraryName>.\Release/HGserver.tlb</TypeLibraryName>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0412</Culture>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader />
+      <PrecompiledHeaderOutputFile>.\Debug/HGserver.pch</PrecompiledHeaderOutputFile>
+      <AssemblerOutput />
+      <AssemblerListingLocation>.\Debug/</AssemblerListingLocation>
+      <ObjectFileName>.\Debug/</ObjectFileName>
+      <ProgramDataBaseFileName>.\Debug/</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalOptions>/MACHINE:I386 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>.\Debug/HGserver.exe</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>.\Debug/HGserver.pdb</ProgramDatabaseFile>
+      <GenerateMapFile>false</GenerateMapFile>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+    <Midl>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TargetEnvironment>Win32</TargetEnvironment>
+      <TypeLibraryName>.\Debug/HGserver.tlb</TypeLibraryName>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0412</Culture>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="ActionID.h" />
+    <ClInclude Include="BuildItem.h" />
+    <ClInclude Include="Client.h" />
+    <ClInclude Include="DebugDialog.h" />
+    <ClInclude Include="DelayEvent.h" />
+    <ClInclude Include="DynamicObject.h" />
+    <ClInclude Include="DynamicObjectID.h" />
+    <ClInclude Include="Enchanting.h" />
+    <ClInclude Include="Fish.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="GlobalDef.h" />
+    <ClInclude Include="GuildsMan.h" />
+    <ClInclude Include="Item.h" />
+    <ClInclude Include="LoginServer.h" />
+    <ClInclude Include="Magic.h" />
+    <ClInclude Include="Map.h" />
+    <ClInclude Include="MessageIndex.h" />
+    <ClInclude Include="Mineral.h" />
+    <ClInclude Include="Misc.h" />
+    <ClInclude Include="MobCounter.h" />
+    <ClInclude Include="Msg.h" />
+    <ClInclude Include="NetMessages.h" />
+    <ClInclude Include="Npc.h" />
+    <ClInclude Include="OccupyFlag.h" />
+    <ClInclude Include="PartyManager.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="Portion.h" />
+    <ClInclude Include="Quest.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Skill.h" />
+    <ClInclude Include="SkillNum.h" />
+    <ClInclude Include="StrategicPoint.h" />
+    <ClInclude Include="StrTok.h" />
+    <ClInclude Include="TeleportLoc.h" />
+    <ClInclude Include="Tile.h" />
+    <ClInclude Include="UserMessages.h" />
+    <ClInclude Include="version.h" />
+    <ClInclude Include="winmain.h" />
+    <ClInclude Include="XSocket.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="BuildItem.cpp" />
+    <ClCompile Include="Client.cpp" />
+    <ClCompile Include="DebugDialog.cpp" />
+    <ClCompile Include="DelayEvent.cpp" />
+    <ClCompile Include="DynamicObject.cpp" />
+    <ClCompile Include="Enchanting.cpp" />
+    <ClCompile Include="Fish.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GuildsMan.cpp" />
+    <ClCompile Include="Item.cpp" />
+    <ClCompile Include="LoginServer.cpp" />
+    <ClCompile Include="Magic.cpp" />
+    <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Mineral.cpp" />
+    <ClCompile Include="Misc.cpp" />
+    <ClCompile Include="MobCounter.cpp" />
+    <ClCompile Include="Msg.cpp" />
+    <ClCompile Include="Npc.cpp" />
+    <ClCompile Include="OccupyFlag.cpp" />
+    <ClCompile Include="PartyManager.cpp" />
+    <ClCompile Include="Portion.cpp" />
+    <ClCompile Include="Quest.cpp" />
+    <ClCompile Include="Skill.cpp" />
+    <ClCompile Include="StrategicPoint.cpp" />
+    <ClCompile Include="StrTok.cpp" />
+    <ClCompile Include="TeleportLoc.cpp" />
+    <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="wmain.cpp" />
+    <ClCompile Include="XSocket.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="Winmm.lib" />
+    <Library Include="Ws2_32.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="HGserver.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="logo.bmp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
