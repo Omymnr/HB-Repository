@@ -13,6 +13,12 @@
     <Filter Include="classes">
       <UniqueIdentifier>{0a79a3d4-2c6f-4554-aa27-1075857b75af}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Renderer">
+      <UniqueIdentifier>{8e4f1b5c-3d7a-4e9f-b6c2-d1a8f3e5b7c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{9f5e2c6d-4a8b-5f0e-c7d3-e2b9f4a6c8d0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cint.h">
@@ -116,6 +122,21 @@
     <ClInclude Include="SpriteID.h" />
     <ClInclude Include="Winmain.h" />
     <ClInclude Include="MobCounter.h" />
+    <ClInclude Include="IRenderer.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectDrawRenderer.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Direct3D11Renderer.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererConfig.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererBridge.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="YWSound.cpp">
@@ -193,6 +214,18 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Wmain.cpp" />
     <ClCompile Include="MobCounter.cpp" />
+    <ClCompile Include="DirectDrawRenderer.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Direct3D11Renderer.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererConfig.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererBridge.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="AIcon.ico">
@@ -207,5 +240,10 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\SpriteShaders.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

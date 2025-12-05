@@ -8,6 +8,10 @@
 // ...existing code...
 #include "lan_eng.h"
 
+// === MODERNIZATION: Nuevo sistema de renderizado ===
+#include "RendererBridge.h"
+#include "RendererConfig.h"
+
 
 extern char G_cSpriteAlphaDegree;
 
@@ -650,6 +654,20 @@ BOOL CGame::bInit(HWND hWnd, HINSTANCE hInst, char * pCmdLine)
 	{	MessageBox(m_hWnd, "This program requires DirectX7.0a!","ERROR",MB_ICONEXCLAMATION | MB_OK);
 		return FALSE;
 	}
+
+	// === MODERNIZATION: Inicializar el puente de renderizado ===
+	// Esto permite usar DirectDraw (legacy) o Direct3D11 (moderno)
+	CRendererConfig& config = CRendererConfig::GetInstance();
+	config.LoadFromFile("video.cfg");  // Cargar configuración si existe
+	
+	if (CRendererBridge::GetInstance().Initialize(m_hWnd, &m_DDraw)) {
+		if (CRendererBridge::GetInstance().IsUsingD3D11()) {
+			OutputDebugStringA("Helbreath: Usando Direct3D 11 Renderer\n");
+		} else {
+			OutputDebugStringA("Helbreath: Usando DirectDraw Renderer (legacy)\n");
+		}
+	}
+	// === FIN MODERNIZATION ===
 
 	if (m_DInput.bInit(hWnd, hInst) == FALSE) {
 		MessageBox(m_hWnd, "This program requires DirectX7.0a!","ERROR",MB_ICONEXCLAMATION | MB_OK);
