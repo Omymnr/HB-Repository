@@ -4952,6 +4952,7 @@ void CGame::InitGameSettings()
 	m_cWhetherStatus = NULL;
 	m_cLogOutCount = -1;
 	m_dwLogOutCountTime = NULL;
+	m_bLogOutToCharSelect = FALSE;
 	m_iSuperAttackLeft = 0;
 	m_bSuperAttackMode = FALSE;
 	m_iFightzoneNumber = 0 ;
@@ -31188,7 +31189,10 @@ void CGame::UpdateScreen_OnGame()
 		}
 		if (strlen(G_cCmdLineTokenA) != 0)
 			ChangeGameMode(DEF_GAMEMODE_ONQUIT);
-		else ChangeGameMode(DEF_GAMEMODE_ONMAINMENU);
+		else {
+			// Volver al menú principal (Log In, Account create, Exit)
+			ChangeGameMode(DEF_GAMEMODE_ONMAINMENU);
+		}
 		return;
 	}
 

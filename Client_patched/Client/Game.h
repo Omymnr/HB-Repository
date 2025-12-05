@@ -1024,6 +1024,7 @@ public:
 	char m_cAmountString[12];
 	char m_cLogOutCount;
 	char m_cRestartCount;
+	BOOL m_bLogOutToCharSelect;  // TRUE = ir a selección de personajes después de logout
 	char m_cGameMode;
 	char m_cWhisperIndex;
 	char m_cAccountName[12];

@@ -890,6 +890,7 @@ LRESULT CALLBACK WndProc(HWND hWnd,UINT message,WPARAM wParam, LPARAM lParam)
 	case WM_CLOSE:
 		if ( (G_pGame->m_cGameMode == DEF_GAMEMODE_ONMAINGAME) && ( G_pGame->m_bForceDisconn == FALSE ) )
 		{
+			// Alt+F4 durante el juego: iniciar proceso de logout, NO cerrar ventana
 			if (strcmp(G_pGame->m_cMapName, "cityhall_1") == 0 || strcmp(G_pGame->m_cMapName, "cityhall_2") == 0 ||
 				strcmp(G_pGame->m_cMapName, "bsmith_1") == 0 || strcmp(G_pGame->m_cMapName, "bsmith_1f") == 0 ||
 				strcmp(G_pGame->m_cMapName, "bsmith_2") == 0 || strcmp(G_pGame->m_cMapName, "bsmith_2f") == 0 ||
@@ -908,10 +909,16 @@ LRESULT CALLBACK WndProc(HWND hWnd,UINT message,WPARAM wParam, LPARAM lParam)
 				if (G_pGame->m_cLogOutCount == -1 || G_pGame->m_cLogOutCount > 11) G_pGame->m_cLogOutCount = 11;
 #endif
 			}
-
+			return 0;  // Bloquear cierre de ventana, el logout se procesará normalmente
 		}
-			else if (G_pGame->m_cGameMode == DEF_GAMEMODE_ONLOADING) return (DefWindowProc(hWnd, message, wParam, lParam));
-			else if (G_pGame->m_cGameMode == DEF_GAMEMODE_ONMAINMENU) G_pGame->ChangeGameMode(DEF_GAMEMODE_ONQUIT);
+		else if (G_pGame->m_cGameMode == DEF_GAMEMODE_ONLOADING) {
+			return 0;  // Bloquear cierre durante la carga
+		}
+		else if (G_pGame->m_cGameMode == DEF_GAMEMODE_ONMAINMENU) {
+			G_pGame->ChangeGameMode(DEF_GAMEMODE_ONQUIT);
+			return 0;
+		}
+		// En otros modos (QUIT, etc), permitir cierre normal
 		break;
 	
 	case WM_SYSCOMMAND:
