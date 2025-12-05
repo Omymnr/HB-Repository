@@ -382,8 +382,15 @@ BOOL DownloadFile(const char* url, const char* localPath)
     g_dwDownloadedBytes = 0;
     
     // Crear directorios si no existen
+    char localPathFixed[MAX_PATH];
+    strcpy(localPathFixed, localPath);
+    // Convertir / a \ para Windows
+    for (char* p = localPathFixed; *p; p++) {
+        if (*p == '/') *p = '\\';
+    }
+    
     char dirPath[MAX_PATH];
-    strcpy(dirPath, localPath);
+    strcpy(dirPath, localPathFixed);
     char* lastSlash = strrchr(dirPath, '\\');
     if (lastSlash) {
         *lastSlash = '\0';
@@ -400,7 +407,7 @@ BOOL DownloadFile(const char* url, const char* localPath)
         CreateDirectory(dirPath, NULL);
     }
     
-    FILE* fp = fopen(localPath, "wb");
+    FILE* fp = fopen(localPathFixed, "wb");
     if (!fp) {
         InternetCloseHandle(hUrl);
         InternetCloseHandle(hInternet);

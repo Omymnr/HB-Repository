@@ -1,15 +1,3580 @@
-{
-  "version": "1.0.4",
-  "files": [
-    {
-      "path": "Game.exe",
-      "hash": "a1775fc91044df2e829bcab15bf3e5ab",
-      "size": 1541632
-    },
-    {
-      "path": "HelbreathLauncher.exe",
-      "hash": "00b8769b77f178efaacb612cfa61fc0d",
-      "size": 287232
-    }
-  ]
+﻿{
+    "version":  "1.0.5",
+    "files":  [
+                  {
+                      "path":  "Game.exe",
+                      "hash":  "a1775fc91044df2e829bcab15bf3e5ab",
+                      "size":  1541632
+                  },
+                  {
+                      "path":  "HelbreathLauncher.exe",
+                      "hash":  "ee8c96303427858d09f15516030c7101",
+                      "size":  287232
+                  },
+                  {
+                      "path":  "Contents/badword.txt",
+                      "hash":  "3a79e8c5058cd978f9cd022ac44a1eaa",
+                      "size":  151
+                  },
+                  {
+                      "path":  "Contents/BItemcfg.txt",
+                      "hash":  "f0589c5311a8b5184862e49429cab4fd",
+                      "size":  10896
+                  },
+                  {
+                      "path":  "Contents/CItemcfg.txt",
+                      "hash":  "e07ea7c8671bafe92ba053a0d81ba9ee",
+                      "size":  3771
+                  },
+                  {
+                      "path":  "Contents/contents0.txt",
+                      "hash":  "29a52c956660102071807fbc1bb54202",
+                      "size":  3334
+                  },
+                  {
+                      "path":  "Contents/contents1.txt",
+                      "hash":  "91cb9c5d0a8a59f92d60fbc829d8ca9e",
+                      "size":  10153
+                  },
+                  {
+                      "path":  "Contents/contents10.txt",
+                      "hash":  "a900901fd76a389aa338fd9845a74b3d",
+                      "size":  10677
+                  },
+                  {
+                      "path":  "Contents/contents1000.txt",
+                      "hash":  "6a0b34da8c473e005716e5d949ef35b0",
+                      "size":  1409
+                  },
+                  {
+                      "path":  "Contents/contents121.txt",
+                      "hash":  "163a1e280452755398cdec1ed93ebd6e",
+                      "size":  81
+                  },
+                  {
+                      "path":  "Contents/contents122.txt",
+                      "hash":  "9c7c182794866e8f216dac66bde7766c",
+                      "size":  7
+                  },
+                  {
+                      "path":  "Contents/contents123.txt",
+                      "hash":  "3d7ac52340882986aa587eab3f46856f",
+                      "size":  25
+                  },
+                  {
+                      "path":  "Contents/contents124.txt",
+                      "hash":  "9a36fc5a205d48ef38a0df0efb015ae3",
+                      "size":  215
+                  },
+                  {
+                      "path":  "Contents/contents134.txt",
+                      "hash":  "32bf837d06d475f49a5088d986919e13",
+                      "size":  90
+                  },
+                  {
+                      "path":  "Contents/contents144.txt",
+                      "hash":  "9c90d696595d195448730b82d29f91db",
+                      "size":  173
+                  },
+                  {
+                      "path":  "Contents/contents15.txt",
+                      "hash":  "a336a4894da36b32acdc8b7e5aa7149d",
+                      "size":  105
+                  },
+                  {
+                      "path":  "Contents/contents151.txt",
+                      "hash":  "ad5fa6d8d5e0b8922da3cef9a08e5e3f",
+                      "size":  171
+                  },
+                  {
+                      "path":  "Contents/contents152.txt",
+                      "hash":  "daba880f849ae359863d66998eb63d5d",
+                      "size":  103
+                  },
+                  {
+                      "path":  "Contents/contents153.txt",
+                      "hash":  "fa49ee1bb4e6465622f70717c1df1c26",
+                      "size":  245
+                  },
+                  {
+                      "path":  "Contents/contents154.txt",
+                      "hash":  "f5f39d220be3cab6252330f81b219281",
+                      "size":  131
+                  },
+                  {
+                      "path":  "Contents/contents155.txt",
+                      "hash":  "c96781a3bb392f7a5ea471f199e3dc85",
+                      "size":  196
+                  },
+                  {
+                      "path":  "Contents/contents156.txt",
+                      "hash":  "91888294e8f3140a3d877cf60fe0ca39",
+                      "size":  328
+                  },
+                  {
+                      "path":  "Contents/contents171.txt",
+                      "hash":  "06e34e79f7a72c592e6c603036100f4a",
+                      "size":  7
+                  },
+                  {
+                      "path":  "Contents/contents182.txt",
+                      "hash":  "f24aac09846f673448ccf6298f41d2c7",
+                      "size":  5
+                  },
+                  {
+                      "path":  "Contents/contents2.txt",
+                      "hash":  "f83f9914c1b82dd23f813feb7aff95b4",
+                      "size":  15258
+                  },
+                  {
+                      "path":  "Contents/contents20.txt",
+                      "hash":  "7119da8dc507d064e33589f83ead6293",
+                      "size":  17
+                  },
+                  {
+                      "path":  "Contents/contents21.txt",
+                      "hash":  "4e48c01465876dcbcccdf68cb497246a",
+                      "size":  176
+                  },
+                  {
+                      "path":  "Contents/Contents217.txt",
+                      "hash":  "f006bf42fba1cc86471b264a1d2a2f46",
+                      "size":  250
+                  },
+                  {
+                      "path":  "Contents/Contents218.txt",
+                      "hash":  "e1b75b237630d4fe93f396dc8253ec70",
+                      "size":  157
+                  },
+                  {
+                      "path":  "Contents/Contents219.txt",
+                      "hash":  "4ccb058f0673940dbac7782a85014786",
+                      "size":  187
+                  },
+                  {
+                      "path":  "Contents/contents220.txt",
+                      "hash":  "52236268d199c52c936252d0e1b77023",
+                      "size":  148
+                  },
+                  {
+                      "path":  "Contents/contents221.txt",
+                      "hash":  "ed9ef161e13ccec7208f318d4f1225f6",
+                      "size":  36
+                  },
+                  {
+                      "path":  "Contents/contents222.txt",
+                      "hash":  "9f229f59054db88da37a2fe48c3c7254",
+                      "size":  35
+                  },
+                  {
+                      "path":  "Contents/contents223.txt",
+                      "hash":  "46ad82db307de3f46a47e98f758db049",
+                      "size":  205
+                  },
+                  {
+                      "path":  "Contents/contents224.txt",
+                      "hash":  "50792817971236caf662a80a9f07b45f",
+                      "size":  162
+                  },
+                  {
+                      "path":  "Contents/contents225.txt",
+                      "hash":  "39c70837caa1786cd4adb641dd55ae7e",
+                      "size":  163
+                  },
+                  {
+                      "path":  "Contents/contents226.txt",
+                      "hash":  "5878b92937630582eb726a51465f5469",
+                      "size":  656
+                  },
+                  {
+                      "path":  "Contents/contents27.txt",
+                      "hash":  "2a99c55e88efb9ea8e2ff51f0aba32b3",
+                      "size":  123
+                  },
+                  {
+                      "path":  "Contents/contents500.txt",
+                      "hash":  "a86fce39864f356c8fe4aaa25907dd1e",
+                      "size":  466
+                  },
+                  {
+                      "path":  "Contents/contents800.txt",
+                      "hash":  "6a1fe6c97895eca8de3706499c672c07",
+                      "size":  337
+                  },
+                  {
+                      "path":  "Contents/contents801.txt",
+                      "hash":  "20cd0bafdd3bc2d07aa0e25aa9fb6fa7",
+                      "size":  3893
+                  },
+                  {
+                      "path":  "Contents/contents802.txt",
+                      "hash":  "d2937094b85c39dc280db8c9c76570de",
+                      "size":  3894
+                  },
+                  {
+                      "path":  "Contents/contents803.txt",
+                      "hash":  "cc0f4a892d0ecf92b5acf1b429727329",
+                      "size":  456
+                  },
+                  {
+                      "path":  "Contents/contents804.txt",
+                      "hash":  "4cf558e9d07c70c528262514ef4811de",
+                      "size":  578
+                  },
+                  {
+                      "path":  "Contents/contents805.txt",
+                      "hash":  "a9c78727a84359968d5b61e8d5f94d8c",
+                      "size":  1394
+                  },
+                  {
+                      "path":  "Contents/contents806.txt",
+                      "hash":  "14e332b740b9f10a84b9f828752f2920",
+                      "size":  1288
+                  },
+                  {
+                      "path":  "Contents/contents807.txt",
+                      "hash":  "104447eacf4129e922e5706168f5dd4c",
+                      "size":  554
+                  },
+                  {
+                      "path":  "Contents/contents808.txt",
+                      "hash":  "35c325f0b86ed9b4d643891fce39f553",
+                      "size":  708
+                  },
+                  {
+                      "path":  "Contents/contents809.txt",
+                      "hash":  "001bb11034aa885d0ab723709a26b507",
+                      "size":  309
+                  },
+                  {
+                      "path":  "Contents/contents810.txt",
+                      "hash":  "b4d3c1b93bb8c31cbc6efc8cf9dd0082",
+                      "size":  322
+                  },
+                  {
+                      "path":  "Contents/contents811.txt",
+                      "hash":  "eead62a937fa22fcf86066c0673cdd66",
+                      "size":  667
+                  },
+                  {
+                      "path":  "Contents/contents812.txt",
+                      "hash":  "bda3f5dc899d371f63ce525c908c9d5c",
+                      "size":  531
+                  },
+                  {
+                      "path":  "Contents/contents813.txt",
+                      "hash":  "13f7255dd2238fe3a1d8fc4a6b2a6bd9",
+                      "size":  1758
+                  },
+                  {
+                      "path":  "Contents/contents900.txt",
+                      "hash":  "ee5072e4f08c6c2f83bdca737e627292",
+                      "size":  2280
+                  },
+                  {
+                      "path":  "Contents/contents901.txt",
+                      "hash":  "2e3dd8fa5893f820ef4320906f2614b9",
+                      "size":  898
+                  },
+                  {
+                      "path":  "Contents/contents902.txt",
+                      "hash":  "fe2de87eab28b4729e2deb4930672262",
+                      "size":  2573
+                  },
+                  {
+                      "path":  "Contents/contents903.txt",
+                      "hash":  "ea346ee20a9a03d0713f07bef7f346b0",
+                      "size":  1316
+                  },
+                  {
+                      "path":  "Contents/contents904.txt",
+                      "hash":  "a57cb73fa8c60827ae46c7c94a5e1dc7",
+                      "size":  802
+                  },
+                  {
+                      "path":  "Contents/contents905.txt",
+                      "hash":  "ccda12bc311a9bf5b5781288a65894b9",
+                      "size":  3010
+                  },
+                  {
+                      "path":  "Contents/contents906.txt",
+                      "hash":  "6b285a03b964cdca17cb1e93a998faa8",
+                      "size":  915
+                  },
+                  {
+                      "path":  "Contents/contents907.txt",
+                      "hash":  "72a47871f1860e3c3f6a9625f2d18200",
+                      "size":  1231
+                  },
+                  {
+                      "path":  "Contents/contents908.txt",
+                      "hash":  "0d1187d4d6fb554e4ebd663646cf04f7",
+                      "size":  981
+                  },
+                  {
+                      "path":  "Contents/contents909.txt",
+                      "hash":  "9d14c93a7f4e61578f747665cd473ede",
+                      "size":  3497
+                  },
+                  {
+                      "path":  "Contents/contents910.txt",
+                      "hash":  "d9271b7f5dff54f7dd6373cdd7038432",
+                      "size":  673
+                  },
+                  {
+                      "path":  "Contents/contents911.txt",
+                      "hash":  "f1fcf228384621e63cc2defd67299e22",
+                      "size":  2897
+                  },
+                  {
+                      "path":  "Contents/contents912.txt",
+                      "hash":  "de0844cfbf7b6226bb521e76935fddd8",
+                      "size":  2065
+                  },
+                  {
+                      "path":  "Contents/Curse.txt",
+                      "hash":  "b02bddf0d839f1fd29c4fae7cd94ee4c",
+                      "size":  1290
+                  },
+                  {
+                      "path":  "Contents/GameMsgList.txt",
+                      "hash":  "83427f5abb0052d58acf627cac77e0f9",
+                      "size":  3060
+                  },
+                  {
+                      "path":  "Contents/ItemName.cfg",
+                      "hash":  "9b41b6d54f54b7518a85842fd6afcc0c",
+                      "size":  24223
+                  },
+                  {
+                      "path":  "Contents/login.cfg",
+                      "hash":  "490ee25542c99185617d01597e7ba3c0",
+                      "size":  131
+                  },
+                  {
+                      "path":  "Contents/MAGICCFG.TXT",
+                      "hash":  "47a9d346e957b5bb64aa7c4675a1aac8",
+                      "size":  4471
+                  },
+                  {
+                      "path":  "Contents/SKILLCFG.TXT",
+                      "hash":  "fcf1b225fdaf6d43073b99b75287c4c7",
+                      "size":  792
+                  },
+                  {
+                      "path":  "Mapdata/2ndmiddle.amd",
+                      "hash":  "29019a1e0f86c71683ff96e3e68577f6",
+                      "size":  625256
+                  },
+                  {
+                      "path":  "Mapdata/Abaddon.amd",
+                      "hash":  "6019ac23a4faeaf0807692dab65c8aeb",
+                      "size":  400256
+                  },
+                  {
+                      "path":  "Mapdata/arebrk11.amd",
+                      "hash":  "5f5938d6069694211cd3e45bc329ecfd",
+                      "size":  225256
+                  },
+                  {
+                      "path":  "Mapdata/arebrk12.amd",
+                      "hash":  "b7ea56d7ed9f3c7cf912370cfca466ae",
+                      "size":  225256
+                  },
+                  {
+                      "path":  "Mapdata/arebrk21.amd",
+                      "hash":  "9296852483d5041cb07abad95146f970",
+                      "size":  225256
+                  },
+                  {
+                      "path":  "Mapdata/arebrk22.amd",
+                      "hash":  "eeb3e31179324526a133f479c9d77ab2",
+                      "size":  225256
+                  },
+                  {
+                      "path":  "Mapdata/arefarm.amd",
+                      "hash":  "98ef1a8d900df9985cb2698aef99b7e3",
+                      "size":  625256
+                  },
+                  {
+                      "path":  "Mapdata/arejail.amd",
+                      "hash":  "3686e1d480f71c6f1885f355e53051b6",
+                      "size":  240256
+                  },
+                  {
+                      "path":  "Mapdata/ARESDEN.AMD",
+                      "hash":  "3187aa3552f1358cfca3455fe59d2aaf",
+                      "size":  900256
+                  },
+                  {
+                      "path":  "Mapdata/aresdend1.amd",
+                      "hash":  "a1f3f511851720fe10fe678724484421",
+                      "size":  400256
+                  },
+                  {
+                      "path":  "Mapdata/areuni.amd",
+                      "hash":  "da911fb08526fdacc0d260317dabfba6",
+                      "size":  400256
+                  },
+                  {
+                      "path":  "Mapdata/arewrhus.amd",
+                      "hash":  "23536cb749dc2ce4119df6990037d5e9",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/bisle.amd",
+                      "hash":  "937987737aba3aa5f7a4f2154dc91066",
+                      "size":  685256
+                  },
+                  {
+                      "path":  "Mapdata/bsmith_1.amd",
+                      "hash":  "756a2da25cf252d7d50b35bf23be5c24",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/bsmith_1f.amd",
+                      "hash":  "756a2da25cf252d7d50b35bf23be5c24",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/bsmith_2.amd",
+                      "hash":  "756a2da25cf252d7d50b35bf23be5c24",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/bsmith_2f.amd",
+                      "hash":  "756a2da25cf252d7d50b35bf23be5c24",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/BTField.amd",
+                      "hash":  "c121eaee23f1af683a36cae4ef0fd32b",
+                      "size":  900256
+                  },
+                  {
+                      "path":  "Mapdata/cath_1.amd",
+                      "hash":  "57f1fa42f1d76c167b24054f31b0c95f",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/cath_2.amd",
+                      "hash":  "57f1fa42f1d76c167b24054f31b0c95f",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/cityhall_1.amd",
+                      "hash":  "2f68c184d2c5bcfce3edfefc7456dd0c",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/cityhall_2.amd",
+                      "hash":  "908f741b38fc8c481480eea8020d23d9",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/Cmdhall_1.amd",
+                      "hash":  "e3a118c454ee84ab9924f9d63b8be381",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/Cmdhall_2.amd",
+                      "hash":  "e3a118c454ee84ab9924f9d63b8be381",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/default.amd",
+                      "hash":  "1550f47c5ae5af7b7a3623759af7d8f6",
+                      "size":  289256
+                  },
+                  {
+                      "path":  "Mapdata/dglv2.amd",
+                      "hash":  "d8ac389bbbaad5074250da723dd767b1",
+                      "size":  2500256
+                  },
+                  {
+                      "path":  "Mapdata/dglv3.amd",
+                      "hash":  "1ac04aec0603e3910fb331d5787fc55e",
+                      "size":  1600256
+                  },
+                  {
+                      "path":  "Mapdata/dglv4.amd",
+                      "hash":  "854ada86c0792dff4f178d31157ad4d5",
+                      "size":  1600256
+                  },
+                  {
+                      "path":  "Mapdata/DruncnCity.amd",
+                      "hash":  "1dc3a5c9b0f062ffa0e727da3576e560",
+                      "size":  400256
+                  },
+                  {
+                      "path":  "Mapdata/elvbrk11.amd",
+                      "hash":  "5f5938d6069694211cd3e45bc329ecfd",
+                      "size":  225256
+                  },
+                  {
+                      "path":  "Mapdata/elvbrk12.amd",
+                      "hash":  "b7ea56d7ed9f3c7cf912370cfca466ae",
+                      "size":  225256
+                  },
+                  {
+                      "path":  "Mapdata/elvbrk21.amd",
+                      "hash":  "9296852483d5041cb07abad95146f970",
+                      "size":  225256
+                  },
+                  {
+                      "path":  "Mapdata/elvbrk22.amd",
+                      "hash":  "eeb3e31179324526a133f479c9d77ab2",
+                      "size":  225256
+                  },
+                  {
+                      "path":  "Mapdata/elvfarm.amd",
+                      "hash":  "f4b026661fc4795ef6d2b35a71138921",
+                      "size":  625256
+                  },
+                  {
+                      "path":  "Mapdata/ELVINE.AMD",
+                      "hash":  "8a045c2ff1e86241597d1f8cdd1c1e8a",
+                      "size":  900256
+                  },
+                  {
+                      "path":  "Mapdata/elvined1.amd",
+                      "hash":  "a105d91e0c0bd0082f2a9173e0b21a0a",
+                      "size":  400256
+                  },
+                  {
+                      "path":  "Mapdata/elvjail.amd",
+                      "hash":  "3686e1d480f71c6f1885f355e53051b6",
+                      "size":  240256
+                  },
+                  {
+                      "path":  "Mapdata/elvuni.amd",
+                      "hash":  "5f890e44c0b7f92e54e089d6e78400bc",
+                      "size":  400256
+                  },
+                  {
+                      "path":  "Mapdata/elvwrhus.amd",
+                      "hash":  "23536cb749dc2ce4119df6990037d5e9",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/EndlessRft.amd",
+                      "hash":  "b44afe5b119ef2ead437d32873042365",
+                      "size":  144256
+                  },
+                  {
+                      "path":  "Mapdata/fightzone1.amd",
+                      "hash":  "699502b7dbd6b4ecc677e1b9b884d0de",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/fightzone2.amd",
+                      "hash":  "699502b7dbd6b4ecc677e1b9b884d0de",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/fightzone3.amd",
+                      "hash":  "699502b7dbd6b4ecc677e1b9b884d0de",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/fightzone4.amd",
+                      "hash":  "8512f7e80d8c6502de3260511fa4f5c8",
+                      "size":  64256
+                  },
+                  {
+                      "path":  "Mapdata/fightzone5.amd",
+                      "hash":  "b44afe5b119ef2ead437d32873042365",
+                      "size":  144256
+                  },
+                  {
+                      "path":  "Mapdata/fightzone6.amd",
+                      "hash":  "60daca7206ead33a1b20915ed12da7a8",
+                      "size":  144256
+                  },
+                  {
+                      "path":  "Mapdata/fightzone7.amd",
+                      "hash":  "422eb8d1c711bd7e902cf49de0781b3e",
+                      "size":  144256
+                  },
+                  {
+                      "path":  "Mapdata/fightzone8.amd",
+                      "hash":  "557847720d37c607fc50d2242515c8ad",
+                      "size":  144256
+                  },
+                  {
+                      "path":  "Mapdata/fightzone9.amd",
+                      "hash":  "699502b7dbd6b4ecc677e1b9b884d0de",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/gldhall_1.amd",
+                      "hash":  "87981d849580404ff784fe5d68b6f86c",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/gldhall_2.amd",
+                      "hash":  "87981d849580404ff784fe5d68b6f86c",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/GodH.amd",
+                      "hash":  "d41f3c46e481b5f0d37bf472dbb726b6",
+                      "size":  625256
+                  },
+                  {
+                      "path":  "Mapdata/gshop_1.amd",
+                      "hash":  "13a1fd44665ae3a691e25e0da5e05f40",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/gshop_1f.amd",
+                      "hash":  "13a1fd44665ae3a691e25e0da5e05f40",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/gshop_2.amd",
+                      "hash":  "13a1fd44665ae3a691e25e0da5e05f40",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/gshop_2f.amd",
+                      "hash":  "13a1fd44665ae3a691e25e0da5e05f40",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/HRampart.amd",
+                      "hash":  "a4d091f734f5122d8cb029eb42b113dc",
+                      "size":  400256
+                  },
+                  {
+                      "path":  "Mapdata/huntzone1.amd",
+                      "hash":  "265f0d9930057e818c447c6989a96f7c",
+                      "size":  400256
+                  },
+                  {
+                      "path":  "Mapdata/huntzone2.amd",
+                      "hash":  "82e0e044ff3698c9252624f4b02d5ca7",
+                      "size":  400256
+                  },
+                  {
+                      "path":  "Mapdata/huntzone3.amd",
+                      "hash":  "9cd7329b83822788284a25a6ee8863cd",
+                      "size":  400256
+                  },
+                  {
+                      "path":  "Mapdata/huntzone4.amd",
+                      "hash":  "ca1a7c8273df246150019a9193024f81",
+                      "size":  400256
+                  },
+                  {
+                      "path":  "Mapdata/icebound.amd",
+                      "hash":  "9ac87d4490d3c2bb724af36a8048189b",
+                      "size":  900256
+                  },
+                  {
+                      "path":  "Mapdata/inferniaA.amd",
+                      "hash":  "5192d67a36200eb4a4343559eb8dfcfd",
+                      "size":  225256
+                  },
+                  {
+                      "path":  "Mapdata/inferniaB.amd",
+                      "hash":  "a0bdc88c409b42d548a824f69b699386",
+                      "size":  225256
+                  },
+                  {
+                      "path":  "Mapdata/maze.AMD",
+                      "hash":  "649f19eec77c54893563b733fec36e92",
+                      "size":  400256
+                  },
+                  {
+                      "path":  "Mapdata/middled1n.amd",
+                      "hash":  "e42d2f5bc842a6cfc69c16444e24b857",
+                      "size":  484256
+                  },
+                  {
+                      "path":  "Mapdata/middled1x.amd",
+                      "hash":  "59e7febea534eb6e84981fa0d4e42068",
+                      "size":  400256
+                  },
+                  {
+                      "path":  "Mapdata/middleland.amd",
+                      "hash":  "05b25baf3401b51c04c347bb154bf1a7",
+                      "size":  2746016
+                  },
+                  {
+                      "path":  "Mapdata/procella.amd",
+                      "hash":  "d53a9e5eb80c567fdda529f420ccba98",
+                      "size":  625256
+                  },
+                  {
+                      "path":  "Mapdata/Resurr1.amd",
+                      "hash":  "71bed55e11beb2c14773205fa669fab2",
+                      "size":  400256
+                  },
+                  {
+                      "path":  "Mapdata/Resurr2.amd",
+                      "hash":  "71bed55e11beb2c14773205fa669fab2",
+                      "size":  400256
+                  },
+                  {
+                      "path":  "Mapdata/TheEndlessRift.amd",
+                      "hash":  "b44afe5b119ef2ead437d32873042365",
+                      "size":  144256
+                  },
+                  {
+                      "path":  "Mapdata/Toh1.amd",
+                      "hash":  "4ddfb375adf6a04ff5a93640364e71c8",
+                      "size":  625256
+                  },
+                  {
+                      "path":  "Mapdata/Toh2.amd",
+                      "hash":  "5eb051674a4026641ecde34e3046746d",
+                      "size":  900256
+                  },
+                  {
+                      "path":  "Mapdata/Toh3.amd",
+                      "hash":  "bc26c173130877cca44f1f76405eaea0",
+                      "size":  900256
+                  },
+                  {
+                      "path":  "Mapdata/wrhus_1.amd",
+                      "hash":  "23536cb749dc2ce4119df6990037d5e9",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/wrhus_1f.amd",
+                      "hash":  "23536cb749dc2ce4119df6990037d5e9",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/wrhus_2.amd",
+                      "hash":  "23536cb749dc2ce4119df6990037d5e9",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/wrhus_2f.amd",
+                      "hash":  "23536cb749dc2ce4119df6990037d5e9",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/wzdtwr_1.amd",
+                      "hash":  "a6fabf058053d868c37f74c643427b49",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Mapdata/wzdtwr_2.amd",
+                      "hash":  "bc0022c518b9822bbaf3b550f437697b",
+                      "size":  100256
+                  },
+                  {
+                      "path":  "Music/abaddon.wav",
+                      "hash":  "ca57af3160a41ae7be8a8049696023a0",
+                      "size":  2949372
+                  },
+                  {
+                      "path":  "Music/aresden.wav",
+                      "hash":  "4369e67b35829b79807284f3781dabc4",
+                      "size":  3228446
+                  },
+                  {
+                      "path":  "Music/Carol.wav",
+                      "hash":  "7f84e0be0177c0dd10239c5849b98366",
+                      "size":  2736480
+                  },
+                  {
+                      "path":  "Music/Carol0.wav",
+                      "hash":  "bf964f6e0178e4e4b88eab26a37357a7",
+                      "size":  3008044
+                  },
+                  {
+                      "path":  "Music/Carol1.wav",
+                      "hash":  "77349b225804579e0157f3dc22d5c370",
+                      "size":  2349878
+                  },
+                  {
+                      "path":  "Music/Carol2.wav",
+                      "hash":  "0791191b197d29e1d034a027130d8005",
+                      "size":  2803236
+                  },
+                  {
+                      "path":  "Music/druncncity.wav",
+                      "hash":  "322c005c618b4db8224b23828b631df0",
+                      "size":  1204052
+                  },
+                  {
+                      "path":  "Music/dungeon.wav",
+                      "hash":  "22b42ae62779b196757715dace225bc5",
+                      "size":  3669372
+                  },
+                  {
+                      "path":  "Music/elvine.wav",
+                      "hash":  "86c9b12b769a423db5b21002f4fcb1b1",
+                      "size":  3695250
+                  },
+                  {
+                      "path":  "Music/MainTm.wav",
+                      "hash":  "64d59762a8d356d645d604fa32445643",
+                      "size":  3159590
+                  },
+                  {
+                      "path":  "Music/middleland.wav",
+                      "hash":  "0d88206438eca02856b435c02186b234",
+                      "size":  2620348
+                  },
+                  {
+                      "path":  "Sounds/C1.WAV",
+                      "hash":  "0266c36c3b21c9a8d095f084de403242",
+                      "size":  14674
+                  },
+                  {
+                      "path":  "Sounds/C10.WAV",
+                      "hash":  "a4d91e684a4413ea3281b14ea1dbba76",
+                      "size":  14946
+                  },
+                  {
+                      "path":  "Sounds/C11.WAV",
+                      "hash":  "4bf5ba3ef1a51196453e8057156f8f8f",
+                      "size":  14476
+                  },
+                  {
+                      "path":  "Sounds/C12.WAV",
+                      "hash":  "93cb88f7ab8dc0d8b9eaaf7e970e4a3a",
+                      "size":  16322
+                  },
+                  {
+                      "path":  "Sounds/C13.WAV",
+                      "hash":  "ae7ec2502dc8e549dc506bdab7166d7e",
+                      "size":  13046
+                  },
+                  {
+                      "path":  "Sounds/C14.WAV",
+                      "hash":  "5f9d1e0633b26a9e3d757786a3bda823",
+                      "size":  67680
+                  },
+                  {
+                      "path":  "Sounds/C15.WAV",
+                      "hash":  "5317eb0b30392ad788b3b03ab68287a3",
+                      "size":  74358
+                  },
+                  {
+                      "path":  "Sounds/C16.WAV",
+                      "hash":  "0490a7756610cde147042438ed675f08",
+                      "size":  90646
+                  },
+                  {
+                      "path":  "Sounds/C17.WAV",
+                      "hash":  "9af1a82627d2ab589127bfe8707496b7",
+                      "size":  44220
+                  },
+                  {
+                      "path":  "Sounds/C18.WAV",
+                      "hash":  "bd29c96f8a6955c49ba50f7bd4369748",
+                      "size":  41100
+                  },
+                  {
+                      "path":  "Sounds/C19.WAV",
+                      "hash":  "ba247e1bdf68da72b0179c6d8105202f",
+                      "size":  50934
+                  },
+                  {
+                      "path":  "Sounds/C2.WAV",
+                      "hash":  "41b665cc4c7cdce8f05b4e8964099936",
+                      "size":  32124
+                  },
+                  {
+                      "path":  "Sounds/C20.WAV",
+                      "hash":  "eb0fda813cc3139123dcb00bc965cb03",
+                      "size":  55796
+                  },
+                  {
+                      "path":  "Sounds/C21.WAV",
+                      "hash":  "ae9959c9b5a926489f8639e2769d3796",
+                      "size":  82294
+                  },
+                  {
+                      "path":  "Sounds/C22.WAV",
+                      "hash":  "0319a872bf2ed3e3b53b5c8c467725c4",
+                      "size":  26422
+                  },
+                  {
+                      "path":  "Sounds/C23.WAV",
+                      "hash":  "4aa572506680f3c8a15d85e85f6435bd",
+                      "size":  46582
+                  },
+                  {
+                      "path":  "Sounds/C24.WAV",
+                      "hash":  "ee63613c4d57ab2803943bd156ce3ee8",
+                      "size":  46710
+                  },
+                  {
+                      "path":  "Sounds/C3.WAV",
+                      "hash":  "41b3f6eb17203a56100896696d10d796",
+                      "size":  55050
+                  },
+                  {
+                      "path":  "Sounds/C4.WAV",
+                      "hash":  "2a8a98e57b7cb9689548441e556bfd9c",
+                      "size":  7636
+                  },
+                  {
+                      "path":  "Sounds/C5.WAV",
+                      "hash":  "7d6f20d9a94f1dad256c3e5b13d7eab5",
+                      "size":  10838
+                  },
+                  {
+                      "path":  "Sounds/C6.WAV",
+                      "hash":  "1191123a3b6124567b5dee20ced10bd8",
+                      "size":  28726
+                  },
+                  {
+                      "path":  "Sounds/C7.WAV",
+                      "hash":  "293f8b9ea07b0aad9660009142fbb6aa",
+                      "size":  15062
+                  },
+                  {
+                      "path":  "Sounds/C8.WAV",
+                      "hash":  "3714258a6a0972c9d9f390825d22a5d6",
+                      "size":  11174
+                  },
+                  {
+                      "path":  "Sounds/C9.WAV",
+                      "hash":  "da719f73e43b110968bed1ff0cb02b72",
+                      "size":  15760
+                  },
+                  {
+                      "path":  "Sounds/E1.WAV",
+                      "hash":  "dabd3dae595b84c30a94491e1146ffff",
+                      "size":  45548
+                  },
+                  {
+                      "path":  "Sounds/E10.WAV",
+                      "hash":  "594892c78202e46dafa0f110e7f6c038",
+                      "size":  32340
+                  },
+                  {
+                      "path":  "Sounds/E11.WAV",
+                      "hash":  "790d65fb67be781bd776d09e7cebbe5f",
+                      "size":  20116
+                  },
+                  {
+                      "path":  "Sounds/E12.WAV",
+                      "hash":  "57778f4085403e6037eeb40829fe2167",
+                      "size":  27814
+                  },
+                  {
+                      "path":  "Sounds/E13.WAV",
+                      "hash":  "5a88ccef9b786d9f108420e9c69f0667",
+                      "size":  7352
+                  },
+                  {
+                      "path":  "Sounds/E14.WAV",
+                      "hash":  "c8fbb3c21ed55ce4713f7f84f647eb26",
+                      "size":  16098
+                  },
+                  {
+                      "path":  "Sounds/E15.WAV",
+                      "hash":  "a60810d9aac6cf0a7d4015948b97679d",
+                      "size":  132024
+                  },
+                  {
+                      "path":  "Sounds/E16.WAV",
+                      "hash":  "015790c4193b49fb33c21fa573505db9",
+                      "size":  148478
+                  },
+                  {
+                      "path":  "Sounds/E17.WAV",
+                      "hash":  "27390f8a7dea4caecbb8e86e05b383ad",
+                      "size":  48794
+                  },
+                  {
+                      "path":  "Sounds/E18.WAV",
+                      "hash":  "8d094974a344209cad32e40ab70c489b",
+                      "size":  66586
+                  },
+                  {
+                      "path":  "Sounds/E19.WAV",
+                      "hash":  "1bc64a2bee426cfbba682af8225e913c",
+                      "size":  18292
+                  },
+                  {
+                      "path":  "Sounds/E2.WAV",
+                      "hash":  "826137b4bb99ecd46f627f223c1f2edc",
+                      "size":  87056
+                  },
+                  {
+                      "path":  "Sounds/E20.WAV",
+                      "hash":  "256270ebae074de1d155f96a789174a2",
+                      "size":  22364
+                  },
+                  {
+                      "path":  "Sounds/E21.WAV",
+                      "hash":  "292678d7011b54b9520d18e67840ea2e",
+                      "size":  24684
+                  },
+                  {
+                      "path":  "Sounds/E22.WAV",
+                      "hash":  "4debd06202d354bee75c70b7275d98db",
+                      "size":  58868
+                  },
+                  {
+                      "path":  "Sounds/E23.WAV",
+                      "hash":  "b788a9bab64d963b13d738d9382e06ce",
+                      "size":  173820
+                  },
+                  {
+                      "path":  "Sounds/E24.WAV",
+                      "hash":  "bd584a7ba39fddd9cb5f81bb2bdb6414",
+                      "size":  132182
+                  },
+                  {
+                      "path":  "Sounds/E25.WAV",
+                      "hash":  "171a5a1b23b4d755fb99a823b8a676cd",
+                      "size":  39014
+                  },
+                  {
+                      "path":  "Sounds/E26.WAV",
+                      "hash":  "dfe3700f9190fdb754734b7586b6b8fa",
+                      "size":  136270
+                  },
+                  {
+                      "path":  "Sounds/E27.WAV",
+                      "hash":  "7888ee6c345388e624e0c481e33e7e85",
+                      "size":  216038
+                  },
+                  {
+                      "path":  "Sounds/E28.WAV",
+                      "hash":  "512bf5e2e535d4ef441201e9b5955dd9",
+                      "size":  50220
+                  },
+                  {
+                      "path":  "Sounds/E29.WAV",
+                      "hash":  "fa86a5045001ce6b10c84d81e57d4add",
+                      "size":  44140
+                  },
+                  {
+                      "path":  "Sounds/E3.WAV",
+                      "hash":  "d2cec674c645c4d39a2b9f00f732be92",
+                      "size":  88318
+                  },
+                  {
+                      "path":  "Sounds/E30.WAV",
+                      "hash":  "cdb3f95e192dcdbd9ecb63e8eed81e13",
+                      "size":  53148
+                  },
+                  {
+                      "path":  "Sounds/E31.WAV",
+                      "hash":  "db28498bcff001772774cb9d89b1d0b7",
+                      "size":  832206
+                  },
+                  {
+                      "path":  "Sounds/E32.WAV",
+                      "hash":  "3a4ad6a040b1527d6b33eb56f29f92d9",
+                      "size":  745680
+                  },
+                  {
+                      "path":  "Sounds/E33.WAV",
+                      "hash":  "35f6335b989e40cfe76d3a47b69bf4fb",
+                      "size":  752568
+                  },
+                  {
+                      "path":  "Sounds/E34.WAV",
+                      "hash":  "c987837b5e900367b99d0959504f93ff",
+                      "size":  169182
+                  },
+                  {
+                      "path":  "Sounds/E35.WAV",
+                      "hash":  "a46b5f1c48013d78a82e12a8302627b7",
+                      "size":  156892
+                  },
+                  {
+                      "path":  "Sounds/E36.WAV",
+                      "hash":  "73e2c3f557ebb993fdce95e63e72d5cd",
+                      "size":  23092
+                  },
+                  {
+                      "path":  "Sounds/E37.WAV",
+                      "hash":  "2acb6c81904d25e576862d31a19a4230",
+                      "size":  21748
+                  },
+                  {
+                      "path":  "Sounds/E38.WAV",
+                      "hash":  "04221f542897a4114a3dae232dccd975",
+                      "size":  754942
+                  },
+                  {
+                      "path":  "Sounds/E39.WAV",
+                      "hash":  "8a8f50b152f8e1911bd5b324122231e0",
+                      "size":  503852
+                  },
+                  {
+                      "path":  "Sounds/E4.WAV",
+                      "hash":  "2deb2b6e2907fe5498e404424b465027",
+                      "size":  166200
+                  },
+                  {
+                      "path":  "Sounds/E40.WAV",
+                      "hash":  "281de58be89c4d810c043ee234bb2ab2",
+                      "size":  207740
+                  },
+                  {
+                      "path":  "Sounds/E41.WAV",
+                      "hash":  "94ff9d8e32408899f6e834e2e1e8042a",
+                      "size":  160770
+                  },
+                  {
+                      "path":  "Sounds/E42.WAV",
+                      "hash":  "590b579bfa4b942cba98dd3db2af52f7",
+                      "size":  40382
+                  },
+                  {
+                      "path":  "Sounds/E43.WAV",
+                      "hash":  "fdb213ba07179b51eb1065856fc3dfee",
+                      "size":  111948
+                  },
+                  {
+                      "path":  "Sounds/E44.wav",
+                      "hash":  "e7ec9eb239a6b15f7080d3681300f1d9",
+                      "size":  213290
+                  },
+                  {
+                      "path":  "Sounds/E45.wav",
+                      "hash":  "ae57289177378a84ed995830599985f5",
+                      "size":  51106
+                  },
+                  {
+                      "path":  "Sounds/E46.wav",
+                      "hash":  "9fe3a8e9864bf3d7390cfb43e8944edd",
+                      "size":  20502
+                  },
+                  {
+                      "path":  "Sounds/E47.wav",
+                      "hash":  "62761247a505ccf255c500352d614a39",
+                      "size":  55108
+                  },
+                  {
+                      "path":  "Sounds/E49.wav",
+                      "hash":  "bcae7af93a4f0154987d980f2aec5e26",
+                      "size":  75812
+                  },
+                  {
+                      "path":  "Sounds/E5.WAV",
+                      "hash":  "fd59298f67ca39c500236b14a0c65707",
+                      "size":  131862
+                  },
+                  {
+                      "path":  "Sounds/E50.wav",
+                      "hash":  "285d64b5e7209e1360b7f8f77e38e690",
+                      "size":  54238
+                  },
+                  {
+                      "path":  "Sounds/E51.wav",
+                      "hash":  "172144cb28424fbd903725c9673e51d4",
+                      "size":  648784
+                  },
+                  {
+                      "path":  "Sounds/E52.wav",
+                      "hash":  "d1ab61b8165548fe4bacb7eba1546cbf",
+                      "size":  417836
+                  },
+                  {
+                      "path":  "Sounds/E53.wav",
+                      "hash":  "75adde04ea6375e22d32d96b61dd6561",
+                      "size":  565292
+                  },
+                  {
+                      "path":  "Sounds/E6.WAV",
+                      "hash":  "938cff8f7b1daa76f434775eabb821f4",
+                      "size":  131116
+                  },
+                  {
+                      "path":  "Sounds/E7.WAV",
+                      "hash":  "042863573ba63de83a4ccbd0b9b8583e",
+                      "size":  87924
+                  },
+                  {
+                      "path":  "Sounds/E8.WAV",
+                      "hash":  "366831f810d3bb2616319d9ad8a2d662",
+                      "size":  91860
+                  },
+                  {
+                      "path":  "Sounds/E9.WAV",
+                      "hash":  "2588f9e9fac6025f2be7a3897f4f1b78",
+                      "size":  130196
+                  },
+                  {
+                      "path":  "Sounds/M1.WAV",
+                      "hash":  "0a9fe97128ffde27cda61ffa46df81b6",
+                      "size":  44242
+                  },
+                  {
+                      "path":  "Sounds/M10.WAV",
+                      "hash":  "0102aefaf146d256d653807cfcc60dfd",
+                      "size":  33376
+                  },
+                  {
+                      "path":  "Sounds/M100.wav",
+                      "hash":  "6a7fd1335e952d30d7b46617fc782995",
+                      "size":  27088
+                  },
+                  {
+                      "path":  "Sounds/M101.wav",
+                      "hash":  "f9367c1f168fbaac1f30aa8a8d0f9462",
+                      "size":  24104
+                  },
+                  {
+                      "path":  "Sounds/M102.wav",
+                      "hash":  "d17a24504fc6eed9faf8d422b052e36f",
+                      "size":  60460
+                  },
+                  {
+                      "path":  "Sounds/M103.wav",
+                      "hash":  "564a708ff4127494c9786855477645cb",
+                      "size":  106540
+                  },
+                  {
+                      "path":  "Sounds/M105.wav",
+                      "hash":  "388bd935a02e160c56e55b11d3794b54",
+                      "size":  229494
+                  },
+                  {
+                      "path":  "Sounds/M106.wav",
+                      "hash":  "720cced8c6568425c25e9a3d8d578cd5",
+                      "size":  498806
+                  },
+                  {
+                      "path":  "Sounds/M107.wav",
+                      "hash":  "f334f468123536f3db3bfef4e315f69c",
+                      "size":  325676
+                  },
+                  {
+                      "path":  "Sounds/M108.wav",
+                      "hash":  "f30ffdbb5b46dba91081f3c4aa711c9d",
+                      "size":  139382
+                  },
+                  {
+                      "path":  "Sounds/M109.wav",
+                      "hash":  "35f35035cff85dae5b20a5c49d04be7c",
+                      "size":  108406
+                  },
+                  {
+                      "path":  "Sounds/M11.WAV",
+                      "hash":  "fc0e540ffac0281d442f17b1a2e9fb37",
+                      "size":  42678
+                  },
+                  {
+                      "path":  "Sounds/M110.wav",
+                      "hash":  "b7a5ea56b2eb1d588eda357c9ff90e7b",
+                      "size":  76534
+                  },
+                  {
+                      "path":  "Sounds/M111.wav",
+                      "hash":  "5dbf452171384c8120889593050d45cf",
+                      "size":  156278
+                  },
+                  {
+                      "path":  "Sounds/M112.wav",
+                      "hash":  "18a2eddc90d16feb72253c91d479003d",
+                      "size":  85622
+                  },
+                  {
+                      "path":  "Sounds/M113.wav",
+                      "hash":  "879a61a70e8a230b204787c57d7eaab6",
+                      "size":  169338
+                  },
+                  {
+                      "path":  "Sounds/M114.wav",
+                      "hash":  "6e232997d52c5fde7b53588c4b9219c1",
+                      "size":  440438
+                  },
+                  {
+                      "path":  "Sounds/M115.wav",
+                      "hash":  "d2bc74ef55dd91dc304664453c69370b",
+                      "size":  180854
+                  },
+                  {
+                      "path":  "Sounds/M116.wav",
+                      "hash":  "b6b25e764e44986423703f8d4562712c",
+                      "size":  162934
+                  },
+                  {
+                      "path":  "Sounds/M117.wav",
+                      "hash":  "47142f0b2b930a44595b525e7fff682b",
+                      "size":  101750
+                  },
+                  {
+                      "path":  "Sounds/M118.wav",
+                      "hash":  "71220ac8684e694a8b67830636fbc27e",
+                      "size":  150134
+                  },
+                  {
+                      "path":  "Sounds/M119.wav",
+                      "hash":  "74c1ef1a34e35538cfc6a9b646f63bd3",
+                      "size":  122960
+                  },
+                  {
+                      "path":  "Sounds/M12.WAV",
+                      "hash":  "29021f372c369957b5021fd3a9c43703",
+                      "size":  39092
+                  },
+                  {
+                      "path":  "Sounds/M120.wav",
+                      "hash":  "4b544b0d68fc8e88f63f0f0974a31a12",
+                      "size":  133750
+                  },
+                  {
+                      "path":  "Sounds/M121.wav",
+                      "hash":  "fa5f36ff2f71cb1363a1177099e8ac52",
+                      "size":  187510
+                  },
+                  {
+                      "path":  "Sounds/M122.wav",
+                      "hash":  "4440c30338a2bb97c2abdc21486ed351",
+                      "size":  215158
+                  },
+                  {
+                      "path":  "Sounds/M123.wav",
+                      "hash":  "c8f6579a1d48c99888d5ea918ced86b4",
+                      "size":  188534
+                  },
+                  {
+                      "path":  "Sounds/M124.wav",
+                      "hash":  "6e4eaa103030756fe4ad92f251f6bf71",
+                      "size":  59002
+                  },
+                  {
+                      "path":  "Sounds/M125.wav",
+                      "hash":  "35e68fa7697903e0a660f827fcd99ab0",
+                      "size":  189258
+                  },
+                  {
+                      "path":  "Sounds/M126.wav",
+                      "hash":  "859fd103f7337a8bf8eeb985a82d2a07",
+                      "size":  192630
+                  },
+                  {
+                      "path":  "Sounds/M127.wav",
+                      "hash":  "8dbe2254e1c599adee1735d9c04a3f1b",
+                      "size":  71798
+                  },
+                  {
+                      "path":  "Sounds/M128.wav",
+                      "hash":  "c8e12ecc38da115445f7a918e87bc9e8",
+                      "size":  162426
+                  },
+                  {
+                      "path":  "Sounds/M129.wav",
+                      "hash":  "b77efb5f22f27b4663e75dec6e3e485b",
+                      "size":  199914
+                  },
+                  {
+                      "path":  "Sounds/M13.WAV",
+                      "hash":  "c30b9cc3d5e6b4b6636409292ddc14e9",
+                      "size":  48630
+                  },
+                  {
+                      "path":  "Sounds/M130.wav",
+                      "hash":  "820ec6310a67e60de1a78c894534752a",
+                      "size":  348278
+                  },
+                  {
+                      "path":  "Sounds/M131.wav",
+                      "hash":  "83ef8f885702cc004743c5909b4a8bd7",
+                      "size":  162002
+                  },
+                  {
+                      "path":  "Sounds/M132.wav",
+                      "hash":  "8b8eb5bc23acb1d63d510b1bed00dd8d",
+                      "size":  46618
+                  },
+                  {
+                      "path":  "Sounds/M133.wav",
+                      "hash":  "e943ada84d6d4121cea4a645c41f4ad2",
+                      "size":  126106
+                  },
+                  {
+                      "path":  "Sounds/M134.wav",
+                      "hash":  "44ba2dc69cef506e4d5ca441f42c887b",
+                      "size":  196066
+                  },
+                  {
+                      "path":  "Sounds/M135.wav",
+                      "hash":  "daae7688d00792ad695c5d318bbc6539",
+                      "size":  82342
+                  },
+                  {
+                      "path":  "Sounds/M14.WAV",
+                      "hash":  "e3de9a6548d9ee736b1b008378774e07",
+                      "size":  11554
+                  },
+                  {
+                      "path":  "Sounds/M140.wav",
+                      "hash":  "fb49bf999618e9704d4d2760b4070705",
+                      "size":  65476
+                  },
+                  {
+                      "path":  "Sounds/M141.wav",
+                      "hash":  "47f031a8eaad11fa75a3ffd32dfc9253",
+                      "size":  117206
+                  },
+                  {
+                      "path":  "Sounds/M142.wav",
+                      "hash":  "14bc9f2c6c8987e78550591cc1c2b8b9",
+                      "size":  18126
+                  },
+                  {
+                      "path":  "Sounds/M143.wav",
+                      "hash":  "8a29423e4c42972645cdc487b9159d4c",
+                      "size":  54550
+                  },
+                  {
+                      "path":  "Sounds/M144.wav",
+                      "hash":  "4b544b0d68fc8e88f63f0f0974a31a12",
+                      "size":  133750
+                  },
+                  {
+                      "path":  "Sounds/M145.wav",
+                      "hash":  "50ed4836fd5ad34b2235053bd3a449db",
+                      "size":  137198
+                  },
+                  {
+                      "path":  "Sounds/M146.wav",
+                      "hash":  "c863bc0b61bcc0a3020aacdb55894c8c",
+                      "size":  77376
+                  },
+                  {
+                      "path":  "Sounds/M147.wav",
+                      "hash":  "ca24caa133833873b952e9e867a4be78",
+                      "size":  45234
+                  },
+                  {
+                      "path":  "Sounds/M148.wav",
+                      "hash":  "53183b1c2cc73720a18e340c176fc031",
+                      "size":  50506
+                  },
+                  {
+                      "path":  "Sounds/M149.wav",
+                      "hash":  "e4e0f3067aedb01395c7f666a85b5588",
+                      "size":  194210
+                  },
+                  {
+                      "path":  "Sounds/M15.WAV",
+                      "hash":  "704bd0a0828cf72044a90a061bf44534",
+                      "size":  23478
+                  },
+                  {
+                      "path":  "Sounds/M150.wav",
+                      "hash":  "461a8fb3af856dad0cd68fd84f981640",
+                      "size":  65498
+                  },
+                  {
+                      "path":  "Sounds/M151.wav",
+                      "hash":  "72d56b11146aa863d495f711a94717fc",
+                      "size":  73224
+                  },
+                  {
+                      "path":  "Sounds/M152.wav",
+                      "hash":  "f974534816061f2f6dd4c7e86d8f45a6",
+                      "size":  86960
+                  },
+                  {
+                      "path":  "Sounds/M153.wav",
+                      "hash":  "8d5741088917404f9393085decab3ff4",
+                      "size":  86392
+                  },
+                  {
+                      "path":  "Sounds/M154.wav",
+                      "hash":  "18f92021049e2dd8c81fd53cb1810f1e",
+                      "size":  87160
+                  },
+                  {
+                      "path":  "Sounds/M155.wav",
+                      "hash":  "069a8fa4f2cf52c2a9fec7adbdd5bd44",
+                      "size":  73224
+                  },
+                  {
+                      "path":  "Sounds/M156.wav",
+                      "hash":  "117beca6a662d3970d41c0c47af58f96",
+                      "size":  86960
+                  },
+                  {
+                      "path":  "Sounds/M16.WAV",
+                      "hash":  "6b7a3557556cb169d0c5fe91dfce556f",
+                      "size":  66340
+                  },
+                  {
+                      "path":  "Sounds/M17.WAV",
+                      "hash":  "e7a5768d5b5e03842a08717b79c1927b",
+                      "size":  65472
+                  },
+                  {
+                      "path":  "Sounds/M18.WAV",
+                      "hash":  "ac14cfee5c6b06779c5e87361bd7f289",
+                      "size":  47276
+                  },
+                  {
+                      "path":  "Sounds/M19.WAV",
+                      "hash":  "fed40abd8da1251211f1ae6b179657d7",
+                      "size":  71212
+                  },
+                  {
+                      "path":  "Sounds/M2.WAV",
+                      "hash":  "0fbe63c57b6b02c263c1dd22f808acfa",
+                      "size":  27628
+                  },
+                  {
+                      "path":  "Sounds/M20.WAV",
+                      "hash":  "de644d35e562724364f84eedb93d054e",
+                      "size":  87340
+                  },
+                  {
+                      "path":  "Sounds/M21.WAV",
+                      "hash":  "e3dd9efa7c995f990381bb11633584f3",
+                      "size":  36332
+                  },
+                  {
+                      "path":  "Sounds/M22.WAV",
+                      "hash":  "55eaf6f0ee7d8f936b9bd64c8a0183bc",
+                      "size":  34804
+                  },
+                  {
+                      "path":  "Sounds/M23.WAV",
+                      "hash":  "b7e8b812f5d90ce2562707e51fcc1498",
+                      "size":  34180
+                  },
+                  {
+                      "path":  "Sounds/M24.WAV",
+                      "hash":  "cc24867a999d6faa3865c0192d362ceb",
+                      "size":  44452
+                  },
+                  {
+                      "path":  "Sounds/M25.WAV",
+                      "hash":  "fd5ae5eaf8a8a83cd8759eefba8c10a4",
+                      "size":  36722
+                  },
+                  {
+                      "path":  "Sounds/M26.WAV",
+                      "hash":  "0bfa7ae24381e0b75bc06acc33ab282c",
+                      "size":  21634
+                  },
+                  {
+                      "path":  "Sounds/M27.WAV",
+                      "hash":  "95dd2e0f1912a77daabeca8e93ea26de",
+                      "size":  26520
+                  },
+                  {
+                      "path":  "Sounds/M28.WAV",
+                      "hash":  "687c41d8dd6b9b75a69384fea22f3609",
+                      "size":  35360
+                  },
+                  {
+                      "path":  "Sounds/M29.WAV",
+                      "hash":  "0c44bc3f647d20dbb5d7dbecd6a68953",
+                      "size":  37956
+                  },
+                  {
+                      "path":  "Sounds/M3.WAV",
+                      "hash":  "b4483b2cde3506287e7a41b8cd34b404",
+                      "size":  43776
+                  },
+                  {
+                      "path":  "Sounds/M30.WAV",
+                      "hash":  "a8a25adcb2e6870f0f356e7fd310e64c",
+                      "size":  44934
+                  },
+                  {
+                      "path":  "Sounds/M31.WAV",
+                      "hash":  "820d4094404b46493634e1e6aa06219f",
+                      "size":  31620
+                  },
+                  {
+                      "path":  "Sounds/M32.WAV",
+                      "hash":  "d5806359fbbe280c829b1717252eee50",
+                      "size":  35980
+                  },
+                  {
+                      "path":  "Sounds/M33.WAV",
+                      "hash":  "ce22a9c08f48a1cab815bd7e92eeb180",
+                      "size":  67468
+                  },
+                  {
+                      "path":  "Sounds/M34.WAV",
+                      "hash":  "241985e1752dae09f97cb71349867ef5",
+                      "size":  55540
+                  },
+                  {
+                      "path":  "Sounds/M35.WAV",
+                      "hash":  "bef61ea453a5879e2b2dcef6715d6359",
+                      "size":  39348
+                  },
+                  {
+                      "path":  "Sounds/M36.WAV",
+                      "hash":  "f9a69a693f3911ca1acf6020d7c954c7",
+                      "size":  50620
+                  },
+                  {
+                      "path":  "Sounds/M37.WAV",
+                      "hash":  "e0f64e96266a7f27d69fe58790476b40",
+                      "size":  64666
+                  },
+                  {
+                      "path":  "Sounds/M38.WAV",
+                      "hash":  "fd118ba51fbf865fb7634641a65b8ce2",
+                      "size":  32260
+                  },
+                  {
+                      "path":  "Sounds/M39.WAV",
+                      "hash":  "9c16b47ffcb7513e9245473dd15c5cd4",
+                      "size":  42442
+                  },
+                  {
+                      "path":  "Sounds/M4.WAV",
+                      "hash":  "9165355c273874deb071d51607e95547",
+                      "size":  66302
+                  },
+                  {
+                      "path":  "Sounds/M40.WAV",
+                      "hash":  "b95735d41b67bfe442164106825a6624",
+                      "size":  67978
+                  },
+                  {
+                      "path":  "Sounds/M41.WAV",
+                      "hash":  "881093c3591772207192ea91af435d2f",
+                      "size":  66548
+                  },
+                  {
+                      "path":  "Sounds/M42.WAV",
+                      "hash":  "b6f821b75ccad18a07ce510bc1d33392",
+                      "size":  44104
+                  },
+                  {
+                      "path":  "Sounds/M43.WAV",
+                      "hash":  "665afbaf0dbe8b5afb51543545308001",
+                      "size":  37866
+                  },
+                  {
+                      "path":  "Sounds/M44.WAV",
+                      "hash":  "d84df47f0325f78c9e92cc1aaa905a81",
+                      "size":  82440
+                  },
+                  {
+                      "path":  "Sounds/M45.WAV",
+                      "hash":  "3bbd51211a827e820c03167fb36f19d1",
+                      "size":  86470
+                  },
+                  {
+                      "path":  "Sounds/M46.WAV",
+                      "hash":  "1bce3c36f96c52d8912788a7d07fce7f",
+                      "size":  61044
+                  },
+                  {
+                      "path":  "Sounds/M47.WAV",
+                      "hash":  "8a44de3a36a72237dac34aed5259039a",
+                      "size":  44498
+                  },
+                  {
+                      "path":  "Sounds/M48.WAV",
+                      "hash":  "099bb057597e7a0d40125bf36c42b704",
+                      "size":  18382
+                  },
+                  {
+                      "path":  "Sounds/M49.WAV",
+                      "hash":  "bf77f92db302d09ae2b6ccc3a41bf6a1",
+                      "size":  40054
+                  },
+                  {
+                      "path":  "Sounds/M5.WAV",
+                      "hash":  "38475bd0fc50d871f462d20057eac4c2",
+                      "size":  68220
+                  },
+                  {
+                      "path":  "Sounds/M50.WAV",
+                      "hash":  "712bd14d83ff32c9ca5f676291906d17",
+                      "size":  77262
+                  },
+                  {
+                      "path":  "Sounds/M51.WAV",
+                      "hash":  "bd0f4b2e4bd0997fab084b4d415d9aee",
+                      "size":  62670
+                  },
+                  {
+                      "path":  "Sounds/M52.WAV",
+                      "hash":  "23a94a266e4ec367206367f8b43b3b12",
+                      "size":  34974
+                  },
+                  {
+                      "path":  "Sounds/M53.WAV",
+                      "hash":  "971a6d85d92f4e81ed00e3094d184429",
+                      "size":  21582
+                  },
+                  {
+                      "path":  "Sounds/M54.WAV",
+                      "hash":  "b2414df05a7838a6a55ddc234c26c57c",
+                      "size":  81762
+                  },
+                  {
+                      "path":  "Sounds/M55.WAV",
+                      "hash":  "918f56b543e07274e9c21aa8f9877988",
+                      "size":  101300
+                  },
+                  {
+                      "path":  "Sounds/M56.WAV",
+                      "hash":  "21252042c97ee05b2d923408149251ae",
+                      "size":  180868
+                  },
+                  {
+                      "path":  "Sounds/M57.WAV",
+                      "hash":  "45d3b0f0dff3ef9728ddd929056f48ac",
+                      "size":  28388
+                  },
+                  {
+                      "path":  "Sounds/M58.WAV",
+                      "hash":  "6f4b9c1f30d04607d2859b8f3c0bf033",
+                      "size":  53804
+                  },
+                  {
+                      "path":  "Sounds/M59.WAV",
+                      "hash":  "225f639d9d627854823e0203a9000ca9",
+                      "size":  73588
+                  },
+                  {
+                      "path":  "Sounds/M6.WAV",
+                      "hash":  "a5467e25b4eae1c87876de0ab2b83625",
+                      "size":  44220
+                  },
+                  {
+                      "path":  "Sounds/M60.WAV",
+                      "hash":  "9f2d037f97ebf3269642dbe8cdd7df6e",
+                      "size":  64116
+                  },
+                  {
+                      "path":  "Sounds/M61.WAV",
+                      "hash":  "1e1c32ff367f0df21ec609fbde5171b3",
+                      "size":  72638
+                  },
+                  {
+                      "path":  "Sounds/M62.WAV",
+                      "hash":  "bed9292058a3c73df4279e661f93750e",
+                      "size":  65654
+                  },
+                  {
+                      "path":  "Sounds/M63.wav",
+                      "hash":  "cce93ecd7941b5f128b0e8a2938cfaf9",
+                      "size":  53366
+                  },
+                  {
+                      "path":  "Sounds/M64.wav",
+                      "hash":  "b9d429b933aa0fdd5848b2892d3aa30e",
+                      "size":  59050
+                  },
+                  {
+                      "path":  "Sounds/M65.wav",
+                      "hash":  "1aa40c153ab3a53308ac48151872f70a",
+                      "size":  41514
+                  },
+                  {
+                      "path":  "Sounds/M66.wav",
+                      "hash":  "e7ffd4c3f1ce60107b4719e3ac219d38",
+                      "size":  82548
+                  },
+                  {
+                      "path":  "Sounds/M67.wav",
+                      "hash":  "188f6b13db96c447845f82c2d41696ae",
+                      "size":  29626
+                  },
+                  {
+                      "path":  "Sounds/M68.wav",
+                      "hash":  "61a2c31e7dad0f42e49dbbe5be637ad3",
+                      "size":  43580
+                  },
+                  {
+                      "path":  "Sounds/M69.wav",
+                      "hash":  "bc61799b092ac443e9d73a58ac8c884d",
+                      "size":  30848
+                  },
+                  {
+                      "path":  "Sounds/M7.WAV",
+                      "hash":  "f19b6e30c5913fc851dfa94067c6991d",
+                      "size":  30520
+                  },
+                  {
+                      "path":  "Sounds/M70.wav",
+                      "hash":  "043406d01c2d7fe7fd7e2ffeb72e2b4c",
+                      "size":  103694
+                  },
+                  {
+                      "path":  "Sounds/M71.wav",
+                      "hash":  "efa7fb02ddec406855d2b1d6adbb5091",
+                      "size":  29864
+                  },
+                  {
+                      "path":  "Sounds/M72.wav",
+                      "hash":  "9a9e24442d8b5d2dd9e70a0e187ed9c1",
+                      "size":  12712
+                  },
+                  {
+                      "path":  "Sounds/M73.wav",
+                      "hash":  "f9cc8c0a97bfe278a9086d8affe26199",
+                      "size":  44026
+                  },
+                  {
+                      "path":  "Sounds/M74.wav",
+                      "hash":  "8f188c429de93a98066294b766f52661",
+                      "size":  39558
+                  },
+                  {
+                      "path":  "Sounds/M75.wav",
+                      "hash":  "86089ccbb0f508dcfc925ff213bb9dc2",
+                      "size":  61394
+                  },
+                  {
+                      "path":  "Sounds/M76.wav",
+                      "hash":  "f0d3c6b2adc514e07d2f5bc13e98c3dc",
+                      "size":  51944
+                  },
+                  {
+                      "path":  "Sounds/M77.wav",
+                      "hash":  "ca8cc78e812963425e6549e04db811d2",
+                      "size":  20074
+                  },
+                  {
+                      "path":  "Sounds/M78.wav",
+                      "hash":  "6f261ee62371767aeac70e62e4b1a1cf",
+                      "size":  30066
+                  },
+                  {
+                      "path":  "Sounds/M79.wav",
+                      "hash":  "392ea96b18c6d1f52948610a28834e9c",
+                      "size":  22824
+                  },
+                  {
+                      "path":  "Sounds/M8.WAV",
+                      "hash":  "5fd9c199e5a77d3413e83134767ca4f7",
+                      "size":  66188
+                  },
+                  {
+                      "path":  "Sounds/M80.wav",
+                      "hash":  "443caa7d2086bd36e32ae9a402441e5a",
+                      "size":  32344
+                  },
+                  {
+                      "path":  "Sounds/M81.wav",
+                      "hash":  "16fdd1f98fc49f6c67e5a38c6bbd4016",
+                      "size":  31810
+                  },
+                  {
+                      "path":  "Sounds/M82.wav",
+                      "hash":  "4f822d1ad50f9264446497c637759106",
+                      "size":  60176
+                  },
+                  {
+                      "path":  "Sounds/M83.wav",
+                      "hash":  "f5a84bd0c23b6c7fea6d5ea87dce4d2c",
+                      "size":  85826
+                  },
+                  {
+                      "path":  "Sounds/M84.wav",
+                      "hash":  "11360e468dbb26411ee6319546a0e527",
+                      "size":  60504
+                  },
+                  {
+                      "path":  "Sounds/M85.wav",
+                      "hash":  "6aa2f5a37ba2c89be669aa3642a94bfc",
+                      "size":  56530
+                  },
+                  {
+                      "path":  "Sounds/M86.wav",
+                      "hash":  "61f0a98386432f782937686cd3d463d1",
+                      "size":  80470
+                  },
+                  {
+                      "path":  "Sounds/M87.wav",
+                      "hash":  "7e4abc270e883b10c127b3be438ec61e",
+                      "size":  43832
+                  },
+                  {
+                      "path":  "Sounds/M88.wav",
+                      "hash":  "6688f3e3d7715c8cae2169b082744b0f",
+                      "size":  63494
+                  },
+                  {
+                      "path":  "Sounds/M89.wav",
+                      "hash":  "923f577bc2c78fbf803b3f814182c549",
+                      "size":  22984
+                  },
+                  {
+                      "path":  "Sounds/M9.WAV",
+                      "hash":  "8348a33e563929173131373354956791",
+                      "size":  48012
+                  },
+                  {
+                      "path":  "Sounds/M90.wav",
+                      "hash":  "7c7c23ba5f69726f54b3fdc59879ae59",
+                      "size":  75978
+                  },
+                  {
+                      "path":  "Sounds/M91.wav",
+                      "hash":  "862ebbde588dbf1c55005f6a1c9701bb",
+                      "size":  44152
+                  },
+                  {
+                      "path":  "Sounds/M92.wav",
+                      "hash":  "b2e598b3f22300fc7a7c9ddf270e7c8a",
+                      "size":  46124
+                  },
+                  {
+                      "path":  "Sounds/M93.wav",
+                      "hash":  "ac3a968330bbb87d367b89493c716b6d",
+                      "size":  48570
+                  },
+                  {
+                      "path":  "Sounds/M94.wav",
+                      "hash":  "69852e62e9250b0820a765a43b943eb7",
+                      "size":  68568
+                  },
+                  {
+                      "path":  "Sounds/M95.wav",
+                      "hash":  "9ab743b9e413f5f79eef693023d368f8",
+                      "size":  40186
+                  },
+                  {
+                      "path":  "Sounds/M96.wav",
+                      "hash":  "ed2eef562d57378ba08827e88d82d25d",
+                      "size":  46202
+                  },
+                  {
+                      "path":  "Sounds/M97.wav",
+                      "hash":  "1c1ca3f22b9aa93ba50b633527532458",
+                      "size":  47850
+                  },
+                  {
+                      "path":  "Sounds/M98.wav",
+                      "hash":  "ff82747c14b75e5be9e118978c4805e3",
+                      "size":  42146
+                  },
+                  {
+                      "path":  "Sounds/M99.wav",
+                      "hash":  "40ba2ce45569ea23701eb970925ec0f6",
+                      "size":  214760
+                  },
+                  {
+                      "path":  "Sprites/ABS.pak",
+                      "hash":  "de11954bd2bde4d62f3f6a6d0e3ce762",
+                      "size":  1967756
+                  },
+                  {
+                      "path":  "Sprites/ACannon.pak",
+                      "hash":  "a913c11de78674384f1653e0384e42c4",
+                      "size":  7069356
+                  },
+                  {
+                      "path":  "Sprites/Amp.pak",
+                      "hash":  "dc8581d195b89dd9f178ae2e45ca9489",
+                      "size":  341228
+                  },
+                  {
+                      "path":  "Sprites/Ant.pak",
+                      "hash":  "c95bb03517051170f6461b5e150f109f",
+                      "size":  166280
+                  },
+                  {
+                      "path":  "Sprites/Babarian.pak",
+                      "hash":  "f6dcfbc0937b3e98510eb61a4e9eb841",
+                      "size":  4090588
+                  },
+                  {
+                      "path":  "Sprites/Barlog.pak",
+                      "hash":  "c4439559cdb9f2d2821dbe22c58e3619",
+                      "size":  4960008
+                  },
+                  {
+                      "path":  "Sprites/Beholder.pak",
+                      "hash":  "c0d82053e1abe9b8f8505260c2caa57d",
+                      "size":  2673356
+                  },
+                  {
+                      "path":  "Sprites/BG.pak",
+                      "hash":  "f167cb4cee662cb08248131b5348e1bb",
+                      "size":  2996492
+                  },
+                  {
+                      "path":  "Sprites/Bm.pak",
+                      "hash":  "8ecc57211c4f27b50d61aedf08003601",
+                      "size":  1453932
+                  },
+                  {
+                      "path":  "Sprites/Bunny.pak",
+                      "hash":  "33cffe3132168b5cbc829f309286d1fd",
+                      "size":  252472
+                  },
+                  {
+                      "path":  "Sprites/Bw.pak",
+                      "hash":  "1ab04bc28b418c7996728be0c9d2c037",
+                      "size":  1150048
+                  },
+                  {
+                      "path":  "Sprites/CanPlant.pak",
+                      "hash":  "fe6cac2e8a17e80dbb3fd92499ffe1fa",
+                      "size":  1335228
+                  },
+                  {
+                      "path":  "Sprites/Cat.pak",
+                      "hash":  "85d3cd44a491347326fb7e693cc0fae6",
+                      "size":  428140
+                  },
+                  {
+                      "path":  "Sprites/Catapult.pak",
+                      "hash":  "098f44db02d763f2c6316e53ad991697",
+                      "size":  1241460
+                  },
+                  {
+                      "path":  "Sprites/CBTurret.pak",
+                      "hash":  "2f773f312676835e5695b106253385e6",
+                      "size":  6113004
+                  },
+                  {
+                      "path":  "Sprites/Centaurus.pak",
+                      "hash":  "5b612e15cb2b8e11caf8b74ba71fff28",
+                      "size":  3105932
+                  },
+                  {
+                      "path":  "Sprites/Cla.pak",
+                      "hash":  "bdf3cf6a11421c915fce1c3efaa5cb49",
+                      "size":  592532
+                  },
+                  {
+                      "path":  "Sprites/Clawturtle.pak",
+                      "hash":  "622bc6818a211b4aed50cf841473e88e",
+                      "size":  3092404
+                  },
+                  {
+                      "path":  "Sprites/Crop.pak",
+                      "hash":  "4a5876b1e0bff5109719a4e0a5ad31db",
+                      "size":  670664
+                  },
+                  {
+                      "path":  "Sprites/CruEffect1.pak",
+                      "hash":  "e5c8718607eff36e11dd0ab64925f3ba",
+                      "size":  3765232
+                  },
+                  {
+                      "path":  "Sprites/CruObj1.pak",
+                      "hash":  "9300476bd62711f86e1749def3dde329",
+                      "size":  477716
+                  },
+                  {
+                      "path":  "Sprites/Cyc.pak",
+                      "hash":  "26374c26ab65146358affb50b6b69838",
+                      "size":  2191760
+                  },
+                  {
+                      "path":  "Sprites/DarkElf.pak",
+                      "hash":  "2f6801fbe4add9b1e1a5d4fcc792e3a8",
+                      "size":  1292900
+                  },
+                  {
+                      "path":  "Sprites/DarkKnight.pak",
+                      "hash":  "a7d26d1b31cbcfc00b0929208750e307",
+                      "size":  3705340
+                  },
+                  {
+                      "path":  "Sprites/Demon.pak",
+                      "hash":  "b1a99f5717f2bce76c17c3662b976a0e",
+                      "size":  3582460
+                  },
+                  {
+                      "path":  "Sprites/Detector.pak",
+                      "hash":  "e43401202011e88ebe729702e160efae",
+                      "size":  641080
+                  },
+                  {
+                      "path":  "Sprites/Devlin.pak",
+                      "hash":  "7b163e5a1840d601d37f25fb66ecc692",
+                      "size":  161412
+                  },
+                  {
+                      "path":  "Sprites/DialogText.pak",
+                      "hash":  "5822cd7442073e0a893c1bd839199a87",
+                      "size":  672840
+                  },
+                  {
+                      "path":  "Sprites/DireBoar.pak",
+                      "hash":  "a57b9be2b4baa7881d270f269b329bad",
+                      "size":  2050116
+                  },
+                  {
+                      "path":  "Sprites/dummy.pak",
+                      "hash":  "81cb07511fcad3743dafacea11f32cb4",
+                      "size":  244264
+                  },
+                  {
+                      "path":  "Sprites/EFFECT.PAK",
+                      "hash":  "b179a650c1f075c12d1ad273ebd97f59",
+                      "size":  1623346
+                  },
+                  {
+                      "path":  "Sprites/effect10.pak",
+                      "hash":  "b03445edf3ab1beb55d085ac7c7b31f9",
+                      "size":  554516
+                  },
+                  {
+                      "path":  "Sprites/Effect11.pak",
+                      "hash":  "5f9b200480add95b1878d18f7413e5c7",
+                      "size":  7546240
+                  },
+                  {
+                      "path":  "Sprites/effect11s.pak",
+                      "hash":  "613a76125b52ce810adf2b78cfe49e32",
+                      "size":  1347004
+                  },
+                  {
+                      "path":  "Sprites/Effect12.pak",
+                      "hash":  "54511849eadbd42329a815d17a4db1e2",
+                      "size":  529272
+                  },
+                  {
+                      "path":  "Sprites/Effect13.pak",
+                      "hash":  "fecb0e918f5e39ac26d07b10f6f27605",
+                      "size":  3039056
+                  },
+                  {
+                      "path":  "Sprites/EFFECT2.PAK",
+                      "hash":  "537360054cecad0e6dd806f21906632a",
+                      "size":  451206
+                  },
+                  {
+                      "path":  "Sprites/EFFECT3.PAK",
+                      "hash":  "96de0d2b45f90ce798cee485ad0ad56f",
+                      "size":  2235796
+                  },
+                  {
+                      "path":  "Sprites/effect4.pak",
+                      "hash":  "2e37fe361705a2e82e7676d52c0acddd",
+                      "size":  1398346
+                  },
+                  {
+                      "path":  "Sprites/effect5.pak",
+                      "hash":  "b90b47de1b0de39bdabf6ac32eabd083",
+                      "size":  2111002
+                  },
+                  {
+                      "path":  "Sprites/effect6.pak",
+                      "hash":  "9edeb2aa500abbddeba0461dde4958d5",
+                      "size":  1649692
+                  },
+                  {
+                      "path":  "Sprites/Effect7.pak",
+                      "hash":  "c087993c19c215c43b74a5e4c174c7fa",
+                      "size":  2104244
+                  },
+                  {
+                      "path":  "Sprites/Effect8.pak",
+                      "hash":  "61f50e4da2aef59d9beee6a177429f4a",
+                      "size":  2031608
+                  },
+                  {
+                      "path":  "Sprites/effect9.pak",
+                      "hash":  "6e4a8897fb3130bb2ecf54a988e02090",
+                      "size":  1909178
+                  },
+                  {
+                      "path":  "Sprites/ElfMaster.pak",
+                      "hash":  "3bb1637dbc41a55823f5af398beaab9e",
+                      "size":  2372604
+                  },
+                  {
+                      "path":  "Sprites/ESG.pak",
+                      "hash":  "9191f5b924bb4e7dfcfd57f691931830",
+                      "size":  272824
+                  },
+                  {
+                      "path":  "Sprites/Ettin.pak",
+                      "hash":  "54f5e2331b7e4db38f9e638466ba8298",
+                      "size":  3247908
+                  },
+                  {
+                      "path":  "Sprites/FireWyvern.pak",
+                      "hash":  "9b4b468d0d5afe852717e850757a7b7c",
+                      "size":  13779288
+                  },
+                  {
+                      "path":  "Sprites/frost.pak",
+                      "hash":  "252489d10b27b4cfb3746502a3bdbe0c",
+                      "size":  1853384
+                  },
+                  {
+                      "path":  "Sprites/gagoyle.pak",
+                      "hash":  "755bd6613647a9d10a2694cb7635d650",
+                      "size":  6699280
+                  },
+                  {
+                      "path":  "Sprites/Gail.pak",
+                      "hash":  "65cdae769673c4aa9e4949318d7da914",
+                      "size":  144720
+                  },
+                  {
+                      "path":  "Sprites/GameDialog.pak",
+                      "hash":  "326e7ab145c85c7aa84e7eb9409b21e3",
+                      "size":  4023442
+                  },
+                  {
+                      "path":  "Sprites/GameDialog2.pak",
+                      "hash":  "ba9e705cff20bb63ba2d0516729cfad1",
+                      "size":  4150186
+                  },
+                  {
+                      "path":  "Sprites/Gandlf.pak",
+                      "hash":  "b5a6df9cc0da7acdfd044454369549ee",
+                      "size":  166232
+                  },
+                  {
+                      "path":  "Sprites/Gate.pak",
+                      "hash":  "2f1a9adb7cbba9518dd795feea3cc4c9",
+                      "size":  5809676
+                  },
+                  {
+                      "path":  "Sprites/GHK.pak",
+                      "hash":  "613d5fe610a77971d5d0e286aebefa57",
+                      "size":  1368208
+                  },
+                  {
+                      "path":  "Sprites/GHKABS.pak",
+                      "hash":  "d61ea1e16d7599e360b4d3db24494981",
+                      "size":  2605984
+                  },
+                  {
+                      "path":  "Sprites/GiantCrayfish.pak",
+                      "hash":  "633d6c5b4e0de02c5c4800b64cf66fa0",
+                      "size":  2840784
+                  },
+                  {
+                      "path":  "Sprites/GiantFrog.pak",
+                      "hash":  "9628a0227d8207e1cdb2fb8d9a439479",
+                      "size":  1688664
+                  },
+                  {
+                      "path":  "Sprites/GiantLizard.pak",
+                      "hash":  "dc4467b9085d79024c1d8c1cc6fa7b23",
+                      "size":  4265768
+                  },
+                  {
+                      "path":  "Sprites/GiantPlant.pak",
+                      "hash":  "d72a8e4214be312ee27aea276b430df7",
+                      "size":  2590108
+                  },
+                  {
+                      "path":  "Sprites/GMG.pak",
+                      "hash":  "022d5d0aa620394a4c35ac25e527bbb5",
+                      "size":  545464
+                  },
+                  {
+                      "path":  "Sprites/GOL.PAK",
+                      "hash":  "89ab253e217780c2439c86443011478c",
+                      "size":  928984
+                  },
+                  {
+                      "path":  "Sprites/GT-Arrow.pak",
+                      "hash":  "82366ee2151eb221bc76f09c6de74bb3",
+                      "size":  923604
+                  },
+                  {
+                      "path":  "Sprites/GT-Cannon.pak",
+                      "hash":  "fcd6774fff791d1b87edd102f4a7e6e7",
+                      "size":  700696
+                  },
+                  {
+                      "path":  "Sprites/Guard.pak",
+                      "hash":  "9dedd8deba3aa9c62608e3744373a572",
+                      "size":  687668
+                  },
+                  {
+                      "path":  "Sprites/HBTank.pak",
+                      "hash":  "20aa9b1bfe8c9230fd5e4b353d821f0d",
+                      "size":  4892036
+                  },
+                  {
+                      "path":  "Sprites/Helb.pak",
+                      "hash":  "3c4cada562dd1ff4b35d31e040e33c28",
+                      "size":  745132
+                  },
+                  {
+                      "path":  "Sprites/Hellclaw.pak",
+                      "hash":  "a943cfc4ea17aa7cfec0d8ce2044650a",
+                      "size":  4073284
+                  },
+                  {
+                      "path":  "Sprites/Howard.pak",
+                      "hash":  "0724a4e51e0e1821470a08e6a58c2ea2",
+                      "size":  167976
+                  },
+                  {
+                      "path":  "Sprites/IceGolem.pak",
+                      "hash":  "f185d0bda98a8855691b3406d8e267bc",
+                      "size":  2433048
+                  },
+                  {
+                      "path":  "Sprites/interface.pak",
+                      "hash":  "44882e9769f43f79ba58ecdb27881a43",
+                      "size":  56492
+                  },
+                  {
+                      "path":  "Sprites/interface2.pak",
+                      "hash":  "d89dd2d65034475133ba4831d215af62",
+                      "size":  473440
+                  },
+                  {
+                      "path":  "Sprites/item-dynamic.pak",
+                      "hash":  "7253a24035ff8f03390dcd8527b5d147",
+                      "size":  69660
+                  },
+                  {
+                      "path":  "Sprites/item-equipM.pak",
+                      "hash":  "cb977dcc0c1324fe85bf463f9e26fd08",
+                      "size":  1777198
+                  },
+                  {
+                      "path":  "Sprites/item-equipW.pak",
+                      "hash":  "11d8c663cf0d03bccc6043c2d2e7adab",
+                      "size":  1529554
+                  },
+                  {
+                      "path":  "Sprites/item-ground.pak",
+                      "hash":  "f685c5d0c2cfdf7214dea1750097a2a9",
+                      "size":  874234
+                  },
+                  {
+                      "path":  "Sprites/item-pack.pak",
+                      "hash":  "256a217023e70dd8fbd47a1f50d7c0fc",
+                      "size":  2432574
+                  },
+                  {
+                      "path":  "Sprites/Kennedy.pak",
+                      "hash":  "65cdae769673c4aa9e4949318d7da914",
+                      "size":  144720
+                  },
+                  {
+                      "path":  "Sprites/Liche.pak",
+                      "hash":  "c580adc484d3e499ba5879683a3a0545",
+                      "size":  1628616
+                  },
+                  {
+                      "path":  "Sprites/LoginDialog.pak",
+                      "hash":  "0ab39f409c8b53693d7aa25fdad105c9",
+                      "size":  482752
+                  },
+                  {
+                      "path":  "Sprites/LWB.pak",
+                      "hash":  "4885a91d5368532dfce840d5346273e0",
+                      "size":  3924324
+                  },
+                  {
+                      "path":  "Sprites/ManaCollector.pak",
+                      "hash":  "d4d3018fb090abf12d5e7df658407aff",
+                      "size":  593688
+                  },
+                  {
+                      "path":  "Sprites/ManaStone.pak",
+                      "hash":  "c581193d9e90e3eac734746aea1547a4",
+                      "size":  332344
+                  },
+                  {
+                      "path":  "Sprites/maptiles1.pak",
+                      "hash":  "f3683d2ae15790c155b6a182ec0fe98e",
+                      "size":  9983768
+                  },
+                  {
+                      "path":  "Sprites/maptiles2.pak",
+                      "hash":  "181ba4ca5eeb393a0893b66e1ab33935",
+                      "size":  4679904
+                  },
+                  {
+                      "path":  "Sprites/maptiles353-361.pak",
+                      "hash":  "5e53a24373ab4c642414a0d59425a44b",
+                      "size":  2807952
+                  },
+                  {
+                      "path":  "Sprites/maptiles4.pak",
+                      "hash":  "81a19da1d8794f8df006c1ff266d201f",
+                      "size":  3119944
+                  },
+                  {
+                      "path":  "Sprites/maptiles5.pak",
+                      "hash":  "5b3a6bf12ffe51bc4aad44c87360f50e",
+                      "size":  5927872
+                  },
+                  {
+                      "path":  "Sprites/maptiles6.pak",
+                      "hash":  "b0de0055492754ecdaf607565cd7004a",
+                      "size":  1247992
+                  },
+                  {
+                      "path":  "Sprites/MasterMageOrc.pak",
+                      "hash":  "c1d36f39c6e362e6b08b0bb75a6d1abe",
+                      "size":  2771308
+                  },
+                  {
+                      "path":  "Sprites/MAxe1.pak",
+                      "hash":  "2669fa6d39111e55405abe2ba35a5f35",
+                      "size":  272948
+                  },
+                  {
+                      "path":  "Sprites/MAxe2.pak",
+                      "hash":  "75ca65451194b50d09737bd709b0ac20",
+                      "size":  336772
+                  },
+                  {
+                      "path":  "Sprites/MAxe3.pak",
+                      "hash":  "b1f972bfea4bfa8b6ec074bf36d4a95d",
+                      "size":  247864
+                  },
+                  {
+                      "path":  "Sprites/MAxe4.pak",
+                      "hash":  "2e595c69d3e0087269aca38183233675",
+                      "size":  246368
+                  },
+                  {
+                      "path":  "Sprites/MAxe5.pak",
+                      "hash":  "dc53e7aec7ec0d0562f54d807d3cb788",
+                      "size":  361696
+                  },
+                  {
+                      "path":  "Sprites/MAxe6.pak",
+                      "hash":  "f144513920743bddd9575b172e464bf0",
+                      "size":  411276
+                  },
+                  {
+                      "path":  "Sprites/MBabHammer.pak",
+                      "hash":  "701a777e488172472cd66e846483743f",
+                      "size":  592072
+                  },
+                  {
+                      "path":  "Sprites/MBerserkWand.pak",
+                      "hash":  "94c1a6d93a7f7e22d4bfb345050404ae",
+                      "size":  478012
+                  },
+                  {
+                      "path":  "Sprites/MBHammer.pak",
+                      "hash":  "7a530ad7ccca21ff6c1ec8f6c8c6d0a6",
+                      "size":  520540
+                  },
+                  {
+                      "path":  "Sprites/Mbo.pak",
+                      "hash":  "6340aa84ad521ec3a4bb2f51c4db7fc5",
+                      "size":  855768
+                  },
+                  {
+                      "path":  "Sprites/MBShadowSword.pak",
+                      "hash":  "60ed1e36e17495fa5ae315fb35b2353c",
+                      "size":  545720
+                  },
+                  {
+                      "path":  "Sprites/McGaffin.pak",
+                      "hash":  "49f08bd442c83806c3068988a2e52cee",
+                      "size":  122712
+                  },
+                  {
+                      "path":  "Sprites/MCHoses.pak",
+                      "hash":  "75d796a0933bc97c6ff055518bc42850",
+                      "size":  858040
+                  },
+                  {
+                      "path":  "Sprites/MCMail.pak",
+                      "hash":  "379923a6eadf42bae9359a4f13dc6b31",
+                      "size":  923468
+                  },
+                  {
+                      "path":  "Sprites/MDarkExec.pak",
+                      "hash":  "0deb0e5eee34456d7b761c394dd23a16",
+                      "size":  505644
+                  },
+                  {
+                      "path":  "Sprites/MDebastator.pak",
+                      "hash":  "5448ca327cb5290bff8b2cf2b13ddc71",
+                      "size":  602148
+                  },
+                  {
+                      "path":  "Sprites/MDirectBow.pak",
+                      "hash":  "aa335d46bd829935958e238f4e465a62",
+                      "size":  963152
+                  },
+                  {
+                      "path":  "Sprites/MFireBow.pak",
+                      "hash":  "bef84406a0e0c92767de7845cc2b1d56",
+                      "size":  1352912
+                  },
+                  {
+                      "path":  "Sprites/MHammer.pak",
+                      "hash":  "946e9d62a7d92f20d3ca347caf3ef06e",
+                      "size":  458828
+                  },
+                  {
+                      "path":  "Sprites/MHauberk.pak",
+                      "hash":  "632c6a6b933a699b3475bb9e28698b10",
+                      "size":  781524
+                  },
+                  {
+                      "path":  "Sprites/MHCap1.pak",
+                      "hash":  "9449eeb6e1000e82188c45fc48861383",
+                      "size":  263312
+                  },
+                  {
+                      "path":  "Sprites/MHCap2.pak",
+                      "hash":  "69f3bb1d7a7b488ca21981e1d7d3f885",
+                      "size":  263312
+                  },
+                  {
+                      "path":  "Sprites/MHelm1.pak",
+                      "hash":  "5406c9c617312ea48544bf2e1a27a049",
+                      "size":  124016
+                  },
+                  {
+                      "path":  "Sprites/MHelm2.pak",
+                      "hash":  "d30fae787cdacdc8b1b0871ca50b4d9c",
+                      "size":  128376
+                  },
+                  {
+                      "path":  "Sprites/MHelm3.pak",
+                      "hash":  "884524eab50c1ef9354fc6f6bd3af19a",
+                      "size":  273220
+                  },
+                  {
+                      "path":  "Sprites/MHelm4.pak",
+                      "hash":  "f180074385809a04b9b320b9f2096368",
+                      "size":  90056
+                  },
+                  {
+                      "path":  "Sprites/MHHauberk1.pak",
+                      "hash":  "71b92544717272ebe1dd9a122244a335",
+                      "size":  1750776
+                  },
+                  {
+                      "path":  "Sprites/MHHauberk2.pak",
+                      "hash":  "d371f749b7dae0af8ecac11e8675d94f",
+                      "size":  1750776
+                  },
+                  {
+                      "path":  "Sprites/MHHelm1.pak",
+                      "hash":  "942115b19e0f3cbdb37c22b5d9d1b89b",
+                      "size":  312596
+                  },
+                  {
+                      "path":  "Sprites/MHHelm2.pak",
+                      "hash":  "b70146937bdcc875f6e7255981dd0579",
+                      "size":  312596
+                  },
+                  {
+                      "path":  "Sprites/MHLeggings1.pak",
+                      "hash":  "48e3ef398d9a9cc654592ad5f7993592",
+                      "size":  2559508
+                  },
+                  {
+                      "path":  "Sprites/MHLeggings2.pak",
+                      "hash":  "7971eaee55abfc97c0dcb3aa99b1455a",
+                      "size":  2559508
+                  },
+                  {
+                      "path":  "Sprites/Mhoe.pak",
+                      "hash":  "0417a9b919a796a63fd25cc220139df0",
+                      "size":  115460
+                  },
+                  {
+                      "path":  "Sprites/MHPMail1.pak",
+                      "hash":  "04cccfaaa01dd7390e668fbad73051da",
+                      "size":  2289724
+                  },
+                  {
+                      "path":  "Sprites/MHPMail2.pak",
+                      "hash":  "70e6a7d39d2251fad72a38289fcbe799",
+                      "size":  2291812
+                  },
+                  {
+                      "path":  "Sprites/Mhr.pak",
+                      "hash":  "f7e86f811954d8f5453642a7ddcbe9a1",
+                      "size":  590684
+                  },
+                  {
+                      "path":  "Sprites/MHRobe1.pak",
+                      "hash":  "38c790efad59ecf7773fe58a60e452cd",
+                      "size":  5124540
+                  },
+                  {
+                      "path":  "Sprites/MHRobe2.pak",
+                      "hash":  "9ca22b6173c5689d6a0810e921063cac",
+                      "size":  5124540
+                  },
+                  {
+                      "path":  "Sprites/MHTrouser.pak",
+                      "hash":  "a6a867b7a80585873ee2e8a073049bc0",
+                      "size":  275828
+                  },
+                  {
+                      "path":  "Sprites/Minotaurs.pak",
+                      "hash":  "27dc2dacb9d8170b86920e9b5720c54c",
+                      "size":  1702668
+                  },
+                  {
+                      "path":  "Sprites/MKlonessAstock.pak",
+                      "hash":  "a17317f927d53e1c4b2ff8ee8b0ab3b2",
+                      "size":  494180
+                  },
+                  {
+                      "path":  "Sprites/MKlonessAxe.pak",
+                      "hash":  "606a39e44415cd5dd1d1375944549be5",
+                      "size":  467768
+                  },
+                  {
+                      "path":  "Sprites/MKlonessBlade.pak",
+                      "hash":  "77157b7f8e0a5d9ecd8da175a6920151",
+                      "size":  574748
+                  },
+                  {
+                      "path":  "Sprites/MKlonessWand.pak",
+                      "hash":  "e74dcd40f1ea5e52adbc48265869cbad",
+                      "size":  560252
+                  },
+                  {
+                      "path":  "Sprites/MLarmor.pak",
+                      "hash":  "9195aad3af3a0143a2a79c51d8f8282f",
+                      "size":  507360
+                  },
+                  {
+                      "path":  "Sprites/MLBoots.pak",
+                      "hash":  "dbfada9da13e5736f8659738d6809645",
+                      "size":  1739328
+                  },
+                  {
+                      "path":  "Sprites/MLeggings.pak",
+                      "hash":  "7e1db55f41a939f70b570f0fa40d66ff",
+                      "size":  852620
+                  },
+                  {
+                      "path":  "Sprites/MLightBlade.pak",
+                      "hash":  "eb06b98834210f37dedd29d462bb20fd",
+                      "size":  589736
+                  },
+                  {
+                      "path":  "Sprites/Mmantle01.pak",
+                      "hash":  "f9592ac9a188e5a5e2d3f051aa2a9797",
+                      "size":  1132240
+                  },
+                  {
+                      "path":  "Sprites/Mmantle02.pak",
+                      "hash":  "005dd19e0939c485df9b21c44be8b580",
+                      "size":  1133592
+                  },
+                  {
+                      "path":  "Sprites/Mmantle03.pak",
+                      "hash":  "69f6f19fbc95b576d667b0780691edc8",
+                      "size":  1133524
+                  },
+                  {
+                      "path":  "Sprites/Mmantle04.pak",
+                      "hash":  "870e3dc7c166d820ec2fcf7e0585c57d",
+                      "size":  4878384
+                  },
+                  {
+                      "path":  "Sprites/Mmantle05.pak",
+                      "hash":  "07fc85e46fa5f3bd46e9e57861c1b290",
+                      "size":  4878384
+                  },
+                  {
+                      "path":  "Sprites/Mmantle06.pak",
+                      "hash":  "5fe3dd39ed3feb3ee29b7ce853ab6c6b",
+                      "size":  4878384
+                  },
+                  {
+                      "path":  "Sprites/monster.pak",
+                      "hash":  "2ca3623f68e0c41a755c1e2eb51a7150",
+                      "size":  236594
+                  },
+                  {
+                      "path":  "Sprites/MPickAxe1.pak",
+                      "hash":  "4901ef52ba49d9040c25f7e73b16ab12",
+                      "size":  305684
+                  },
+                  {
+                      "path":  "Sprites/MPMail.pak",
+                      "hash":  "6b439594d549fea4fc3eef1bdb7da76a",
+                      "size":  670460
+                  },
+                  {
+                      "path":  "Sprites/Mpt.pak",
+                      "hash":  "ce1d690baf2f0e7fe1153417a78de8d0",
+                      "size":  862460
+                  },
+                  {
+                      "path":  "Sprites/MPTWK.PAK",
+                      "hash":  "344c10f7bc274462ee9c43cc1e96c6a7",
+                      "size":  14200
+                  },
+                  {
+                      "path":  "Sprites/MReMagicWand.pak",
+                      "hash":  "80a00676eb2d55026dca3f9ad1004ba1",
+                      "size":  558612
+                  },
+                  {
+                      "path":  "Sprites/Mrobe1.pak",
+                      "hash":  "289dfc6fe5d6aef07495530e0f4837d9",
+                      "size":  1560096
+                  },
+                  {
+                      "path":  "Sprites/MSanta.pak",
+                      "hash":  "67e802cfd12464be55e19c45da3c1b55",
+                      "size":  1594588
+                  },
+                  {
+                      "path":  "Sprites/Msh.pak",
+                      "hash":  "f0c2d89e05bdf6ec4282c8cb2290f78f",
+                      "size":  2237648
+                  },
+                  {
+                      "path":  "Sprites/MShirt.pak",
+                      "hash":  "a4310ba91158bbac6620165ec3559b51",
+                      "size":  612508
+                  },
+                  {
+                      "path":  "Sprites/MShoes.pak",
+                      "hash":  "6ec4b614283f2ed9d321a190a21d35a1",
+                      "size":  1083560
+                  },
+                  {
+                      "path":  "Sprites/MSMail.pak",
+                      "hash":  "d5935540804265b3252c3b89f7cd7149",
+                      "size":  609916
+                  },
+                  {
+                      "path":  "Sprites/MStaff1.pak",
+                      "hash":  "68adfe8c2bf49416ea461e43ad985305",
+                      "size":  522504
+                  },
+                  {
+                      "path":  "Sprites/MStaff2.pak",
+                      "hash":  "5826234a4f53005e8fbe56246744cfd8",
+                      "size":  925040
+                  },
+                  {
+                      "path":  "Sprites/MStaff3.pak",
+                      "hash":  "96636d6e8f9a48fead9dddbad6e6e305",
+                      "size":  673672
+                  },
+                  {
+                      "path":  "Sprites/MStormBringer.pak",
+                      "hash":  "45d47c2e8f68314a8009b6c7930c1af7",
+                      "size":  440020
+                  },
+                  {
+                      "path":  "Sprites/Msw.pak",
+                      "hash":  "be503fc0df8aa14d9ec2fbce6fcca7bd",
+                      "size":  4737588
+                  },
+                  {
+                      "path":  "Sprites/Msw2.pak",
+                      "hash":  "2d0f4e62297d3ef17a85addf742a4e60",
+                      "size":  528344
+                  },
+                  {
+                      "path":  "Sprites/Msw3.pak",
+                      "hash":  "1d5e2a4fcd4f56878418cd7d05d50216",
+                      "size":  606212
+                  },
+                  {
+                      "path":  "Sprites/Mswx.pak",
+                      "hash":  "6760dff4bcfb015b70b6c6839bfda5b4",
+                      "size":  379332
+                  },
+                  {
+                      "path":  "Sprites/MTGiant.pak",
+                      "hash":  "dde265e530a53d0e438ba915cd5a59b2",
+                      "size":  2143948
+                  },
+                  {
+                      "path":  "Sprites/MTrouser.pak",
+                      "hash":  "f0bf7e2c268f112aafbd7e86e6c26985",
+                      "size":  639964
+                  },
+                  {
+                      "path":  "Sprites/MTunic.pak",
+                      "hash":  "e45a0a7a5e05e1ae0dea7f8d70944960",
+                      "size":  639512
+                  },
+                  {
+                      "path":  "Sprites/New-Dialog.pak",
+                      "hash":  "0eb7e60a463de8090b5a565bc5774612",
+                      "size":  1032828
+                  },
+                  {
+                      "path":  "Sprites/newmaps.pak",
+                      "hash":  "1dac10b3c352d8c89d7a2bb222542e47",
+                      "size":  1001392
+                  },
+                  {
+                      "path":  "Sprites/Nizie.pak",
+                      "hash":  "202d256c50a53c06a7c8b94761cd6bd7",
+                      "size":  2745272
+                  },
+                  {
+                      "path":  "Sprites/NMHelm1.pak",
+                      "hash":  "adcd81dba7ab8fa18c23d70d7f48b9e2",
+                      "size":  147772
+                  },
+                  {
+                      "path":  "Sprites/NMHelm2.pak",
+                      "hash":  "5dfbb7b681b6ec87534527424fc248bf",
+                      "size":  134200
+                  },
+                  {
+                      "path":  "Sprites/NMHelm3.pak",
+                      "hash":  "71c8a7af521299552db3a7f087034788",
+                      "size":  122920
+                  },
+                  {
+                      "path":  "Sprites/NMHelm4.pak",
+                      "hash":  "b341a3523f1430c0ebd15d58744c126f",
+                      "size":  175856
+                  },
+                  {
+                      "path":  "Sprites/NWHelm1.pak",
+                      "hash":  "6d69586d340574a33e08d5ea61f6f16b",
+                      "size":  149956
+                  },
+                  {
+                      "path":  "Sprites/NWHelm2.pak",
+                      "hash":  "f67d2f02f5330709e9cf04afbe07ca0b",
+                      "size":  343356
+                  },
+                  {
+                      "path":  "Sprites/NWHelm3.pak",
+                      "hash":  "412fafec0f6d4f0085ca6f39462b033e",
+                      "size":  123156
+                  },
+                  {
+                      "path":  "Sprites/NWHelm4.pak",
+                      "hash":  "fe04286c578a65b896bd84c80bd6ff58",
+                      "size":  471396
+                  },
+                  {
+                      "path":  "Sprites/Objects1.pak",
+                      "hash":  "cc4427ed386ee54ab106f9fa654a3184",
+                      "size":  3573090
+                  },
+                  {
+                      "path":  "Sprites/Objects2.pak",
+                      "hash":  "3862ec3dd2b07489a9126c2cc692aa16",
+                      "size":  1207386
+                  },
+                  {
+                      "path":  "Sprites/Objects3.pak",
+                      "hash":  "9c5705806562e6e49c93b83e21f7e060",
+                      "size":  1234480
+                  },
+                  {
+                      "path":  "Sprites/objects4.pak",
+                      "hash":  "5e11183c69e3d5edc2f6e53073e5946c",
+                      "size":  617124
+                  },
+                  {
+                      "path":  "Sprites/Objects5.pak",
+                      "hash":  "24045a2db590e2ee0c4b2a5b557d6540",
+                      "size":  2737568
+                  },
+                  {
+                      "path":  "Sprites/Objects6.pak",
+                      "hash":  "ae1d6262c7d36d3549014030d432450f",
+                      "size":  694640
+                  },
+                  {
+                      "path":  "Sprites/Objects7.pak",
+                      "hash":  "1441ff24f9918ebd5145095ecf66fd55",
+                      "size":  2159920
+                  },
+                  {
+                      "path":  "Sprites/Orc.pak",
+                      "hash":  "8efa82e18d20ce476427b00d7e98e7f9",
+                      "size":  615124
+                  },
+                  {
+                      "path":  "Sprites/Orge.pak",
+                      "hash":  "71f84ae5e376d9b23c34f45f86af9fed",
+                      "size":  8500736
+                  },
+                  {
+                      "path":  "Sprites/PartySprite.pak",
+                      "hash":  "c31a75750db971911de905d6170b142b",
+                      "size":  179738
+                  },
+                  {
+                      "path":  "Sprites/Perry.pak",
+                      "hash":  "ab056438ce6d0b28258d4b64238801d1",
+                      "size":  124672
+                  },
+                  {
+                      "path":  "Sprites/Rudolph.pak",
+                      "hash":  "eca2d8f983e4cb5d76a8415e8fae5c0a",
+                      "size":  1187776
+                  },
+                  {
+                      "path":  "Sprites/Scp.pak",
+                      "hash":  "4bcb54aa5dedbb7979402707ce28c529",
+                      "size":  631804
+                  },
+                  {
+                      "path":  "Sprites/SHOPKPR.PAK",
+                      "hash":  "b56d150ee7e3d96d7d608acbb4b9088d",
+                      "size":  88932
+                  },
+                  {
+                      "path":  "Sprites/Sinside1.pak",
+                      "hash":  "271a37398c20170a671212bd2f90956a",
+                      "size":  8423808
+                  },
+                  {
+                      "path":  "Sprites/SKE.PAK",
+                      "hash":  "f50856a52f192af061ca728c92366b59",
+                      "size":  512152
+                  },
+                  {
+                      "path":  "Sprites/SLM.PAK",
+                      "hash":  "660ce97a5f28df1aa504023f05123546",
+                      "size":  277648
+                  },
+                  {
+                      "path":  "Sprites/Sorceress.pak",
+                      "hash":  "9228e8b3f42bec8d830a099bc52acddc",
+                      "size":  2264596
+                  },
+                  {
+                      "path":  "Sprites/SPRFONTS.PAK",
+                      "hash":  "faaca74fc718723a64bb188e4f1b2642",
+                      "size":  87428
+                  },
+                  {
+                      "path":  "Sprites/Stalker.pak",
+                      "hash":  "98277e179c1783c39899893affee8456",
+                      "size":  2249420
+                  },
+                  {
+                      "path":  "Sprites/Structures1.pak",
+                      "hash":  "4744238a55f38d70b85802117deff2a8",
+                      "size":  6239864
+                  },
+                  {
+                      "path":  "Sprites/Telescope.pak",
+                      "hash":  "48a30b920697a384bb1d20ba8c5527f5",
+                      "size":  2920400
+                  },
+                  {
+                      "path":  "Sprites/Telescope2.pak",
+                      "hash":  "6fc9d1265f7d91150041f7d36cd56cfc",
+                      "size":  3687176
+                  },
+                  {
+                      "path":  "Sprites/Tentocle.pak",
+                      "hash":  "39f8a579b0c4c30d4161d9d4ce5fe2c5",
+                      "size":  663176
+                  },
+                  {
+                      "path":  "Sprites/Tigerworm.pak",
+                      "hash":  "cfc8bc814dac5ef696e260d3fd9639c8",
+                      "size":  4688784
+                  },
+                  {
+                      "path":  "Sprites/Tile223-225.pak",
+                      "hash":  "2c2124ee3e66e5f34a700ff19a6f1995",
+                      "size":  925896
+                  },
+                  {
+                      "path":  "Sprites/Tile226-229.pak",
+                      "hash":  "dda1ba859d6f659f233cd2a104fab3b1",
+                      "size":  1235176
+                  },
+                  {
+                      "path":  "Sprites/Tile363-366.pak",
+                      "hash":  "c5bf3d3b9b2b2c38452647b882e4e4e7",
+                      "size":  1247992
+                  },
+                  {
+                      "path":  "Sprites/Tile367-367.pak",
+                      "hash":  "1ef535e6b1d916308cce61f7cb6da3a8",
+                      "size":  311988
+                  },
+                  {
+                      "path":  "Sprites/Tile370-381.pak",
+                      "hash":  "a99f3196dde041ecb94ad71dc355bcb0",
+                      "size":  2555712
+                  },
+                  {
+                      "path":  "Sprites/Tile382-387.pak",
+                      "hash":  "03b22b848eaeeee57e816921de4c0a3a",
+                      "size":  1597304
+                  },
+                  {
+                      "path":  "Sprites/Tile388-402.pak",
+                      "hash":  "666664ae196bb7ddf2a35a64086c5a72",
+                      "size":  4679904
+                  },
+                  {
+                      "path":  "Sprites/Tile403-405.pak",
+                      "hash":  "ad6b05209bda0d35cef1dfd8c50c73bb",
+                      "size":  936000
+                  },
+                  {
+                      "path":  "Sprites/Tile406-421.pak",
+                      "hash":  "65ff0e81bf00aa9570150fdae269cccd",
+                      "size":  4991896
+                  },
+                  {
+                      "path":  "Sprites/Tile422-429.pak",
+                      "hash":  "3288cfb64b9206c491c89ec512e899e6",
+                      "size":  2181860
+                  },
+                  {
+                      "path":  "Sprites/Tile430-443.pak",
+                      "hash":  "f54af25c418f13ba894e2e9357d33ca5",
+                      "size":  4367912
+                  },
+                  {
+                      "path":  "Sprites/Tile444-444.pak",
+                      "hash":  "0f207e2229d2a50af8d863e43f2d88e0",
+                      "size":  312016
+                  },
+                  {
+                      "path":  "Sprites/Tile445-461.pak",
+                      "hash":  "1cfc7e13c02a73cbe0195f82ff31ebc9",
+                      "size":  3841324
+                  },
+                  {
+                      "path":  "Sprites/Tile462-464.pak",
+                      "hash":  "c3c22e54898abd4a7a2ffa4a8e5229e2",
+                      "size":  2766036
+                  },
+                  {
+                      "path":  "Sprites/Tile462-473.pak",
+                      "hash":  "d4613cedef5673dae77f363083f5fed9",
+                      "size":  3743928
+                  },
+                  {
+                      "path":  "Sprites/Tile462-475.pak",
+                      "hash":  "590fa337438b6e52093b393396be348c",
+                      "size":  4365896
+                  },
+                  {
+                      "path":  "Sprites/Tile474-478.pak",
+                      "hash":  "b72f6fd496106f42b2d8a9e968a0a7fb",
+                      "size":  1559984
+                  },
+                  {
+                      "path":  "Sprites/Tile474-488.pak",
+                      "hash":  "c915f34542d721a3a5afdcf43ce62d79",
+                      "size":  4679924
+                  },
+                  {
+                      "path":  "Sprites/Tile479-488.pak",
+                      "hash":  "22d2badc405afc478825bf0b697c65ba",
+                      "size":  3119948
+                  },
+                  {
+                      "path":  "Sprites/Tile489-522.pak",
+                      "hash":  "0ba97ef3739b54fe092e18f4c6f580da",
+                      "size":  10607076
+                  },
+                  {
+                      "path":  "Sprites/Tile523-530.pak",
+                      "hash":  "bfeea3659cfebddcb54de2426a38707d",
+                      "size":  3109340
+                  },
+                  {
+                      "path":  "Sprites/Tile523-532.pak",
+                      "hash":  "a34ace6c124dea45b563ba7ee2527ef9",
+                      "size":  3119964
+                  },
+                  {
+                      "path":  "Sprites/Tile531-540.pak",
+                      "hash":  "030285a844e3e7e1520804dc6fe416d9",
+                      "size":  3119944
+                  },
+                  {
+                      "path":  "Sprites/Tile541-545.pak",
+                      "hash":  "d32cb8cd46b3e9f33f1b891b93beaf33",
+                      "size":  1559986
+                  },
+                  {
+                      "path":  "Sprites/TK.pak",
+                      "hash":  "8da35ae9641ac9100ff3e930542c2da9",
+                      "size":  1335472
+                  },
+                  {
+                      "path":  "Sprites/Tom.pak",
+                      "hash":  "b529168e1056cc6fab506633257b0c1e",
+                      "size":  176948
+                  },
+                  {
+                      "path":  "Sprites/TPKnight.pak",
+                      "hash":  "e75f05d797687f6c22bf8024fbb85110",
+                      "size":  3597732
+                  },
+                  {
+                      "path":  "Sprites/TREES1.PAK",
+                      "hash":  "b59761f61571487cdfababf5b6cae0c5",
+                      "size":  2945524
+                  },
+                  {
+                      "path":  "Sprites/TreeShadows.pak",
+                      "hash":  "9b0ba3208b4ce6f49e58e13d6cb8b1cf",
+                      "size":  155504
+                  },
+                  {
+                      "path":  "Sprites/Troll.pak",
+                      "hash":  "58b82ce58c27932363e9853f1b1418e4",
+                      "size":  1753384
+                  },
+                  {
+                      "path":  "Sprites/TutelarAngel1.pak",
+                      "hash":  "47bccd02aad69373022f8fe0f2b05498",
+                      "size":  827700
+                  },
+                  {
+                      "path":  "Sprites/TutelarAngel2.pak",
+                      "hash":  "ddf88c548e637d47d6ff84875980ee64",
+                      "size":  827700
+                  },
+                  {
+                      "path":  "Sprites/TutelarAngel3.pak",
+                      "hash":  "7d2d74acf70ca8b5bf0cfa9032b3097b",
+                      "size":  774940
+                  },
+                  {
+                      "path":  "Sprites/TutelarAngel4.pak",
+                      "hash":  "b367a373baf493d0306377c6df098aea",
+                      "size":  774940
+                  },
+                  {
+                      "path":  "Sprites/Unicorn.pak",
+                      "hash":  "53d29aaff240761d0a847365642044e1",
+                      "size":  1034476
+                  },
+                  {
+                      "path":  "Sprites/WAxe1.pak",
+                      "hash":  "2f2baa60529841290c39780b5521b517",
+                      "size":  172268
+                  },
+                  {
+                      "path":  "Sprites/WAxe2.pak",
+                      "hash":  "ff570a91ad461d87e6237e9d33d22b0d",
+                      "size":  231084
+                  },
+                  {
+                      "path":  "Sprites/WAxe3.pak",
+                      "hash":  "ffcd66c130ab778cdafa2aef49284450",
+                      "size":  211296
+                  },
+                  {
+                      "path":  "Sprites/WAxe4.pak",
+                      "hash":  "cca0b5c29c8d52968d5684863f7d5917",
+                      "size":  215004
+                  },
+                  {
+                      "path":  "Sprites/WAxe5.pak",
+                      "hash":  "0c6e65cfa65b0c2e41e6ecd85e9c7a62",
+                      "size":  263984
+                  },
+                  {
+                      "path":  "Sprites/WAxe6.pak",
+                      "hash":  "d674b2a2278ab0fee552e628369570ff",
+                      "size":  405220
+                  },
+                  {
+                      "path":  "Sprites/WBabHammer.pak",
+                      "hash":  "979af858936f6b79e94470b762adcd3c",
+                      "size":  456980
+                  },
+                  {
+                      "path":  "Sprites/WBerserkWand.pak",
+                      "hash":  "da08fc6a49eeb0dbf24ab6d1cb9c4a43",
+                      "size":  414152
+                  },
+                  {
+                      "path":  "Sprites/WBHammer.pak",
+                      "hash":  "9fa733505bd83ad0337d12eacc111a64",
+                      "size":  355152
+                  },
+                  {
+                      "path":  "Sprites/Wbo.pak",
+                      "hash":  "9baa4c8dbb3a5396e12d191c03357506",
+                      "size":  696004
+                  },
+                  {
+                      "path":  "Sprites/WBodice1.pak",
+                      "hash":  "77e7c5b025e17a0f74d53f12ea5e1d24",
+                      "size":  182364
+                  },
+                  {
+                      "path":  "Sprites/WBodice2.pak",
+                      "hash":  "7526ee5a843b02857dde9ce3958d6eea",
+                      "size":  254932
+                  },
+                  {
+                      "path":  "Sprites/WBShadowSword.pak",
+                      "hash":  "eff82d635db5b4d9bb288bc2873a8122",
+                      "size":  496668
+                  },
+                  {
+                      "path":  "Sprites/WChemiss.pak",
+                      "hash":  "f9c843ae8ff1adda33e3d7fac500269c",
+                      "size":  631200
+                  },
+                  {
+                      "path":  "Sprites/WCHoses.pak",
+                      "hash":  "dee57288953d1509fd4ff1836b2753e0",
+                      "size":  700988
+                  },
+                  {
+                      "path":  "Sprites/WCMail.pak",
+                      "hash":  "e4ed3364580c53c54ed1924c20be05a2",
+                      "size":  592408
+                  },
+                  {
+                      "path":  "Sprites/WDarkExec.pak",
+                      "hash":  "e522e6edba3c2491cc5c04eb91e956ce",
+                      "size":  470940
+                  },
+                  {
+                      "path":  "Sprites/WDebastator.pak",
+                      "hash":  "9a560273971c08b4aca5793cf7c0229b",
+                      "size":  418184
+                  },
+                  {
+                      "path":  "Sprites/WDirectBow.pak",
+                      "hash":  "102d56ae1f29632d4badcd18a1ccc552",
+                      "size":  593200
+                  },
+                  {
+                      "path":  "Sprites/WereWolf.pak",
+                      "hash":  "0c17f27bfab8ac19558e073f77206adc",
+                      "size":  1277924
+                  },
+                  {
+                      "path":  "Sprites/WFireBow.pak",
+                      "hash":  "34e54016b3bb44a5c49d21840764f0ce",
+                      "size":  1222604
+                  },
+                  {
+                      "path":  "Sprites/WHammer.pak",
+                      "hash":  "cbc96838b77a34b1ceea1bed1c4ee516",
+                      "size":  348988
+                  },
+                  {
+                      "path":  "Sprites/WHauberk.pak",
+                      "hash":  "4a5e3638015c686998400472c16cfd55",
+                      "size":  613784
+                  },
+                  {
+                      "path":  "Sprites/WHCap1.pak",
+                      "hash":  "a3b28cc3e10604c2cbed8e461fc87c7d",
+                      "size":  270788
+                  },
+                  {
+                      "path":  "Sprites/WHCap2.pak",
+                      "hash":  "2bc8b7fea20b9ff1ae80f98ce86a70a8",
+                      "size":  270788
+                  },
+                  {
+                      "path":  "Sprites/WHelm1.pak",
+                      "hash":  "da3a3787bd7faebe25eb8a8d27b64b1b",
+                      "size":  109264
+                  },
+                  {
+                      "path":  "Sprites/WHelm4.pak",
+                      "hash":  "098d5cf622c292538a8ae78dfba1f2d2",
+                      "size":  81008
+                  },
+                  {
+                      "path":  "Sprites/WHHauberk1.pak",
+                      "hash":  "518d24e841477cd061ef550dc34db63c",
+                      "size":  1159284
+                  },
+                  {
+                      "path":  "Sprites/WHHauberk2.pak",
+                      "hash":  "30c7a7672e23310d07ff917538e169de",
+                      "size":  1161216
+                  },
+                  {
+                      "path":  "Sprites/WHHelm1.pak",
+                      "hash":  "d18c3d51f743a316fb15f209f529e739",
+                      "size":  280320
+                  },
+                  {
+                      "path":  "Sprites/WHHelm2.pak",
+                      "hash":  "323f8102d6eeb92a0a950105dcd247a3",
+                      "size":  280320
+                  },
+                  {
+                      "path":  "Sprites/WHLeggings1.pak",
+                      "hash":  "a319943c61aad192fd0128220b37a859",
+                      "size":  2032860
+                  },
+                  {
+                      "path":  "Sprites/WHLeggings2.pak",
+                      "hash":  "6848b2459ac691bb44aa3f6da627539b",
+                      "size":  2032860
+                  },
+                  {
+                      "path":  "Sprites/Whoe.pak",
+                      "hash":  "742a146dca3261cc802a4d252375535c",
+                      "size":  118312
+                  },
+                  {
+                      "path":  "Sprites/WHPMail1.pak",
+                      "hash":  "f5ea837ecc8db8ae28d2c2a2da1758e3",
+                      "size":  1594644
+                  },
+                  {
+                      "path":  "Sprites/WHPMail2.pak",
+                      "hash":  "3ca1cf4cbdbe1d6a01b674c394fcb91b",
+                      "size":  1594644
+                  },
+                  {
+                      "path":  "Sprites/Whr.pak",
+                      "hash":  "47b93a53d8b7d23f044236ae8ab69da5",
+                      "size":  680548
+                  },
+                  {
+                      "path":  "Sprites/WHRobe1.pak",
+                      "hash":  "7815f24f68d64dd7339f5d908d85954f",
+                      "size":  4177584
+                  },
+                  {
+                      "path":  "Sprites/WHRobe2.pak",
+                      "hash":  "d31d49d67b54ac6b2b48c35b3271297d",
+                      "size":  4177584
+                  },
+                  {
+                      "path":  "Sprites/WHTrouser.pak",
+                      "hash":  "928b2d49fb46e74bcf9e377c8bad5819",
+                      "size":  232196
+                  },
+                  {
+                      "path":  "Sprites/William.pak",
+                      "hash":  "29523796c8bdfa53a777fc5c2410982d",
+                      "size":  128708
+                  },
+                  {
+                      "path":  "Sprites/WKlonessAstock.pak",
+                      "hash":  "234854605564d4b5db75b69057cab25c",
+                      "size":  451172
+                  },
+                  {
+                      "path":  "Sprites/WKlonessAxe.pak",
+                      "hash":  "7cc13e1f674f99917a1dceed50d735a5",
+                      "size":  329812
+                  },
+                  {
+                      "path":  "Sprites/WKlonessBlade.pak",
+                      "hash":  "bb79a99ae8963e4e9e9fa0022b3e28a8",
+                      "size":  407584
+                  },
+                  {
+                      "path":  "Sprites/WKlonessWand.pak",
+                      "hash":  "1c16d041df4a0d577e60bde703e5905e",
+                      "size":  612120
+                  },
+                  {
+                      "path":  "Sprites/WLarmor.pak",
+                      "hash":  "a0a55daa9c98dc608d675f60f0550b7c",
+                      "size":  378768
+                  },
+                  {
+                      "path":  "Sprites/WLBoots.pak",
+                      "hash":  "eba2362a584307f006e1e5386e00bb4a",
+                      "size":  1310764
+                  },
+                  {
+                      "path":  "Sprites/WLeggings.pak",
+                      "hash":  "8a05e26c9b0202a43c4fd54c578160e7",
+                      "size":  670608
+                  },
+                  {
+                      "path":  "Sprites/WLightBlade.pak",
+                      "hash":  "825b7df203c3baaee98c933156500583",
+                      "size":  411272
+                  },
+                  {
+                      "path":  "Sprites/Wm.pak",
+                      "hash":  "3b55a6e4a5f58f3b1140f03e31a615e9",
+                      "size":  1453932
+                  },
+                  {
+                      "path":  "Sprites/Wmantle01.pak",
+                      "hash":  "7c6acf7a8952776880794e7444a7d98f",
+                      "size":  943056
+                  },
+                  {
+                      "path":  "Sprites/Wmantle02.pak",
+                      "hash":  "52dd61c3ebf7f01839e8c8b313031887",
+                      "size":  942720
+                  },
+                  {
+                      "path":  "Sprites/Wmantle03.pak",
+                      "hash":  "bace1e3a9897626eed52cd5031a2cef1",
+                      "size":  944700
+                  },
+                  {
+                      "path":  "Sprites/Wmantle04.pak",
+                      "hash":  "6046bd57775f81fb37c294aefa430912",
+                      "size":  4285704
+                  },
+                  {
+                      "path":  "Sprites/Wmantle05.pak",
+                      "hash":  "ea7372cd95908e96b46d0947d79b30eb",
+                      "size":  4285704
+                  },
+                  {
+                      "path":  "Sprites/Wmantle06.pak",
+                      "hash":  "9c222dc7adf2716080a9fb87f4c8566b",
+                      "size":  4285704
+                  },
+                  {
+                      "path":  "Sprites/WPickAxe1.pak",
+                      "hash":  "ee4a5e9895b843ffd724eead028aff85",
+                      "size":  286904
+                  },
+                  {
+                      "path":  "Sprites/WPMail.pak",
+                      "hash":  "1b62a4354d4d62a53b3b3210034dc9f6",
+                      "size":  396688
+                  },
+                  {
+                      "path":  "Sprites/Wpt.pak",
+                      "hash":  "dc91bae7314adc73aea3c1273d9f0492",
+                      "size":  1278704
+                  },
+                  {
+                      "path":  "Sprites/WReMagicWand.pak",
+                      "hash":  "fea31654d809f2ff1ab53e5a9394efac",
+                      "size":  486068
+                  },
+                  {
+                      "path":  "Sprites/Wrobe1.pak",
+                      "hash":  "668d657e46c9eed5cee992ac2bc24a90",
+                      "size":  1169940
+                  },
+                  {
+                      "path":  "Sprites/WSanta.pak",
+                      "hash":  "a76a75e494db55fc25a6ad48f30700f4",
+                      "size":  1178332
+                  },
+                  {
+                      "path":  "Sprites/Wsh.pak",
+                      "hash":  "2376f33a82b506c0ad70f94685439dda",
+                      "size":  1816712
+                  },
+                  {
+                      "path":  "Sprites/WShirt.pak",
+                      "hash":  "849e336bdc2d82765591f067dc1e5e8a",
+                      "size":  463744
+                  },
+                  {
+                      "path":  "Sprites/WShoes.pak",
+                      "hash":  "967cbdc0b284b12b85d8a6aa216ffab5",
+                      "size":  747716
+                  },
+                  {
+                      "path":  "Sprites/WSkirt.pak",
+                      "hash":  "02ac0b11c04f2a876b563eb652aa2ce6",
+                      "size":  715388
+                  },
+                  {
+                      "path":  "Sprites/WSMail.pak",
+                      "hash":  "c2030ce2501aad56ac0eded2be515299",
+                      "size":  434448
+                  },
+                  {
+                      "path":  "Sprites/WStaff1.pak",
+                      "hash":  "e3a3d4cbd6ecf66a01eea970b656e3b4",
+                      "size":  474548
+                  },
+                  {
+                      "path":  "Sprites/WStaff2.pak",
+                      "hash":  "ef04ff7546522fc9a5b5dc6678149fb7",
+                      "size":  810084
+                  },
+                  {
+                      "path":  "Sprites/WStaff3.pak",
+                      "hash":  "13d85f12b3d828e50af316f74e5d2412",
+                      "size":  566860
+                  },
+                  {
+                      "path":  "Sprites/WStormbringer.pak",
+                      "hash":  "e4852085923e70ddf7b1d92a69877677",
+                      "size":  445744
+                  },
+                  {
+                      "path":  "Sprites/Wsw.pak",
+                      "hash":  "6730800e47286216ea3acd5c99f875ba",
+                      "size":  3874636
+                  },
+                  {
+                      "path":  "Sprites/Wsw2.pak",
+                      "hash":  "659b6bf8d164717be89568af4c89cabe",
+                      "size":  410300
+                  },
+                  {
+                      "path":  "Sprites/Wsw3.pak",
+                      "hash":  "3a7028b9889259d4e82a202bae681a13",
+                      "size":  1153084
+                  },
+                  {
+                      "path":  "Sprites/Wswx.pak",
+                      "hash":  "077141a5c7e8e2a26269c4f546433a0d",
+                      "size":  354408
+                  },
+                  {
+                      "path":  "Sprites/WTrouser.pak",
+                      "hash":  "427b4c971682990acc65be89c450da5f",
+                      "size":  532068
+                  },
+                  {
+                      "path":  "Sprites/Ww.pak",
+                      "hash":  "f7441013cbe77239050c7675f24978a9",
+                      "size":  1150064
+                  },
+                  {
+                      "path":  "Sprites/Wyvern.pak",
+                      "hash":  "d27e3df891c395e66a4c74a1a53e7f24",
+                      "size":  19958156
+                  },
+                  {
+                      "path":  "Sprites/Ym.pak",
+                      "hash":  "0c4b47d05d65e70630c00e8fbd2ea639",
+                      "size":  1453932
+                  },
+                  {
+                      "path":  "Sprites/yseffect2.pak",
+                      "hash":  "4dabef6ad2664da87eec7c6961227cf8",
+                      "size":  23847736
+                  },
+                  {
+                      "path":  "Sprites/yseffect3.pak",
+                      "hash":  "00ae2fcaf15cc41e3bd59a9138ec3e3e",
+                      "size":  33172352
+                  },
+                  {
+                      "path":  "Sprites/yseffect4.pak",
+                      "hash":  "a14694dd883c4002c48659ace06b35bd",
+                      "size":  3628898
+                  },
+                  {
+                      "path":  "Sprites/yspro.pak",
+                      "hash":  "d1c3943c1ed15979ccc38c69da7ce1c8",
+                      "size":  38365564
+                  },
+                  {
+                      "path":  "Sprites/Yw.pak",
+                      "hash":  "01e1173a4cefc4bf4881c4a6266ba14a",
+                      "size":  1150064
+                  },
+                  {
+                      "path":  "Sprites/Zom.pak",
+                      "hash":  "79d6e80504861b04694cfc2641ae44de",
+                      "size":  351744
+                  }
+              ]
 }
