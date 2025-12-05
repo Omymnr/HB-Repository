@@ -31178,12 +31178,8 @@ void CGame::UpdateScreen_OnGame()
 		{
 			if (m_pBGM != NULL) m_pBGM->bStop();
 		}
-		if (strlen(G_cCmdLineTokenA) != 0)
-			ChangeGameMode(DEF_GAMEMODE_ONQUIT);
-		else {
-			// Volver al menú principal (Log In, Account create, Exit)
-			ChangeGameMode(DEF_GAMEMODE_ONMAINMENU);
-		}
+		// Siempre volver al menú principal (Log In, Account create, Exit)
+		ChangeGameMode(DEF_GAMEMODE_ONMAINMENU);
 		return;
 	}
 

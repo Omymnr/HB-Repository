@@ -1,9 +1,9 @@
 {
-  "version": "1.0.3",
+  "version": "1.0.4",
   "files": [
     {
       "path": "Game.exe",
-      "hash": "b5c08d45d7453806194a11f29928b65e",
+      "hash": "a1775fc91044df2e829bcab15bf3e5ab",
       "size": 1541632
     },
     {
