@@ -1,14 +1,14 @@
 {
-  "version": "1.0.2",
+  "version": "1.0.3",
   "files": [
     {
       "path": "Game.exe",
-      "hash": "6add54f5ce7e1b8b87d0b17fc5acf249",
-      "size": 1542144
+      "hash": "b5c08d45d7453806194a11f29928b65e",
+      "size": 1541632
     },
     {
       "path": "HelbreathLauncher.exe",
-      "hash": "9fff5e6d84a886458f7995b3f14d65b8",
+      "hash": "00b8769b77f178efaacb612cfa61fc0d",
       "size": 287232
     }
   ]

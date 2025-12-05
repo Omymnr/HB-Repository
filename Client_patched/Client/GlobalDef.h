@@ -19,8 +19,9 @@
 #define NAME_WORLDNAME1			"Apocalypse"
 #define MSG_WORLDNAME1			"Apocalypse Server"
 #define MSG_HOMEPAGE			"http://www.helbreath.com/"
-#define DEF_UPPERVERSION		3
-#define DEF_LOWERVERSION		51
+#define DEF_UPPERVERSION		1
+#define DEF_LOWERVERSION		0
+#define DEF_VERSION_STRING		"1.0.2"  // Version mostrada en pantalla
 #define DEF_SERVER_IP			"127.0.0.1"
 #define DEF_SERVER_PORT			9907
 #define DEF_GSERVER_PORT		9907

@@ -36,7 +36,7 @@
 
 // URL de tu repositorio de GitHub (raw content)
 // Formato: https://raw.githubusercontent.com/USUARIO/REPOSITORIO/RAMA
-#define GITHUB_RAW_URL "https://raw.githubusercontent.com/Omymnr/HB-Repository/main"
+#define GITHUB_RAW_URL "https://raw.githubusercontent.com/Omymnr/HB-Repository/main/updates"
 
 // Versión actual del cliente instalado (se lee de version.txt)
 #define DEFAULT_VERSION "1.0.0"

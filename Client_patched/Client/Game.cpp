@@ -29711,24 +29711,12 @@ void CGame::DrawVersion(BOOL bAuthor)
 {DWORD dwTime = timeGetTime();
  WORD  wR, wG, wB;
 	m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(140, 140, 140), &wR, &wG, &wB);
-	// Ver
-	m_pSprite[DEF_SPRID_INTERFACE_ADDINTERFACE]->PutTransSpriteRGB(14+SCREENX, 463 + SCREENY, 19, wR, wG, wB, dwTime);
-	// Upper Version
-	wsprintf(G_cTxt, "%d", DEF_UPPERVERSION);
-	PutString_SprNum(36 + SCREENX, 463 + SCREENY, G_cTxt, 140, 140, 140);
-	// .
-	m_pSprite[DEF_SPRID_INTERFACE_ADDINTERFACE]->PutTransSpriteRGB(42 + SCREENX, 463 + SCREENY, 18, wR, wG, wB, dwTime);
-	// Lower Version
-	wsprintf(G_cTxt, "%d", DEF_LOWERVERSION);
-	PutString_SprNum(46 + SCREENX, 463 + SCREENY, G_cTxt, 140, 140, 140);
+	// Mostrar versión completa del servidor
+	PutString2(14 + SCREENX, 463 + SCREENY, "v" DEF_VERSION_STRING, 140, 140, 140);
 	if (bAuthor == FALSE) return;
-	// Of course it's easy to remove those lines, but those people deserve some credit
-	// at least for releasing their work....
-	PutString2(14 + SCREENX, 375 + SCREENY, "V3.51 compatibility by OhmyWeed", 220, 200, 200);
-	PutString2(14 + SCREENX, 390 + SCREENY, "V3.51 dialogs by Migui", 220, 200, 200);
-	PutString2(14 + SCREENX, 405 + SCREENY, "Effects, mobs, Apocalypse, Heldenian,", 220, 200, 200);
-	PutString2(14 + SCREENX, 420 + SCREENY, "& finalizing By Widah", 220, 200, 200);
-	PutString2(14 + SCREENX, 435 + SCREENY, "Angels & Crafting By Widah & OhmyWeed", 220, 200, 200);
+	// Credits
+	PutString2(14 + SCREENX, 390 + SCREENY, "Helbreath Apocalypse", 220, 200, 200);
+	PutString2(14 + SCREENX, 405 + SCREENY, "Powered by D3D11 Renderer", 220, 200, 200);
 
 }
 
