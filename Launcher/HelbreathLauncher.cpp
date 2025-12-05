@@ -133,6 +133,10 @@ BOOL g_bCanPlay = FALSE;
 BOOL g_bUpdateInProgress = FALSE;
 HANDLE g_hUpdateThread = NULL;
 
+// Progreso de descarga de archivo actual (en bytes)
+DWORD g_dwDownloadedBytes = 0;
+DWORD g_dwTotalFileSize = 0;
+
 // Estado de ambos servidores
 BOOL g_bOnlineServerStatus = FALSE;    // Servidor Principal
 BOOL g_bTestServerStatus = FALSE;       // Servidor de Pruebas
@@ -370,6 +374,13 @@ BOOL DownloadFile(const char* url, const char* localPath)
         return FALSE;
     }
     
+    // Obtener tamaño del archivo
+    DWORD fileSize = 0;
+    DWORD bufferSize = sizeof(fileSize);
+    HttpQueryInfo(hUrl, HTTP_QUERY_CONTENT_LENGTH | HTTP_QUERY_FLAG_NUMBER, &fileSize, &bufferSize, NULL);
+    g_dwTotalFileSize = fileSize;
+    g_dwDownloadedBytes = 0;
+    
     // Crear directorios si no existen
     char dirPath[MAX_PATH];
     strcpy(dirPath, localPath);
@@ -398,9 +409,28 @@ BOOL DownloadFile(const char* url, const char* localPath)
     
     char buffer[8192];
     DWORD bytesRead;
+    DWORD lastUIUpdate = GetTickCount();
     
     while (InternetReadFile(hUrl, buffer, sizeof(buffer), &bytesRead) && bytesRead > 0) {
         fwrite(buffer, 1, bytesRead, fp);
+        g_dwDownloadedBytes += bytesRead;
+        
+        // Actualizar UI cada 100ms para no sobrecargar
+        DWORD now = GetTickCount();
+        if (now - lastUIUpdate >= 100) {
+            lastUIUpdate = now;
+            if (g_hMainWnd) {
+                // Solo invalidar la zona de la barra de progreso
+                RECT rcProgress = {0, 370, LAUNCHER_WIDTH, 440};
+                InvalidateRect(g_hMainWnd, &rcProgress, FALSE);
+            }
+        }
+    }
+    
+    // Actualización final
+    if (g_hMainWnd) {
+        RECT rcProgress = {0, 370, LAUNCHER_WIDTH, 440};
+        InvalidateRect(g_hMainWnd, &rcProgress, FALSE);
     }
     
     fclose(fp);
@@ -1224,17 +1254,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         if (g_updateState == STATE_DOWNLOADING && g_iProgressTotal > 0) {
             int barY = updateY + 25;
             int barWidth = width - 100;
-            int barHeight = 10;
+            int barHeight = 16;  // Más alta para mejor visibilidad
             int barX = (width - barWidth) / 2;
             
-            // Fondo
+            // Fondo de la barra
             RECT rcBarBG = {barX, barY, barX + barWidth, barY + barHeight};
             HBRUSH hBrushBarBG = CreateSolidBrush(COLOR_PROGRESS_BG);
             FillRect(hdcMem, &rcBarBG, hBrushBarBG);
             DeleteObject(hBrushBarBG);
             
-            // Progreso
-            int progressWidth = (barWidth * g_iProgressCurrent) / g_iProgressTotal;
+            // Calcular progreso basado en bytes del archivo actual
+            int progressWidth = 0;
+            if (g_dwTotalFileSize > 0) {
+                progressWidth = (int)(((__int64)barWidth * g_dwDownloadedBytes) / g_dwTotalFileSize);
+            }
+            
+            // Dibujar barra de progreso
             if (progressWidth > 0) {
                 RECT rcBar = {barX, barY, barX + progressWidth, barY + barHeight};
                 HBRUSH hBrushBar = CreateSolidBrush(COLOR_ACCENT);
@@ -1242,18 +1277,47 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 DeleteObject(hBrushBar);
             }
             
-            // Borde
+            // Borde de la barra
             HPEN hPenBar = CreatePen(PS_SOLID, 1, COLOR_BORDER);
             SelectObject(hdcMem, hPenBar);
             SelectObject(hdcMem, GetStockObject(NULL_BRUSH));
             Rectangle(hdcMem, barX, barY, barX + barWidth, barY + barHeight);
             DeleteObject(hPenBar);
             
-            // Nombre archivo
+            // Texto de progreso (porcentaje y KB/MB)
+            char progressText[128];
+            if (g_dwTotalFileSize > 0) {
+                int percent = (int)(((__int64)100 * g_dwDownloadedBytes) / g_dwTotalFileSize);
+                if (g_dwTotalFileSize >= 1024 * 1024) {
+                    // Mostrar en MB
+                    sprintf(progressText, "%d%% - %.1f / %.1f MB", 
+                        percent,
+                        g_dwDownloadedBytes / (1024.0 * 1024.0),
+                        g_dwTotalFileSize / (1024.0 * 1024.0));
+                } else {
+                    // Mostrar en KB
+                    sprintf(progressText, "%d%% - %d / %d KB", 
+                        percent,
+                        g_dwDownloadedBytes / 1024,
+                        g_dwTotalFileSize / 1024);
+                }
+            } else {
+                sprintf(progressText, "Descargando...");
+            }
+            
+            // Dibujar texto del progreso centrado en la barra
             SelectObject(hdcMem, g_hFontSmall);
+            SetTextColor(hdcMem, RGB(255, 255, 255));
+            SetBkMode(hdcMem, TRANSPARENT);
+            RECT rcProgressText = {barX, barY, barX + barWidth, barY + barHeight};
+            DrawText(hdcMem, progressText, -1, &rcProgressText, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+            
+            // Nombre archivo debajo de la barra
             SetTextColor(hdcMem, RGB(150, 130, 100));
-            RECT rcFile = {20, barY + 15, width - 20, barY + 30};
-            DrawText(hdcMem, g_szCurrentFile, -1, &rcFile, DT_CENTER | DT_SINGLELINE);
+            RECT rcFile = {20, barY + barHeight + 5, width - 20, barY + barHeight + 20};
+            char fileInfo[256];
+            sprintf(fileInfo, "%s (%d/%d)", g_szCurrentFile, g_iProgressCurrent, g_iProgressTotal);
+            DrawText(hdcMem, fileInfo, -1, &rcFile, DT_CENTER | DT_SINGLELINE);
         }
         
         // Versión
