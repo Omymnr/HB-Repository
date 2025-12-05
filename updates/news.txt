@@ -1,0 +1,50 @@
+=== HELBREATH APOCALYPSE ===
+Noticias y Actualizaciones
+
+─────────────────────────────────
+
+[6 Dic 2025] LAUNCHER v1.0.9
+─────────────────────────────────
+• Panel de noticias integrado
+• Noticias desde servidor
+• Barra de instalacion separada
+
+[5 Dic 2025] CLIENTE - 144Hz
+─────────────────────────────────
+• Deteccion automatica de Hz
+• FPS desbloqueados hasta 144
+• Movimiento mas fluido
+
+[5 Dic 2025] CLIENTE - D3D11
+─────────────────────────────────
+• Modo hibrido DirectDraw+D3D11
+• Soporte 1080p, 1440p, 4K
+• Escalado con aspecto 4:3
+
+[5 Dic 2025] CLIENTE - Alt+Tab
+─────────────────────────────────
+• Fix pantalla blanca
+• SwapChain se restaura solo
+• Device Lost manejado
+
+[5 Dic 2025] CLIENTE - video.cfg
+─────────────────────────────────
+• Renderer=2 (D3D11 hibrido)
+• VSync, Fullscreen, ScaleMode
+• Configuracion persistente
+
+[5 Dic 2025] SERVIDOR - Ragnaros
+─────────────────────────────────
+• Fix: Ya no ataca sus minions
+• Demon-Elite mismo bando
+• Mejor experiencia de boss
+
+[5 Dic 2025] LAUNCHER - Estado
+─────────────────────────────────
+• Indicador servidor Online
+• Verde=Online, Rojo=Offline
+• Actualiza cada 5 segundos
+
+─────────────────────────────────
+  Helbreath Apocalypse 2025
+─────────────────────────────────
