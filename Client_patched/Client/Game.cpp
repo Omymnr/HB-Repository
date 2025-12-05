@@ -660,6 +660,10 @@ BOOL CGame::bInit(HWND hWnd, HINSTANCE hInst, char * pCmdLine)
 	CRendererConfig& config = CRendererConfig::GetInstance();
 	config.LoadFromFile("video.cfg");  // Cargar configuración si existe
 	
+	// Cargar volúmenes de sonido y música desde la configuración
+	m_cSoundVolume = config.GetSoundVolume();
+	m_cMusicVolume = config.GetMusicVolume();
+	
 	// Aplicar VSync al DirectDraw (para Renderer=1)
 	m_DDraw.SetVSync(config.IsVsyncEnabled());
 	
@@ -719,8 +723,7 @@ BOOL CGame::bInit(HWND hWnd, HINSTANCE hInst, char * pCmdLine)
 	m_cMenuDirCnt = 0;
 	m_cMenuFrame  = 0;
 
-	m_cSoundVolume = 100;
-	m_cMusicVolume = 100;
+	// m_cSoundVolume y m_cMusicVolume ya se cargaron desde video.cfg
 
 	m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(  70,  70,  80), &m_wWR[1], &m_wWG[1], &m_wWB[1]); // Light-blue
 	m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(  70,  70,  80), &m_wWR[2], &m_wWG[2], &m_wWB[2]); // light-blue
@@ -37182,11 +37185,17 @@ void CGame::DrawDialogBox_SysMenu(short msX, short msY, char cLB)
 		{	m_cSoundVolume = msX - (sX + 127);
 			if( m_cSoundVolume > 100 ) m_cSoundVolume = 100;
 			if( m_cSoundVolume < 0 ) m_cSoundVolume = 0;
+			// Guardar volumen en configuración
+			CRendererConfig::GetInstance().SetSoundVolume(m_cSoundVolume);
+			CRendererConfig::GetInstance().SaveToFile("video.cfg");
 		}
 		if ((msX >= sX + 127) && (msX <= sX + 238) && (msY >= sY +139) && (msY <= sY +155))
 		{	m_cMusicVolume = msX - (sX + 127);
 			if( m_cMusicVolume > 100 ) m_cMusicVolume = 100;
 			if( m_cMusicVolume < 0 ) m_cMusicVolume = 0;
+			// Guardar volumen en configuración
+			CRendererConfig::GetInstance().SetMusicVolume(m_cMusicVolume);
+			CRendererConfig::GetInstance().SaveToFile("video.cfg");
 			if (m_bSoundFlag)
 			{
 				int iVol;

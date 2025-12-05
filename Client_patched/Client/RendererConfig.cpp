@@ -183,6 +183,20 @@ bool CRendererConfig::LoadFromFile(const char* filename)
                 sprintf(msg, "[HB-CONFIG] ScaleMode = %d\\n", m_videoSettings.scaleMode);
                 OutputDebugStringA(msg);
             }
+            else if (strcmp(k, "SoundVolume") == 0) {
+                m_videoSettings.soundVolume = atoi(v);
+                if (m_videoSettings.soundVolume < 0) m_videoSettings.soundVolume = 0;
+                if (m_videoSettings.soundVolume > 100) m_videoSettings.soundVolume = 100;
+                sprintf(msg, "[HB-CONFIG] SoundVolume = %d\\n", m_videoSettings.soundVolume);
+                OutputDebugStringA(msg);
+            }
+            else if (strcmp(k, "MusicVolume") == 0) {
+                m_videoSettings.musicVolume = atoi(v);
+                if (m_videoSettings.musicVolume < 0) m_videoSettings.musicVolume = 0;
+                if (m_videoSettings.musicVolume > 100) m_videoSettings.musicVolume = 100;
+                sprintf(msg, "[HB-CONFIG] MusicVolume = %d\\n", m_videoSettings.musicVolume);
+                OutputDebugStringA(msg);
+            }
             else if (strcmp(k, "MaintainAspect") == 0) {
                 // Reservado para futuro
             }
@@ -214,6 +228,10 @@ bool CRendererConfig::SaveToFile(const char* filename)
     fprintf(fp, "VSync=%d\n", m_videoSettings.vsync ? 1 : 0);
     fprintf(fp, "ScaleMode=%d\n", (int)m_videoSettings.scaleMode);
     fprintf(fp, "Quality=%d\n", m_videoSettings.quality);
+    fprintf(fp, "\n# Audio Configuration\n");
+    fprintf(fp, "# Volume: 0-100\n");
+    fprintf(fp, "SoundVolume=%d\n", m_videoSettings.soundVolume);
+    fprintf(fp, "MusicVolume=%d\n", m_videoSettings.musicVolume);
     
     fclose(fp);
     return true;

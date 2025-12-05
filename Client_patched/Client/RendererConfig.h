@@ -32,6 +32,10 @@ struct VideoSettings {
     int quality;            // Calidad gráfica (0-3)
     ScaleMode scaleMode;    // Modo de escalado
     
+    // Configuración de audio
+    int soundVolume;        // Volumen de efectos de sonido (0-100)
+    int musicVolume;        // Volumen de música (0-100)
+    
     // Valores por defecto - modernos para hardware actual
     VideoSettings() :
         width(1920),         // Full HD por defecto
@@ -40,7 +44,9 @@ struct VideoSettings {
         vsync(true),
         renderer(RENDERER_DIRECT3D11),  // D3D11 por defecto
         quality(2),
-        scaleMode(SCALE_BILINEAR) {}
+        scaleMode(SCALE_BILINEAR),
+        soundVolume(100),
+        musicVolume(100) {}
 };
 
 // Clase para manejar la configuración del renderer
@@ -86,6 +92,13 @@ public:
     
     ScaleMode GetScaleMode() const { return m_videoSettings.scaleMode; }
     void SetScaleMode(ScaleMode mode) { m_videoSettings.scaleMode = mode; }
+    
+    // Audio settings
+    int GetSoundVolume() const { return m_videoSettings.soundVolume; }
+    void SetSoundVolume(int vol) { m_videoSettings.soundVolume = (vol < 0 ? 0 : (vol > 100 ? 100 : vol)); }
+    
+    int GetMusicVolume() const { return m_videoSettings.musicVolume; }
+    void SetMusicVolume(int vol) { m_videoSettings.musicVolume = (vol < 0 ? 0 : (vol > 100 ? 100 : vol)); }
     
     // Detectar capacidades del sistema
     static bool IsD3D11Available();
