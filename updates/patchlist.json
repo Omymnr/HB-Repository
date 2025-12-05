@@ -1,5 +1,5 @@
 ﻿{
-    "version":  "1.0.5",
+    "version":  "1.0.6",
     "files":  [
                   {
                       "path":  "Game.exe",
@@ -8,8 +8,8 @@
                   },
                   {
                       "path":  "HelbreathLauncher.exe",
-                      "hash":  "ee8c96303427858d09f15516030c7101",
-                      "size":  287232
+                      "hash":  "a25b7e9e4c20c87b9d18996e91894249",
+                      "size":  288256
                   },
                   {
                       "path":  "Contents/badword.txt",
@@ -3575,6 +3575,11 @@
                       "path":  "Sprites/Zom.pak",
                       "hash":  "79d6e80504861b04694cfc2641ae44de",
                       "size":  351744
+                  },
+                  {
+                      "path":  "Logo_Server.png",
+                      "hash":  "3decdf5bef9913c4dfe7156a646b60df",
+                      "size":  687116
                   }
               ]
 }

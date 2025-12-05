@@ -155,6 +155,9 @@ std::vector<FileInfo> g_filesToUpdate;
 BOOL g_bLauncherNeedsUpdate = FALSE;
 char g_szNewLauncherHash[33] = "";
 
+// Logo del servidor
+Gdiplus::Image* g_pLogoImage = NULL;
+
 // ===== FUNCIONES DE CONFIGURACIÓN =====
 
 // Declaración adelantada
@@ -639,7 +642,22 @@ BOOL CheckServerOnline(const char* ip, int port)
 // Thread para verificar estado de servidores cada 5 segundos
 DWORD WINAPI ServerCheckThread(LPVOID lpParam)
 {
+    // Verificar inmediatamente al iniciar
+    g_bOnlineServerStatus = CheckServerOnline(ONLINE_SERVER_IP, ONLINE_SERVER_PORT);
+    g_bTestServerStatus = CheckServerOnline(TEST_SERVER_IP, TEST_SERVER_PORT);
+    
+    // Redibujar ventana inmediatamente
+    if (g_hMainWnd) {
+        RECT rcServers = {50, 115, 470, 200};
+        InvalidateRect(g_hMainWnd, &rcServers, FALSE);
+    }
+    
     while (g_bServerCheckRunning) {
+        // Esperar 5 segundos antes de la siguiente verificación
+        for (int i = 0; i < 50 && g_bServerCheckRunning; i++) {
+            Sleep(100);
+        }
+        
         // Verificar servidor principal
         g_bOnlineServerStatus = CheckServerOnline(ONLINE_SERVER_IP, ONLINE_SERVER_PORT);
         
@@ -651,11 +669,6 @@ DWORD WINAPI ServerCheckThread(LPVOID lpParam)
             // Solo invalidar la zona de los radio buttons
             RECT rcServers = {50, 115, 470, 200};
             InvalidateRect(g_hMainWnd, &rcServers, FALSE);
-        }
-        
-        // Esperar 5 segundos antes de la siguiente verificación
-        for (int i = 0; i < 50 && g_bServerCheckRunning; i++) {
-            Sleep(100);
         }
     }
     return 0;
@@ -1153,17 +1166,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         
         SetBkMode(hdcMem, TRANSPARENT);
         
-        // Título
-        SelectObject(hdcMem, g_hFontTitle);
-        SetTextColor(hdcMem, COLOR_ACCENT);
-        RECT rcTitle = {0, 30, width, 70};
-        DrawText(hdcMem, "HELBREATH", -1, &rcTitle, DT_CENTER | DT_SINGLELINE);
-        
-        // Subtítulo
-        SelectObject(hdcMem, g_hFontNormal);
-        SetTextColor(hdcMem, COLOR_TEXT);
-        RECT rcSubtitle = {0, 65, width, 90};
-        DrawText(hdcMem, "~ Launcher ~", -1, &rcSubtitle, DT_CENTER | DT_SINGLELINE);
+        // Logo del servidor (imagen en lugar de texto)
+        if (g_pLogoImage) {
+            Gdiplus::Graphics graphics(hdcMem);
+            // Centrar la imagen
+            int imgWidth = g_pLogoImage->GetWidth();
+            int imgHeight = g_pLogoImage->GetHeight();
+            // Escalar si es necesario (máximo 200px de alto)
+            int maxHeight = 80;
+            int drawHeight = min((int)imgHeight, maxHeight);
+            int drawWidth = (int)(imgWidth * ((float)drawHeight / imgHeight));
+            int imgX = (width - drawWidth) / 2;
+            int imgY = 15;
+            graphics.DrawImage(g_pLogoImage, imgX, imgY, drawWidth, drawHeight);
+        }
         
         // Línea decorativa
         SelectObject(hdcMem, hPenGold);
@@ -1209,6 +1225,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         LineTo(hdcMem, width - 30, optionsLineY);
         
         // Etiqueta opciones
+        SetTextColor(hdcMem, COLOR_ACCENT);  // Asegurar color dorado
         RECT rcOptionsLabel = {0, 205, width, 225};
         DrawText(hdcMem, "- Opciones de Video -", -1, &rcOptionsLabel, DT_CENTER | DT_SINGLELINE);
         
@@ -1534,6 +1551,18 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 {
     g_hInstance = hInstance;
     
+    // Inicializar GDI+ para cargar imágenes PNG
+    Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+    ULONG_PTR gdiplusToken;
+    Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
+    
+    // Cargar imagen del logo
+    g_pLogoImage = Gdiplus::Image::FromFile(L"Logo_Server.png");
+    if (g_pLogoImage && g_pLogoImage->GetLastStatus() != Gdiplus::Ok) {
+        delete g_pLogoImage;
+        g_pLogoImage = NULL;
+    }
+    
     // Inicializar Winsock
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -1590,6 +1619,15 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
+    
+    // Limpiar imagen del logo
+    if (g_pLogoImage) {
+        delete g_pLogoImage;
+        g_pLogoImage = NULL;
+    }
+    
+    // Cerrar GDI+
+    Gdiplus::GdiplusShutdown(gdiplusToken);
     
     // Limpiar Winsock
     WSACleanup();
