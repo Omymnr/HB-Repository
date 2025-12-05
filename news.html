@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helbreath Apocalypse - Noticias y Actualizaciones</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 2px solid #c9a227;
+            margin-bottom: 30px;
+        }
+        
+        header h1 {
+            color: #c9a227;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            color: #888;
+            font-style: italic;
+        }
+        
+        .news-item {
+            background: rgba(255,255,255,0.05);
+            border-left: 4px solid #c9a227;
+            border-radius: 0 8px 8px 0;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .news-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(201, 162, 39, 0.2);
+        }
+        
+        .news-date {
+            color: #c9a227;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .news-title {
+            color: #fff;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+        
+        .news-category {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        
+        .category-server {
+            background: #e74c3c;
+            color: #fff;
+        }
+        
+        .category-client {
+            background: #3498db;
+            color: #fff;
+        }
+        
+        .category-launcher {
+            background: #9b59b6;
+            color: #fff;
+        }
+        
+        .category-general {
+            background: #27ae60;
+            color: #fff;
+        }
+        
+        .news-content {
+            color: #ccc;
+            line-height: 1.6;
+        }
+        
+        .news-content ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+        
+        .news-content li {
+            margin-bottom: 5px;
+        }
+        
+        .news-content code {
+            background: rgba(0,0,0,0.3);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', monospace;
+            color: #e0e0e0;
+        }
+        
+        .highlight {
+            color: #c9a227;
+            font-weight: bold;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 40px;
+            border-top: 1px solid #333;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚔️ Helbreath Apocalypse</h1>
+            <p>Noticias y Actualizaciones del Servidor</p>
+        </header>
+        
+        <main>
+            <!-- ==================== ACTUALIZACIONES ==================== -->
+            
+            <article class="news-item">
+                <div class="news-date">📅 5 de Diciembre, 2025</div>
+                <span class="news-category category-launcher">Launcher</span>
+                <h2 class="news-title">Indicador de Estado del Servidor</h2>
+                <div class="news-content">
+                    <p>Se ha añadido un <span class="highlight">indicador visual de estado</span> en el launcher que muestra si el servidor está online u offline.</p>
+                    <ul>
+                        <li>🟢 <strong>Verde</strong>: Servidor Online - Puedes conectarte</li>
+                        <li>🔴 <strong>Rojo</strong>: Servidor Offline - No disponible</li>
+                        <li>🟡 <strong>Amarillo</strong>: Verificando conexión...</li>
+                    </ul>
+                    <p>El estado se actualiza automáticamente cada <strong>5 segundos</strong>.</p>
+                </div>
+            </article>
+            
+            <article class="news-item">
+                <div class="news-date">📅 5 de Diciembre, 2025</div>
+                <span class="news-category category-server">Servidor</span>
+                <h2 class="news-title">Fix: Ragnaros ya no ataca a sus propios Demon-Elite</h2>
+                <div class="news-content">
+                    <p>Se ha corregido un bug importante donde el boss <span class="highlight">Ragnaros</span> atacaba a los <span class="highlight">Demon-Elite</span> que él mismo invocaba.</p>
+                    <ul>
+                        <li>Los Demon-Elite ahora nacen correctamente en el mismo bando que Ragnaros</li>
+                        <li>Ragnaros y sus minions ahora luchan juntos contra los jugadores</li>
+                        <li>Se corrigió el parámetro <code>cChangeSide</code> en la función de invocación</li>
+                    </ul>
+                    <p><em>Este fix mejora significativamente la experiencia de combate contra Ragnaros.</em></p>
+                </div>
+            </article>
+            
+            <!-- ==================== PLANTILLA PARA NUEVAS NOTICIAS ====================
+            
+            <article class="news-item">
+                <div class="news-date">📅 [FECHA]</div>
+                <span class="news-category category-server">Servidor</span>
+                <h2 class="news-title">[TÍTULO]</h2>
+                <div class="news-content">
+                    <p>[DESCRIPCIÓN]</p>
+                    <ul>
+                        <li>[DETALLE 1]</li>
+                        <li>[DETALLE 2]</li>
+                    </ul>
+                </div>
+            </article>
+            
+            Categorías disponibles:
+            - category-server (rojo) - Cambios en el servidor
+            - category-client (azul) - Cambios en el cliente
+            - category-launcher (morado) - Cambios en el launcher
+            - category-general (verde) - Anuncios generales
+            
+            ========================================================================== -->
+            
+        </main>
+        
+        <footer>
+            <p>Helbreath Apocalypse © 2025 - Todos los derechos reservados</p>
+        </footer>
+    </div>
+</body>
+</html>
