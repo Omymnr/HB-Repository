@@ -148,6 +148,88 @@
             
             <article class="news-item">
                 <div class="news-date">📅 5 de Diciembre, 2025</div>
+                <span class="news-category category-client">Cliente</span>
+                <h2 class="news-title">🎮 Soporte para Monitores de 144Hz</h2>
+                <div class="news-content">
+                    <p>El cliente ahora detecta automáticamente la <span class="highlight">frecuencia de refresco de tu monitor</span> y ajusta el renderizado para aprovecharla al máximo.</p>
+                    <ul>
+                        <li>🖥️ Detección automática de la frecuencia del monitor (60Hz, 144Hz, 165Hz, etc.)</li>
+                        <li>⚡ El SwapChain de D3D11 ahora usa la frecuencia nativa detectada</li>
+                        <li>🎯 FPS desbloqueados hasta 144 FPS (antes limitado a 60)</li>
+                        <li>✨ Movimiento más fluido y responsivo en monitores de alta frecuencia</li>
+                    </ul>
+                    <p><em>Configura <code>VSync=1</code> en video.cfg para sincronizar con tu monitor y evitar tearing.</em></p>
+                </div>
+            </article>
+            
+            <article class="news-item">
+                <div class="news-date">📅 5 de Diciembre, 2025</div>
+                <span class="news-category category-client">Cliente</span>
+                <h2 class="news-title">🔧 Sistema de Renderizado D3D11 Híbrido</h2>
+                <div class="news-content">
+                    <p>Se ha implementado un nuevo <span class="highlight">sistema de renderizado híbrido</span> que combina DirectDraw con Direct3D 11.</p>
+                    <ul>
+                        <li>🎨 <strong>Modo Híbrido (Renderer=2)</strong>: DirectDraw dibuja los sprites, D3D11 escala y presenta</li>
+                        <li>📐 Soporte para resoluciones modernas: 1080p, 1440p, 4K</li>
+                        <li>🔲 Escalado inteligente con relación de aspecto 4:3 mantenida</li>
+                        <li>🖼️ Tres modos de escalado: Point (pixelado), Bilinear (suave), Integer (perfecto)</li>
+                    </ul>
+                    <p>Configurable mediante <code>video.cfg</code> en la carpeta del juego.</p>
+                </div>
+            </article>
+            
+            <article class="news-item">
+                <div class="news-date">📅 5 de Diciembre, 2025</div>
+                <span class="news-category category-client">Cliente</span>
+                <h2 class="news-title">🔄 Corrección de Alt+Tab en Pantalla Completa</h2>
+                <div class="news-content">
+                    <p>Se ha corregido el comportamiento de <span class="highlight">Alt+Tab</span> cuando el juego está en pantalla completa con D3D11.</p>
+                    <ul>
+                        <li>✅ Alt+Tab ya no causa pantalla blanca o crash</li>
+                        <li>🔄 El SwapChain se restaura automáticamente al volver al juego</li>
+                        <li>💾 El RenderTarget se recrea correctamente después de minimizar</li>
+                        <li>🛡️ Manejo robusto de estados de dispositivo perdido (Device Lost)</li>
+                    </ul>
+                    <p><em>Ahora puedes cambiar de ventana sin problemas durante el juego.</em></p>
+                </div>
+            </article>
+            
+            <article class="news-item">
+                <div class="news-date">📅 5 de Diciembre, 2025</div>
+                <span class="news-category category-client">Cliente</span>
+                <h2 class="news-title">⚙️ Archivo de Configuración de Video (video.cfg)</h2>
+                <div class="news-content">
+                    <p>Nuevo archivo de configuración <span class="highlight">video.cfg</span> para personalizar el renderizado:</p>
+                    <ul>
+                        <li><code>Renderer=2</code> - Modo híbrido D3D11 (recomendado)</li>
+                        <li><code>ScreenWidth/ScreenHeight</code> - Resolución de salida (1920x1080, etc.)</li>
+                        <li><code>VSync=1</code> - Sincronización vertical (evita tearing)</li>
+                        <li><code>Fullscreen=1</code> - Pantalla completa</li>
+                        <li><code>ScaleMode=1</code> - Modo de escalado (0=Point, 1=Bilinear, 2=Integer)</li>
+                        <li><code>MaintainAspect=1</code> - Mantener proporción 4:3 con barras negras</li>
+                    </ul>
+                    <p><em>El archivo incluye documentación detallada de cada opción.</em></p>
+                </div>
+            </article>
+            
+            <article class="news-item">
+                <div class="news-date">📅 5 de Diciembre, 2025</div>
+                <span class="news-category category-client">Cliente</span>
+                <h2 class="news-title">🛠️ Sistema de Logging para Diagnóstico</h2>
+                <div class="news-content">
+                    <p>Se ha implementado un <span class="highlight">sistema de logging extensivo</span> para facilitar la depuración de problemas gráficos.</p>
+                    <ul>
+                        <li>📋 Logs detallados visibles con DebugView (Sysinternals)</li>
+                        <li>🔍 Prefijos identificativos: <code>[HB-INIT]</code>, <code>[HB-FLIP]</code>, <code>[HB-D3D11]</code></li>
+                        <li>⚠️ Detección y reporte de errores de Direct3D 11</li>
+                        <li>📊 Información de estado del dispositivo gráfico</li>
+                    </ul>
+                    <p><em>Útil para reportar bugs y diagnosticar problemas de rendimiento.</em></p>
+                </div>
+            </article>
+            
+            <article class="news-item">
+                <div class="news-date">📅 5 de Diciembre, 2025</div>
                 <span class="news-category category-launcher">Launcher</span>
                 <h2 class="news-title">Panel de Noticias Integrado</h2>
                 <div class="news-content">

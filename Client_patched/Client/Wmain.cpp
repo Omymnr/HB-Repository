@@ -23,6 +23,7 @@
 #include "winmain.h"
 #include "Game.h"
 #include "GlobalDef.h"
+#include "RendererBridge.h"
 
 #pragma comment(lib, "comctl32.lib")
 #pragma comment(lib, "gdiplus.lib")
@@ -940,16 +941,45 @@ LRESULT CALLBACK WndProc(HWND hWnd,UINT message,WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_ACTIVATEAPP:
+		{
+			char dbgMsg[256];
+			sprintf(dbgMsg, "[HB-WMAIN] WM_ACTIVATEAPP wParam=%d (0=deactivate, 1=activate)\\n", (int)wParam);
+			OutputDebugStringA(dbgMsg);
+		}
+		
 		if( wParam == 0 ) 
-		{	G_pGame->m_bIsProgramActive = FALSE;
+		{	// Aplicación desactivada (Alt+Tab fuera)
+			OutputDebugStringA("[HB-WMAIN] === APP DESACTIVADA (Alt+Tab out) ===\\n");
+			G_pGame->m_bIsProgramActive = FALSE;
 			G_pGame->m_DInput.SetAcquire(FALSE);
+			
+			// Notificar al renderer D3D11 que perdimos el foco
+			if (CRendererBridge::GetInstance().IsUsingD3D11()) {
+				OutputDebugStringA("[HB-WMAIN] Llamando OnAppActivate(FALSE)...\\n");
+				CRendererBridge::GetInstance().OnAppActivate(FALSE);
+				OutputDebugStringA("[HB-WMAIN] OnAppActivate(FALSE) completado\\n");
+			} else {
+				OutputDebugStringA("[HB-WMAIN] No usando D3D11, no se llama OnAppActivate\\n");
+			}
 		}else 
-		{	G_pGame->m_bIsProgramActive = TRUE;
+		{	// Aplicación activada (volviendo al juego)
+			OutputDebugStringA("[HB-WMAIN] === APP ACTIVADA (volviendo) ===\\n");
+			G_pGame->m_bIsProgramActive = TRUE;
 			G_pGame->m_DInput.SetAcquire(TRUE);
 			G_pGame->m_bCtrlPressed = FALSE;
-			
 			G_pGame->m_bIsRedrawPDBGS = TRUE;
-			G_pGame->m_DDraw.ChangeDisplayMode(G_hWnd);
+			
+			// Notificar al renderer D3D11 que recuperamos el foco
+			if (CRendererBridge::GetInstance().IsUsingD3D11()) {
+				OutputDebugStringA("[HB-WMAIN] Llamando OnAppActivate(TRUE)...\\n");
+				CRendererBridge::GetInstance().OnAppActivate(TRUE);
+				OutputDebugStringA("[HB-WMAIN] OnAppActivate(TRUE) completado\\n");
+			} else {
+				// Solo DirectDraw necesita ChangeDisplayMode
+				OutputDebugStringA("[HB-WMAIN] Usando DirectDraw, llamando ChangeDisplayMode...\\n");
+				G_pGame->m_DDraw.ChangeDisplayMode(G_hWnd);
+				OutputDebugStringA("[HB-WMAIN] ChangeDisplayMode completado\\n");
+			}
 
 			if (G_pGame->bCheckImportantFile() == FALSE) 
 			{	MessageBox(G_pGame->m_hWnd, "File checksum error! Get Update again please!", "ERROR1", MB_ICONEXCLAMATION | MB_OK);

@@ -81,6 +81,9 @@ public:
     // Resize handler
     void OnResize(int width, int height);
     
+    // Alt+Tab / Focus handling
+    void OnAppActivate(BOOL bActive);
+    
 private:
     CRendererBridge();
     ~CRendererBridge();

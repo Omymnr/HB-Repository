@@ -104,6 +104,8 @@ Direct3D11Renderer::Direct3D11Renderer()
     , m_bFullscreen(FALSE)
     , m_bInitialized(FALSE)
     , m_bVSync(TRUE)
+    , m_bDeviceLost(FALSE)
+    , m_bMinimized(FALSE)
     , m_pCurrentTexture(NULL)
     , m_CurrentBlendMode(BlendMode::Alpha)
     , m_pHybridTexture(NULL)
@@ -284,6 +286,41 @@ BOOL Direct3D11Renderer::CreateSwapChain()
     IDXGIFactory* dxgiFactory = NULL;
     dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&dxgiFactory);
     
+    // Detectar refresh rate del monitor
+    UINT refreshRateNum = 60;
+    UINT refreshRateDen = 1;
+    
+    // Intentar obtener el refresh rate real del monitor
+    IDXGIOutput* dxgiOutput = NULL;
+    if (SUCCEEDED(dxgiAdapter->EnumOutputs(0, &dxgiOutput))) {
+        UINT numModes = 0;
+        dxgiOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, 0, &numModes, NULL);
+        
+        if (numModes > 0) {
+            DXGI_MODE_DESC* modes = new DXGI_MODE_DESC[numModes];
+            dxgiOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, 0, &numModes, modes);
+            
+            // Buscar el modo que coincida con nuestra resolución y tenga el mayor refresh rate
+            UINT bestRefreshRate = 60;
+            for (UINT i = 0; i < numModes; i++) {
+                if (modes[i].Width == (UINT)m_iWidth && modes[i].Height == (UINT)m_iHeight) {
+                    UINT rate = modes[i].RefreshRate.Numerator / modes[i].RefreshRate.Denominator;
+                    if (rate > bestRefreshRate) {
+                        bestRefreshRate = rate;
+                        refreshRateNum = modes[i].RefreshRate.Numerator;
+                        refreshRateDen = modes[i].RefreshRate.Denominator;
+                    }
+                }
+            }
+            delete[] modes;
+            
+            char msg[128];
+            sprintf(msg, "D3D11: Detected refresh rate: %d Hz\n", refreshRateNum / refreshRateDen);
+            OutputDebugStringA(msg);
+        }
+        dxgiOutput->Release();
+    }
+    
     // Describir swap chain
     DXGI_SWAP_CHAIN_DESC scd;
     ZeroMemory(&scd, sizeof(scd));
@@ -291,8 +328,8 @@ BOOL Direct3D11Renderer::CreateSwapChain()
     scd.BufferDesc.Width = m_iWidth;
     scd.BufferDesc.Height = m_iHeight;
     scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    scd.BufferDesc.RefreshRate.Numerator = 60;
-    scd.BufferDesc.RefreshRate.Denominator = 1;
+    scd.BufferDesc.RefreshRate.Numerator = refreshRateNum;
+    scd.BufferDesc.RefreshRate.Denominator = refreshRateDen;
     scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     scd.OutputWindow = m_hWnd;
     scd.SampleDesc.Count = 1;
@@ -762,11 +799,29 @@ HRESULT Direct3D11Renderer::EndFrame()
 {
     if (!m_bInitialized) return E_FAIL;
     
+    // Si el dispositivo está perdido o minimizado, no presentar
+    if (m_bDeviceLost || m_bMinimized) {
+        return S_OK;  // Retornar OK para evitar cascada de errores
+    }
+    
     // Flush cualquier sprite pendiente
     FlushBatch();
     
     // Presentar
     HRESULT hr = m_pSwapChain->Present(m_bVSync ? 1 : 0, 0);
+    
+    // Manejar device lost (DXGI_ERROR_DEVICE_REMOVED o DXGI_ERROR_DEVICE_RESET)
+    if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET) {
+        OutputDebugStringA("D3D11: Device lost en EndFrame - marcando para recuperación\n");
+        m_bDeviceLost = TRUE;
+        return S_OK;  // No propagar el error
+    }
+    
+    // DXGI_STATUS_OCCLUDED significa que la ventana está oculta (alt+tab en fullscreen)
+    if (hr == DXGI_STATUS_OCCLUDED) {
+        m_bMinimized = TRUE;
+        return S_OK;
+    }
     
     return hr;
 }
@@ -1473,27 +1528,61 @@ void Direct3D11Renderer::UpdateHybridBackBuffer(WORD* pPixels, int pitch, int wi
 
 void Direct3D11Renderer::PresentDirectDrawBackBuffer(void* pBackBufferData, int pitch, int width, int height, WORD colorKey)
 {
+    static int presentCount = 0;
+    static bool bFirstLog = true;
+    presentCount++;
+    bool bLogThis = (presentCount % 300 == 0);  // Log cada ~5 segundos
+    
     if (!m_bInitialized) {
-        OutputDebugStringA("PresentDirectDrawBackBuffer: No inicializado\n");
+        OutputDebugStringA("[HB-D3D11] PresentDDBackBuffer: No inicializado\\n");
+        return;
+    }
+    
+    // Si el dispositivo está perdido o minimizado, no hacer nada
+    if (m_bDeviceLost) {
+        if (bLogThis) OutputDebugStringA("[HB-D3D11] PresentDDBackBuffer: Device lost - saltando\\n");
+        return;
+    }
+    if (m_bMinimized) {
+        if (bLogThis) OutputDebugStringA("[HB-D3D11] PresentDDBackBuffer: Minimizado - saltando\\n");
         return;
     }
     
     if (!pBackBufferData) {
-        OutputDebugStringA("PresentDirectDrawBackBuffer: pBackBufferData es NULL\n");
+        OutputDebugStringA("[HB-D3D11] PresentDDBackBuffer: pBackBufferData es NULL\\n");
         return;
+    }
+    
+    if (bFirstLog) {
+        char msg[256];
+        sprintf(msg, "[HB-D3D11] PresentDDBackBuffer: Primera llamada, %dx%d, pitch=%d\\n", width, height, pitch);
+        OutputDebugStringA(msg);
+        bFirstLog = false;
     }
     
     // Crear textura híbrida si no existe
     if (!m_pHybridTexture) {
-        OutputDebugStringA("PresentDirectDrawBackBuffer: Creando textura hibrida...\n");
+        OutputDebugStringA("[HB-D3D11] PresentDDBackBuffer: Creando textura hibrida...\\n");
         if (!CreateHybridBackBuffer(width, height)) {
-            OutputDebugStringA("PresentDirectDrawBackBuffer: Fallo al crear textura\n");
+            OutputDebugStringA("[HB-D3D11] PresentDDBackBuffer: FALLO al crear textura\\n");
             return;
         }
+        OutputDebugStringA("[HB-D3D11] PresentDDBackBuffer: Textura hibrida creada OK\\n");
     }
     
     // Actualizar textura con datos del backbuffer de DirectDraw
     UpdateHybridBackBuffer((WORD*)pBackBufferData, pitch, width, height, colorKey);
+    
+    // Verificar que tenemos render target válido
+    if (!m_pRenderTargetView) {
+        OutputDebugStringA("[HB-D3D11] PresentDDBackBuffer: ERROR - RenderTargetView es NULL!\\n");
+        // Intentar recrearlo
+        if (!CreateRenderTarget()) {
+            OutputDebugStringA("[HB-D3D11] PresentDDBackBuffer: ERROR - No se pudo recrear RenderTarget\\n");
+            return;
+        }
+        OutputDebugStringA("[HB-D3D11] PresentDDBackBuffer: RenderTarget recreado OK\\n");
+    }
     
     // Limpiar el render target (negro)
     float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -1559,9 +1648,162 @@ void Direct3D11Renderer::PresentDirectDrawBackBuffer(void* pBackBufferData, int 
     
     // Presentar
     HRESULT hr = m_pSwapChain->Present(m_bVSync ? 1 : 0, 0);
+    
+    // Manejar device lost
+    if (hr == DXGI_ERROR_DEVICE_REMOVED) {
+        OutputDebugStringA("[HB-D3D11] Present: DXGI_ERROR_DEVICE_REMOVED - marcando device lost\\n");
+        if (m_pDevice) {
+            HRESULT reason = m_pDevice->GetDeviceRemovedReason();
+            char reasonMsg[128];
+            sprintf(reasonMsg, "[HB-D3D11] DeviceRemovedReason: 0x%08X\\n", reason);
+            OutputDebugStringA(reasonMsg);
+        }
+        m_bDeviceLost = TRUE;
+        return;
+    }
+    
+    if (hr == DXGI_ERROR_DEVICE_RESET) {
+        OutputDebugStringA("[HB-D3D11] Present: DXGI_ERROR_DEVICE_RESET - marcando device lost\\n");
+        m_bDeviceLost = TRUE;
+        return;
+    }
+    
+    // DXGI_STATUS_OCCLUDED significa que la ventana está oculta (alt+tab en fullscreen)
+    if (hr == DXGI_STATUS_OCCLUDED) {
+        OutputDebugStringA("[HB-D3D11] Present: DXGI_STATUS_OCCLUDED - ventana oculta\\n");
+        m_bMinimized = TRUE;
+        return;
+    }
+    
     if (FAILED(hr)) {
         char msg[128];
-        sprintf(msg, "PresentDirectDrawBackBuffer: Present fallo 0x%08X\n", hr);
+        sprintf(msg, "[HB-D3D11] Present FALLO: 0x%08X\\n", hr);
         OutputDebugStringA(msg);
     }
+}
+
+// ==================== DEVICE LOST HANDLING (Alt+Tab) ====================
+
+void Direct3D11Renderer::OnAppActivate(BOOL bActive)
+{
+    char msg[256];
+    sprintf(msg, "[HB-D3D11] OnAppActivate(%s) - DeviceLost=%d, Minimized=%d, Fullscreen=%d\\n", 
+            bActive ? "TRUE" : "FALSE", m_bDeviceLost, m_bMinimized, m_bFullscreen);
+    OutputDebugStringA(msg);
+    
+    if (bActive) {
+        OutputDebugStringA("[HB-D3D11] === APLICACION ACTIVADA ===\\n");
+        m_bMinimized = FALSE;
+        
+        // Si el dispositivo estaba perdido, intentar recuperar
+        if (m_bDeviceLost) {
+            OutputDebugStringA("[HB-D3D11] Device estaba perdido, intentando recuperar...\\n");
+            if (RecoverDevice()) {
+                OutputDebugStringA("[HB-D3D11] Device recuperado exitosamente!\\n");
+            } else {
+                OutputDebugStringA("[HB-D3D11] ERROR: No se pudo recuperar el device\\n");
+            }
+        }
+        
+        // CRÍTICO: En fullscreen, después de Alt+Tab necesitamos restaurar el SwapChain
+        if (m_bFullscreen && m_pSwapChain) {
+            OutputDebugStringA("[HB-D3D11] Fullscreen - restaurando SwapChain buffers...\\n");
+            
+            // Liberar el render target actual
+            if (m_pRenderTargetView) {
+                m_pContext->OMSetRenderTargets(0, NULL, NULL);
+                m_pRenderTargetView->Release();
+                m_pRenderTargetView = NULL;
+            }
+            
+            // Resize buffers para restaurar el SwapChain
+            HRESULT hr = m_pSwapChain->ResizeBuffers(0, m_iWidth, m_iHeight, DXGI_FORMAT_UNKNOWN, 0);
+            sprintf(msg, "[HB-D3D11] ResizeBuffers result: 0x%08X\\n", hr);
+            OutputDebugStringA(msg);
+            
+            if (SUCCEEDED(hr)) {
+                // Recrear el render target
+                if (CreateRenderTarget()) {
+                    OutputDebugStringA("[HB-D3D11] RenderTarget recreado exitosamente!\\n");
+                } else {
+                    OutputDebugStringA("[HB-D3D11] ERROR: Fallo al recrear RenderTarget\\n");
+                }
+            } else {
+                sprintf(msg, "[HB-D3D11] ERROR: ResizeBuffers fallo con 0x%08X\\n", hr);
+                OutputDebugStringA(msg);
+            }
+        }
+        
+        sprintf(msg, "[HB-D3D11] Estado final: DeviceLost=%d, Minimized=%d\\n", m_bDeviceLost, m_bMinimized);
+        OutputDebugStringA(msg);
+    } else {
+        OutputDebugStringA("[HB-D3D11] === APLICACION DESACTIVADA ===\\n");
+        // En fullscreen, marcar como minimizado
+        if (m_bFullscreen) {
+            m_bMinimized = TRUE;
+            OutputDebugStringA("[HB-D3D11] Fullscreen - marcado como minimizado\\n");
+        }
+    }
+}
+
+BOOL Direct3D11Renderer::RecoverDevice()
+{
+    char msg[256];
+    
+    if (!m_bDeviceLost) {
+        OutputDebugStringA("[HB-D3D11] RecoverDevice: Device NO estaba perdido\\n");
+        return TRUE;
+    }
+    
+    OutputDebugStringA("[HB-D3D11] RecoverDevice: Intentando recuperar dispositivo...\\n");
+    
+    // Verificar si el device está realmente perdido
+    if (m_pDevice) {
+        HRESULT reason = m_pDevice->GetDeviceRemovedReason();
+        sprintf(msg, "[HB-D3D11] GetDeviceRemovedReason: 0x%08X\\n", reason);
+        OutputDebugStringA(msg);
+        
+        if (reason != S_OK) {
+            // El dispositivo fue removido - esto es serio
+            OutputDebugStringA("[HB-D3D11] WARNING: Device fue removido por el sistema\\n");
+        }
+    } else {
+        OutputDebugStringA("[HB-D3D11] ERROR: m_pDevice es NULL!\\n");
+        return FALSE;
+    }
+    
+    // Intentar un Present con DXGI_PRESENT_TEST para ver si el dispositivo está disponible
+    if (m_pSwapChain) {
+        OutputDebugStringA("[HB-D3D11] Probando SwapChain con DXGI_PRESENT_TEST...\\n");
+        HRESULT hr = m_pSwapChain->Present(0, DXGI_PRESENT_TEST);
+        
+        sprintf(msg, "[HB-D3D11] Present(TEST) result: 0x%08X\\n", hr);
+        OutputDebugStringA(msg);
+        
+        if (hr == S_OK) {
+            OutputDebugStringA("[HB-D3D11] SwapChain OK - dispositivo recuperado!\\n");
+            m_bDeviceLost = FALSE;
+            return TRUE;
+        } else if (hr == DXGI_STATUS_OCCLUDED) {
+            OutputDebugStringA("[HB-D3D11] SwapChain OCCLUDED (ventana oculta) - esperando...\\n");
+            // No marcar como perdido, solo oculto
+            m_bDeviceLost = FALSE;
+            m_bMinimized = TRUE;
+            return TRUE;
+        } else if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET) {
+            OutputDebugStringA("[HB-D3D11] Device aun perdido - necesita reinicializacion\\n");
+            return FALSE;
+        } else {
+            sprintf(msg, "[HB-D3D11] Present(TEST) resultado inesperado: 0x%08X\\n", hr);
+            OutputDebugStringA(msg);
+        }
+    } else {
+        OutputDebugStringA("[HB-D3D11] ERROR: m_pSwapChain es NULL!\\n");
+        return FALSE;
+    }
+    
+    // Si llegamos aquí, asumir que está recuperado
+    OutputDebugStringA("[HB-D3D11] Asumiendo dispositivo recuperado\\n");
+    m_bDeviceLost = FALSE;
+    return TRUE;
 }

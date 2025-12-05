@@ -18,11 +18,21 @@ const char* CRendererConfig::REG_VSYNC = "VSync";
 
 bool CRendererConfig::LoadFromFile(const char* filename)
 {
+    char msg[256];
+    sprintf(msg, "[HB-CONFIG] LoadFromFile('%s')\\n", filename);
+    OutputDebugStringA(msg);
+    
     FILE* fp = fopen(filename, "r");
-    if (!fp) return false;
+    if (!fp) {
+        OutputDebugStringA("[HB-CONFIG] ERROR: No se pudo abrir el archivo\\n");
+        return false;
+    }
     
     char line[256];
     while (fgets(line, sizeof(line), fp)) {
+        // Ignorar comentarios y líneas vacías
+        if (line[0] == '#' || line[0] == '\n' || line[0] == '\r') continue;
+        
         char key[64], value[64];
         if (sscanf(line, "%63[^=]=%63s", key, value) == 2) {
             // Limpiar espacios
@@ -31,28 +41,57 @@ bool CRendererConfig::LoadFromFile(const char* filename)
             char* v = value;
             while (*v == ' ') v++;
             
+            // Eliminar espacios finales del key
+            char* end = k + strlen(k) - 1;
+            while (end > k && (*end == ' ' || *end == '\t')) {
+                *end = '\0';
+                end--;
+            }
+            
             if (strcmp(k, "Renderer") == 0) {
                 m_videoSettings.renderer = (RendererType)atoi(v);
+                sprintf(msg, "[HB-CONFIG] Renderer = %d\\n", m_videoSettings.renderer);
+                OutputDebugStringA(msg);
             }
-            else if (strcmp(k, "Width") == 0) {
+            else if (strcmp(k, "ScreenWidth") == 0 || strcmp(k, "Width") == 0) {
                 m_videoSettings.width = atoi(v);
+                sprintf(msg, "[HB-CONFIG] Width = %d\\n", m_videoSettings.width);
+                OutputDebugStringA(msg);
             }
-            else if (strcmp(k, "Height") == 0) {
+            else if (strcmp(k, "ScreenHeight") == 0 || strcmp(k, "Height") == 0) {
                 m_videoSettings.height = atoi(v);
+                sprintf(msg, "[HB-CONFIG] Height = %d\\n", m_videoSettings.height);
+                OutputDebugStringA(msg);
             }
             else if (strcmp(k, "Fullscreen") == 0) {
                 m_videoSettings.fullscreen = (atoi(v) != 0);
+                sprintf(msg, "[HB-CONFIG] Fullscreen = %d\\n", m_videoSettings.fullscreen);
+                OutputDebugStringA(msg);
             }
             else if (strcmp(k, "VSync") == 0) {
                 m_videoSettings.vsync = (atoi(v) != 0);
+                sprintf(msg, "[HB-CONFIG] VSync = %d\\n", m_videoSettings.vsync);
+                OutputDebugStringA(msg);
             }
             else if (strcmp(k, "Quality") == 0) {
                 m_videoSettings.quality = atoi(v);
+            }
+            else if (strcmp(k, "ScaleMode") == 0) {
+                // Reservado para futuro
+            }
+            else if (strcmp(k, "MaintainAspect") == 0) {
+                // Reservado para futuro
             }
         }
     }
     
     fclose(fp);
+    
+    sprintf(msg, "[HB-CONFIG] Resultado final: %dx%d, Renderer=%d, Fullscreen=%d, VSync=%d\\n",
+            m_videoSettings.width, m_videoSettings.height, 
+            m_videoSettings.renderer, m_videoSettings.fullscreen, m_videoSettings.vsync);
+    OutputDebugStringA(msg);
+    
     return true;
 }
 

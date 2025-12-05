@@ -660,6 +660,9 @@ BOOL CGame::bInit(HWND hWnd, HINSTANCE hInst, char * pCmdLine)
 	CRendererConfig& config = CRendererConfig::GetInstance();
 	config.LoadFromFile("video.cfg");  // Cargar configuración si existe
 	
+	// Aplicar VSync al DirectDraw (para Renderer=1)
+	m_DDraw.SetVSync(config.IsVsyncEnabled());
+	
 	if (CRendererBridge::GetInstance().Initialize(m_hWnd, &m_DDraw)) {
 		if (CRendererBridge::GetInstance().IsUsingD3D11()) {
 			OutputDebugStringA("Helbreath: Usando Direct3D 11 Renderer\n");
@@ -25252,7 +25255,10 @@ void CGame::OnSysKeyUp(WPARAM wParam)
 		m_bEnterPressed = FALSE;
 		if( m_bToggleScreen == TRUE )
 		{	m_bIsRedrawPDBGS = TRUE;
-			m_DDraw.ChangeDisplayMode(G_hWnd);
+			// Solo cambiar modo DirectDraw si no usamos D3D11
+			if (!CRendererBridge::GetInstance().IsUsingD3D11()) {
+				m_DDraw.ChangeDisplayMode(G_hWnd);
+			}
 		}
 		break;
 	case VK_ESCAPE:

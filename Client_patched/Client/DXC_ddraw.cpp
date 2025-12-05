@@ -30,6 +30,7 @@ DXC_ddraw::DXC_ddraw()
 	m_lpBackB4flip	= NULL;
 	m_cPixelFormat	= 0;
 	m_init = FALSE;
+	m_bVSync = TRUE;  // VSync activado por defecto
 #ifdef DEF_WINDOWED_MODE	
 	m_bFullMode		= FALSE;
 #else
@@ -190,10 +191,10 @@ HRESULT DXC_ddraw::iFlip()
 			if (ddVal != DDERR_SURFACELOST) m_lpDD4->FlipToGDISurface();
 		}
 #else
-
-		ddVal = m_lpBackB4flip->BltFast(0, 0, m_lpBackB4, &m_rcFlipping, DDBLTFAST_NOCOLORKEY); // | DDBLTFAST_WAIT);
-		ddVal = m_lpFrontB4->Flip(m_lpBackB4flip, DDFLIP_WAIT);
-
+		ddVal = m_lpBackB4flip->BltFast(0, 0, m_lpBackB4, &m_rcFlipping, DDBLTFAST_NOCOLORKEY);
+		// Usar DDFLIP_NOVSYNC si VSync está desactivado (permite más de 60fps)
+		DWORD dwFlipFlags = m_bVSync ? DDFLIP_WAIT : (DDFLIP_WAIT | DDFLIP_NOVSYNC);
+		ddVal = m_lpFrontB4->Flip(m_lpBackB4flip, dwFlipFlags);
 #endif
 	}
 	else

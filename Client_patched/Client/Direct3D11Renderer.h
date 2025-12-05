@@ -110,6 +110,8 @@ private:
     BOOL m_bFullscreen;
     BOOL m_bInitialized;
     BOOL m_bVSync;
+    BOOL m_bDeviceLost;     // Flag para Alt+Tab device lost
+    BOOL m_bMinimized;      // Flag para ventana minimizada
     RECT m_rcClip;
     D3D11_VIEWPORT m_Viewport;
     
@@ -195,6 +197,11 @@ public:
     // ===== VSYNC =====
     void SetVSync(BOOL enabled) override { m_bVSync = enabled; }
     BOOL GetVSync() const override { return m_bVSync; }
+    
+    // ===== DEVICE LOST HANDLING (Alt+Tab) =====
+    void OnAppActivate(BOOL bActive);   // Llamar cuando la app gana/pierde foco
+    BOOL IsDeviceLost() const { return m_bDeviceLost; }
+    BOOL RecoverDevice();               // Intenta recuperar el dispositivo
     
     // ===== WINDOW RESIZE =====
     void OnResize(int width, int height);

@@ -66,7 +66,10 @@ public:
 	long    m_lFadeG[64][64],  m_lFadeRB[64][64];
 
 	BOOL m_bFullMode;
+	BOOL m_bVSync;  // Control de VSync
 	void SetFullMode(BOOL bFullMode);
+	void SetVSync(BOOL bVSync) { m_bVSync = bVSync; }
+	BOOL GetVSync() const { return m_bVSync; }
 
 	LPDIRECTDRAW7		 m_lpDD4;
 	LPDIRECTDRAWSURFACE7 m_lpFrontB4, m_lpBackB4, m_lpBackB4flip;
