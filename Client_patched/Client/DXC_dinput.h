@@ -49,6 +49,10 @@ public:
 	BOOL m_bWindowedMode;
 	void SetWindowedMode(BOOL bWindowed);
 	
+	// Flag para indicar si el programa está activo (tiene el foco)
+	BOOL m_bProgramActive;
+	void SetProgramActive(BOOL bActive);
+	
 	// High-frequency cursor update from WM_MOUSEMOVE for smoother cursor on high-refresh monitors
 	void UpdateFromWindowsMessage(int x, int y, int clientWidth, int clientHeight);
 };

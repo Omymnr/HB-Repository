@@ -19,6 +19,7 @@ DXC_dinput::DXC_dinput()
 	m_bUseRawInput = false;
 	m_uiRawButtons = 0;
 	m_bWindowedMode = FALSE;
+	m_bProgramActive = TRUE;
 }
 
 DXC_dinput::~DXC_dinput()
@@ -87,9 +88,29 @@ void DXC_dinput::SetWindowedMode(BOOL bWindowed)
 	m_bWindowedMode = bWindowed;
 }
 
+void DXC_dinput::SetProgramActive(BOOL bActive)
+{
+	m_bProgramActive = bActive;
+	// Limpiar estado de botones cuando perdemos el foco
+	if (!bActive) {
+		m_uiRawButtons = 0;
+	}
+}
+
 void DXC_dinput::UpdateMouseState(short * pX, short * pY, short * pZ, char * pLB, char * pRB)
 {
 	DIMOUSESTATE dims;
+	
+	// Si el programa no está activo, no reportar clics
+	// Esto evita que clicks en otras ventanas muevan al personaje
+	if (!m_bProgramActive) {
+		*pX = m_sX;
+		*pY = m_sY;
+		*pZ = 0;
+		*pLB = 0;
+		*pRB = 0;
+		return;
+	}
 	
 	// If raw input is enabled, use cached coordinates from HandleRawInput/UpdateFromWindowsMessage
 	if (m_bUseRawInput) {
@@ -124,6 +145,7 @@ void DXC_dinput::UpdateMouseState(short * pX, short * pY, short * pZ, char * pLB
 			*pRB = (char)dims.rgbButtons[1];
 		} else {
 			// Fallback: usar GetAsyncKeyState para botones del mouse
+			// Solo si el programa está activo (ya verificado arriba)
 			*pLB = (GetAsyncKeyState(VK_LBUTTON) & 0x8000) ? 1 : 0;
 			*pRB = (GetAsyncKeyState(VK_RBUTTON) & 0x8000) ? 1 : 0;
 			if (m_pMouse) m_pMouse->Acquire();

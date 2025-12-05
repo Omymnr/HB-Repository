@@ -953,6 +953,7 @@ LRESULT CALLBACK WndProc(HWND hWnd,UINT message,WPARAM wParam, LPARAM lParam)
 			OutputDebugStringA("[HB-WMAIN] === APP DESACTIVADA (Alt+Tab out) ===\\n");
 			G_pGame->m_bIsProgramActive = FALSE;
 			G_pGame->m_DInput.SetAcquire(FALSE);
+			G_pGame->m_DInput.SetProgramActive(FALSE);  // Ignorar clics cuando no tiene el foco
 			
 			// Notificar al renderer D3D11 que perdimos el foco
 			if (CRendererBridge::GetInstance().IsUsingD3D11()) {
@@ -967,6 +968,7 @@ LRESULT CALLBACK WndProc(HWND hWnd,UINT message,WPARAM wParam, LPARAM lParam)
 			OutputDebugStringA("[HB-WMAIN] === APP ACTIVADA (volviendo) ===\\n");
 			G_pGame->m_bIsProgramActive = TRUE;
 			G_pGame->m_DInput.SetAcquire(TRUE);
+			G_pGame->m_DInput.SetProgramActive(TRUE);  // Aceptar clics de nuevo
 			G_pGame->m_bCtrlPressed = FALSE;
 			G_pGame->m_bIsRedrawPDBGS = TRUE;
 			
