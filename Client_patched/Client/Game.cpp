@@ -1052,6 +1052,17 @@ void CGame::OnGameSocketEvent(WPARAM wParam, LPARAM lParam)
 	}
 }
 
+// Función helper para flip usando RendererBridge (modo híbrido D3D11/DirectDraw)
+HRESULT CGame::FlipScreen()
+{
+    // Si D3D11 está activo, usa el modo híbrido
+    if (CRendererBridge::GetInstance().IsUsingD3D11()) {
+        return CRendererBridge::GetInstance().Flip();
+    }
+    // Si no, usa DirectDraw directamente
+    return m_DDraw.iFlip();
+}
+
 void CGame::RestoreSprites()
 {
 	for (int i = 0; i < DEF_MAXSPRITES; i++)
@@ -3365,7 +3376,7 @@ void CGame::UpdateScreen_OnMainMenu()
 //	if (m_cGameModeCount < 6) m_DDraw.DrawShadowBox(0,0,639,479);
 //	if (m_cGameModeCount < 2) m_DDraw.DrawShadowBox(0,0,639,479);
 
-	if (m_DDraw.iFlip() == DDERR_SURFACELOST) RestoreSprites();
+	if (FlipScreen() == DDERR_SURFACELOST) RestoreSprites();
 }
 
 void CGame::MakeSprite( char* FileName, short sStart, short sCount, bool bAlphaEffect )
@@ -4146,7 +4157,7 @@ void CGame::UpdateScreen_OnLoading_Progress()
 	int iBarWidth;
 	iBarWidth= (int)m_cLoading;
 	m_pSprite[DEF_SPRID_INTERFACE_ND_LOADING]->PutSpriteFastWidth(472 + SCREENX,442 + SCREENY , 1, iBarWidth, G_dwGlobalTime);
-	m_DDraw.iFlip();
+	FlipScreen();
 }
 
 void CGame::OnTimer()
@@ -14345,7 +14356,7 @@ void CGame::UpdateScreen_OnMsg()
 	DrawVersion();
 	m_DInput.UpdateMouseState(&msX, &msY, &msZ, &cLB, &cRB);
 	DrawCursor(msX, msY, 0, dwTime);
-	if (m_DDraw.iFlip() == DDERR_SURFACELOST) RestoreSprites();
+	if (FlipScreen() == DDERR_SURFACELOST) RestoreSprites();
 	if ((G_dwGlobalTime - m_dwTime) > 1500)
 	{	ChangeGameMode(DEF_GAMEMODE_ONMAINMENU);
 	}
@@ -20364,7 +20375,7 @@ void CGame::UpdateScreen_OnSelectCharacter()
 //	if (m_cGameModeCount < 6) m_DDraw.DrawShadowBox(0,0,639,479);
 //	if (m_cGameModeCount < 2) m_DDraw.DrawShadowBox(0,0,639,479);
 
-	if (m_DDraw.iFlip() == DDERR_SURFACELOST) RestoreSprites();
+	if (FlipScreen() == DDERR_SURFACELOST) RestoreSprites();
 }
 
 BOOL CGame::bDlgBoxPress_Character(short msX, short msY)
@@ -23669,7 +23680,7 @@ void CGame::UpdateScreen_OnConnecting()
 	m_DInput.UpdateMouseState(&msX, &msY, &msZ, &cLB, &cRB);
 	DrawCursor(msX, msY, 8, dwTime);
 
-	if (m_DDraw.iFlip() == DDERR_SURFACELOST) RestoreSprites();
+	if (FlipScreen() == DDERR_SURFACELOST) RestoreSprites();
 }
 
 void CGame::UpdateScreen_OnWaitInitData()
@@ -23715,7 +23726,7 @@ void CGame::UpdateScreen_OnWaitInitData()
 	m_DInput.UpdateMouseState(&msX, &msY, &msZ, &cLB, &cRB);
 	DrawCursor(msX, msY, 8, dwTime);
 
-	if (m_DDraw.iFlip() == DDERR_SURFACELOST) RestoreSprites();
+	if (FlipScreen() == DDERR_SURFACELOST) RestoreSprites();
 }
 
 void CGame::UpdateScreen_OnConnectionLost()
@@ -23739,7 +23750,7 @@ void CGame::UpdateScreen_OnConnectionLost()
 	m_DInput.UpdateMouseState(&msX, &msY, &msZ, &cLB, &cRB);
 	DrawCursor(msX, msY, 0, dwTime);
 
-	if (m_DDraw.iFlip() == DDERR_SURFACELOST) RestoreSprites();
+	if (FlipScreen() == DDERR_SURFACELOST) RestoreSprites();
 
 	if ((timeGetTime() - m_dwTime) > 5000)
 	{	if (strlen(G_cCmdLineTokenA) != 0)
@@ -24322,7 +24333,7 @@ void CGame::UpdateScreen_OnCreateNewCharacter()
 //	if (m_cGameModeCount < 6) m_DDraw.DrawShadowBox(0,0,639,479);
 //	if (m_cGameModeCount < 2) m_DDraw.DrawShadowBox(0,0,639,479);
 
-	if (m_DDraw.iFlip() == DDERR_SURFACELOST) RestoreSprites();
+	if (FlipScreen() == DDERR_SURFACELOST) RestoreSprites();
 }
 
 #ifdef DEF_MAKE_ACCOUNT
@@ -24486,7 +24497,7 @@ void CGame::UpdateScreen_OnAgreement()
 //	if (m_cGameModeCount < 6) m_DDraw.DrawShadowBox(0,0,639,479);
 //	if (m_cGameModeCount < 2) m_DDraw.DrawShadowBox(0,0,639,479);
 
-	if (m_DDraw.iFlip() == DDERR_SURFACELOST) RestoreSprites();
+	if (FlipScreen() == DDERR_SURFACELOST) RestoreSprites();
 }
 
 void CGame::UpdateScreen_OnCreateNewAccount()
@@ -24904,7 +24915,7 @@ void CGame::UpdateScreen_OnCreateNewAccount()
 //	if (m_cGameModeCount < 6) m_DDraw.DrawShadowBox(0,0,639,479);
 //	if (m_cGameModeCount < 2) m_DDraw.DrawShadowBox(0,0,639,479);
 
-	if (m_DDraw.iFlip() == DDERR_SURFACELOST) RestoreSprites();
+	if (FlipScreen() == DDERR_SURFACELOST) RestoreSprites();
 }
 #endif //endif from #ifdef DEF_MAKE_ACCOUNT
 
@@ -25069,7 +25080,7 @@ void CGame::UpdateScreen_OnLogin()
 	if ((msX >= 258 + SCREENX) && (msX <= 327 + SCREENX) && (msY >= 280 + SCREENY) && (msY <= 302 + SCREENY)) m_cCurFocus = 4;
 
 	_Draw_OnLogin(cName, cPassword, msX, msY, m_cGameModeCount);
-	if (m_DDraw.iFlip() == DDERR_SURFACELOST) RestoreSprites();
+	if (FlipScreen() == DDERR_SURFACELOST) RestoreSprites();
 
 }
 
@@ -25208,7 +25219,7 @@ void CGame::UpdateScreen_OnSelectServer()
 //	if (m_cGameModeCount < 6) m_DDraw.DrawShadowBox(0,0,639,479);
 //	if (m_cGameModeCount < 2) m_DDraw.DrawShadowBox(0,0,639,479);
 
-	if (m_DDraw.iFlip() == DDERR_SURFACELOST) RestoreSprites();
+	if (FlipScreen() == DDERR_SURFACELOST) RestoreSprites();
 }
 
 void CGame::OnSysKeyDown(WPARAM wParam)
@@ -25848,7 +25859,7 @@ void CGame::UpdateScreen_OnQuit()
 //	if (m_cGameModeCount < 6) m_DDraw.DrawShadowBox(0,0,639,479);
 //	if (m_cGameModeCount < 2) m_DDraw.DrawShadowBox(0,0,639,479);
 
-	if (m_DDraw.iFlip() == DDERR_SURFACELOST) RestoreSprites();
+	if (FlipScreen() == DDERR_SURFACELOST) RestoreSprites();
 }
 
 void CGame::UpdateScreen_OnQueryForceLogin()
@@ -25945,7 +25956,7 @@ void CGame::UpdateScreen_OnQueryForceLogin()
 	}	}
 	DrawVersion();
 	DrawCursor(msX, msY, 0, dwTime);
-	if (m_DDraw.iFlip() == DDERR_SURFACELOST) RestoreSprites();
+	if (FlipScreen() == DDERR_SURFACELOST) RestoreSprites();
 }
 
 void CGame::UpdateScreen_OnSelectCharacter(short sX, short sY, short msX, short msY, BOOL bIgnoreFocus)
@@ -26227,7 +26238,7 @@ void CGame::UpdateScreen_OnWaitingResponse()
 	m_DInput.UpdateMouseState(&msX, &msY, &msZ, &cLB, &cRB);
 	DrawCursor(msX, msY, 8, dwTime);
 
-	if (m_DDraw.iFlip() == DDERR_SURFACELOST) RestoreSprites();
+	if (FlipScreen() == DDERR_SURFACELOST) RestoreSprites();
 }
 
 void CGame::UpdateScreen_OnQueryDeleteCharacter()
@@ -26329,7 +26340,7 @@ void CGame::UpdateScreen_OnQueryDeleteCharacter()
 	}	}
 	DrawVersion();
 	DrawCursor(msX, msY, 0, dwTime);
-	if (m_DDraw.iFlip() == DDERR_SURFACELOST) RestoreSprites();
+	if (FlipScreen() == DDERR_SURFACELOST) RestoreSprites();
 }
 
 void CGame::NotifyMsgHandler(char * pData)
@@ -28452,7 +28463,7 @@ void CGame::UpdateScreen_OnLogResMsg()
 	if (m_cMenuDir > 8) m_cMenuDir = 1;
 	DrawVersion();
 	DrawCursor(msX, msY, 0, dwTime);
-	if (m_DDraw.iFlip() == DDERR_SURFACELOST) RestoreSprites();
+	if (FlipScreen() == DDERR_SURFACELOST) RestoreSprites();
 }
 
 void CGame::RetrieveItemHandler(char *pData)
@@ -29261,7 +29272,7 @@ void CGame::UpdateScreen_OnChangePassword()
 	if ((msX >= 197 + SCREENX) && (msX <= 197 + DEF_BTNSZX + SCREENX) && (msY >= 320 + SCREENY) && (msY <= 320 + DEF_BTNSZY + SCREENY)) m_cCurFocus = 5;
 	if ((msX >= 370 + SCREENX) && (msX <= 370 + DEF_BTNSZX + SCREENX) && (msY >= 320 + SCREENY) && (msY <= 320 + DEF_BTNSZY + SCREENY)) m_cCurFocus = 6;
 
-	if (m_DDraw.iFlip() == DDERR_SURFACELOST) RestoreSprites();
+	if (FlipScreen() == DDERR_SURFACELOST) RestoreSprites();
 }
 
 void CGame::DlgBoxClick_SysMenu(short msX, short msY)
@@ -29683,7 +29694,7 @@ void CGame::UpdateScreen_OnVersionNotMatch()
 		SendMessage(m_hWnd, WM_DESTROY, NULL, NULL);
 		return;
 	}
-	if (m_DDraw.iFlip() == DDERR_SURFACELOST) RestoreSprites();
+	if (FlipScreen() == DDERR_SURFACELOST) RestoreSprites();
 }
 
 void CGame::DrawVersion(BOOL bAuthor)
@@ -31220,7 +31231,7 @@ void CGame::UpdateScreen_OnGame()
 		{	wsprintf( G_cTxt, "fps : %d", m_sFPS );
 			PutString( 10, 100, G_cTxt, RGB(255,255,255) );
 		}
-		if( m_DDraw.iFlip() == DDERR_SURFACELOST ) RestoreSprites();
+		if( FlipScreen() == DDERR_SURFACELOST ) RestoreSprites();
 	}
 
 	// m_iPlayerStatus 0x000F

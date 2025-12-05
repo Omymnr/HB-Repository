@@ -4,6 +4,9 @@
 #include "RendererBridge.h"
 #include "DirectDrawRenderer.h"
 #include "Direct3D11Renderer.h"
+#include "SpriteRenderer.h"
+#include "TextureManager.h"
+#include "Sprite.h"
 #include <stdio.h>
 
 // ============================================================================
@@ -58,42 +61,40 @@ bool CRendererBridge::Initialize(HWND hWnd, DXC_ddraw* pLegacyDDraw)
     bool success = false;
     
     if (requestedType == RENDERER_DIRECT3D11) {
-        // NOTA: D3D11 está implementado pero los sprites aún usan DirectDraw
-        // Por ahora, D3D11 solo se puede usar cuando todos los sprites estén migrados
-        // Forzamos DirectDraw hasta que la migración esté completa
+        // Intentar inicializar D3D11
+        OutputDebugStringA("RendererBridge: Intentando inicializar Direct3D 11...\n");
         
-        OutputDebugStringA("RendererBridge: D3D11 seleccionado pero sprites usan DirectDraw\\n");
-        OutputDebugStringA("RendererBridge: Usando DirectDraw hasta completar migración de sprites\\n");
-        
-        // Verificar que D3D11 está disponible (para futuro uso)
         if (CRendererConfig::IsD3D11Available()) {
-            OutputDebugStringA("RendererBridge: D3D11 está disponible en este sistema\\n");
-        }
-        
-        // Por ahora, forzar DirectDraw
-        requestedType = RENDERER_DIRECTDRAW;
-        
-        /* 
-        // CÓDIGO D3D11 - Descomentar cuando los sprites estén migrados:
-        m_pD3D11Renderer = new Direct3D11Renderer();
-        if (m_pD3D11Renderer->Initialize(hWnd, config.GetScreenWidth(), config.GetScreenHeight(), 
-                                    config.IsFullscreen())) {
-            m_pActiveRenderer = m_pD3D11Renderer;
-            m_bUsingD3D11 = true;
-            success = true;
-            
-            char msg[256];
-            sprintf(msg, "RendererBridge: Inicializado Direct3D 11 (%dx%d)\\n", 
-                    config.GetScreenWidth(), config.GetScreenHeight());
-            OutputDebugStringA(msg);
+            m_pD3D11Renderer = new Direct3D11Renderer();
+            if (m_pD3D11Renderer->Initialize(hWnd, config.GetScreenWidth(), config.GetScreenHeight(), 
+                                        config.IsFullscreen())) {
+                m_pActiveRenderer = m_pD3D11Renderer;
+                m_bUsingD3D11 = true;
+                success = true;
+                
+                // Inicializar el TextureManager para D3D11
+                CTextureManager::GetInstance().Initialize(m_pD3D11Renderer);
+                
+                // Inicializar el SpriteRenderer para D3D11
+                CSpriteRenderer::GetInstance().Initialize(m_pD3D11Renderer, m_pLegacyDDraw);
+                CSpriteRenderer::GetInstance().SetUseD3D11(true);
+                
+                char msg[256];
+                sprintf(msg, "RendererBridge: Direct3D 11 inicializado (%dx%d)\n", 
+                        config.GetScreenWidth(), config.GetScreenHeight());
+                OutputDebugStringA(msg);
+            }
+            else {
+                delete m_pD3D11Renderer;
+                m_pD3D11Renderer = nullptr;
+                requestedType = RENDERER_DIRECTDRAW;
+                OutputDebugStringA("RendererBridge: D3D11 fallo, usando DirectDraw\n");
+            }
         }
         else {
-            delete m_pD3D11Renderer;
-            m_pD3D11Renderer = nullptr;
+            OutputDebugStringA("RendererBridge: D3D11 no disponible, usando DirectDraw\n");
             requestedType = RENDERER_DIRECTDRAW;
-            OutputDebugStringA("RendererBridge: D3D11 falló, usando DirectDraw\\n");
         }
-        */
     }
     
     if (requestedType == RENDERER_DIRECTDRAW && !success) {
@@ -109,6 +110,10 @@ bool CRendererBridge::Initialize(HWND hWnd, DXC_ddraw* pLegacyDDraw)
         m_bUsingD3D11 = false;
         success = true;
         
+        // Inicializar SpriteRenderer en modo DirectDraw
+        CSpriteRenderer::GetInstance().Initialize(nullptr, m_pLegacyDDraw);
+        CSpriteRenderer::GetInstance().SetUseD3D11(false);
+        
         OutputDebugStringA("RendererBridge: Usando DirectDraw (legacy)\n");
     }
     
@@ -121,6 +126,12 @@ bool CRendererBridge::Initialize(HWND hWnd, DXC_ddraw* pLegacyDDraw)
 
 void CRendererBridge::Shutdown()
 {
+    // Liberar SpriteRenderer primero
+    CSpriteRenderer::GetInstance().Shutdown();
+    
+    // Liberar TextureManager
+    CTextureManager::GetInstance().Shutdown();
+    
     if (m_pD3D11Renderer) {
         m_pD3D11Renderer->Shutdown();
         delete m_pD3D11Renderer;
@@ -169,10 +180,18 @@ bool CRendererBridge::SwitchRenderer(RendererType type)
                 m_pD3D11Renderer = nullptr;
                 return false;
             }
+            
+            // Inicializar TextureManager para el nuevo dispositivo D3D11
+            CTextureManager::GetInstance().Shutdown();
+            CTextureManager::GetInstance().Initialize(m_pD3D11Renderer);
         }
         
         m_pActiveRenderer = m_pD3D11Renderer;
         m_bUsingD3D11 = true;
+        
+        // Actualizar SpriteRenderer
+        CSpriteRenderer::GetInstance().Initialize(m_pD3D11Renderer, m_pLegacyDDraw);
+        CSpriteRenderer::GetInstance().SetUseD3D11(true);
         
         OutputDebugStringA("RendererBridge: Cambiado a Direct3D 11\n");
     }
@@ -186,6 +205,9 @@ bool CRendererBridge::SwitchRenderer(RendererType type)
         if (m_pDDrawWrapper) {
             m_pActiveRenderer = m_pDDrawWrapper;
             m_bUsingD3D11 = false;
+            
+            // Actualizar SpriteRenderer
+            CSpriteRenderer::GetInstance().SetUseD3D11(false);
             
             OutputDebugStringA("RendererBridge: Cambiado a DirectDraw\n");
         }
@@ -210,10 +232,16 @@ void CRendererBridge::BeginFrame()
     if (m_pActiveRenderer) {
         m_pActiveRenderer->BeginFrame();
     }
+    
+    // Iniciar frame en SpriteRenderer
+    CSpriteRenderer::GetInstance().BeginFrame();
 }
 
 void CRendererBridge::EndFrame()
 {
+    // Finalizar frame en SpriteRenderer (flush any pending sprites)
+    CSpriteRenderer::GetInstance().EndFrame();
+    
     if (m_pActiveRenderer) {
         m_pActiveRenderer->EndFrame();
     }
@@ -221,9 +249,41 @@ void CRendererBridge::EndFrame()
 
 HRESULT CRendererBridge::Flip()
 {
-    if (m_bUsingD3D11 && m_pD3D11Renderer) {
-        // D3D11 usa Present() en EndFrame, así que aquí no hacemos nada especial
-        return S_OK;
+    if (m_bUsingD3D11 && m_pD3D11Renderer && m_pLegacyDDraw) {
+        // MODO HÍBRIDO: Los sprites se dibujan en DirectDraw
+        // Copiamos el backbuffer de DirectDraw a D3D11 y presentamos
+        
+        // Obtener acceso al backbuffer de DirectDraw
+        LPDIRECTDRAWSURFACE7 lpBackBuffer = m_pLegacyDDraw->m_lpBackB4;
+        if (lpBackBuffer) {
+            DDSURFACEDESC2 ddsd;
+            ZeroMemory(&ddsd, sizeof(ddsd));
+            ddsd.dwSize = sizeof(ddsd);
+            
+            HRESULT hr = lpBackBuffer->Lock(NULL, &ddsd, DDLOCK_WAIT | DDLOCK_READONLY, NULL);
+            if (SUCCEEDED(hr)) {
+                // Copiar backbuffer a D3D11 y presentar
+                // No usamos color key para el backbuffer porque queremos todos los píxeles
+                m_pD3D11Renderer->PresentDirectDrawBackBuffer(
+                    ddsd.lpSurface,
+                    ddsd.lPitch,
+                    ddsd.dwWidth,
+                    ddsd.dwHeight,
+                    0xFFFF  // Color key inválido para que nada sea transparente
+                );
+                
+                lpBackBuffer->Unlock(NULL);
+                return S_OK;
+            }
+            else {
+                char msg[128];
+                sprintf(msg, "RendererBridge::Flip - Lock failed: 0x%08X\n", hr);
+                OutputDebugStringA(msg);
+            }
+        }
+        
+        // Fallback: D3D11 solo usa Present()
+        return m_pD3D11Renderer->EndFrame();
     }
     else if (m_pLegacyDDraw) {
         // DirectDraw usa iFlip()
@@ -245,18 +305,12 @@ void CRendererBridge::ClearBackBuffer()
 
 void CRendererBridge::DrawSprite(int x, int y, void* pSprite, int frame, DWORD dwTime)
 {
-    // Por ahora, siempre usamos el renderer legacy para sprites
-    // En fase 2, convertiremos esto para usar D3D11
-    
-    // TODO: Implementar conversión de CSprite a textura D3D11
-    // CSprite* sprite = (CSprite*)pSprite;
-    // if (m_bUsingD3D11) {
-    //     TextureHandle tex = ConvertSpriteToTexture(sprite, frame);
-    //     m_pD3D11Renderer->DrawSprite(tex, x, y, ...);
-    // }
-    
-    // Por ahora, los sprites siguen dibujándose con DDraw
-    // El código de Game.cpp llama directamente a CSprite::DrawSprite()
+    // Usar SpriteRenderer para dibujar
+    // El SpriteRenderer automáticamente usa D3D11 o DirectDraw según configuración
+    CSprite* sprite = (CSprite*)pSprite;
+    if (sprite) {
+        CSpriteRenderer::GetInstance().DrawSprite(sprite, x, y, frame, dwTime);
+    }
 }
 
 void CRendererBridge::DrawText(int x, int y, const char* text, DWORD color)

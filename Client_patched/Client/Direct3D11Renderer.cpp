@@ -106,6 +106,9 @@ Direct3D11Renderer::Direct3D11Renderer()
     , m_bVSync(TRUE)
     , m_pCurrentTexture(NULL)
     , m_CurrentBlendMode(BlendMode::Alpha)
+    , m_pHybridTexture(NULL)
+    , m_pHybridSRV(NULL)
+    , m_bHybridMode(FALSE)
 {
     SetRect(&m_rcClip, 0, 0, 800, 600);
     ZeroMemory(&m_Viewport, sizeof(m_Viewport));
@@ -659,6 +662,11 @@ void Direct3D11Renderer::UpdateProjectionMatrix()
 
 void Direct3D11Renderer::Shutdown()
 {
+    // Limpiar recursos híbridos
+    if (m_pHybridSRV) { m_pHybridSRV->Release(); m_pHybridSRV = NULL; }
+    if (m_pHybridTexture) { m_pHybridTexture->Release(); m_pHybridTexture = NULL; }
+    m_bHybridMode = FALSE;
+    
     // Limpiar cache de texturas
     for (auto& pair : m_TextureCache) {
         if (pair.second.pSRV) pair.second.pSRV->Release();
@@ -1280,4 +1288,280 @@ void Direct3D11Renderer::OnResize(int width, int height)
     sprintf(msg, "Direct3D11Renderer::OnResize - Resized to %dx%d (scale: %.2fx%.2f)\n", 
             width, height, m_fScaleX, m_fScaleY);
     OutputDebugStringA(msg);
+}
+
+// ==================== DRAW TEXTURED QUAD ====================
+
+void Direct3D11Renderer::DrawTexturedQuad(ID3D11ShaderResourceView* pSRV,
+                                           int x, int y, int width, int height,
+                                           float alpha, float r, float g, float b,
+                                           BlendMode blend)
+{
+    if (!m_bInitialized || pSRV == NULL) return;
+    
+    // Flush cualquier batch pendiente si la textura cambia
+    if (m_pCurrentTexture != pSRV) {
+        FlushBatch();
+        m_pCurrentTexture = pSRV;
+    }
+    
+    // Cambiar blend mode si es necesario
+    if (m_CurrentBlendMode != blend) {
+        FlushBatch();
+        m_CurrentBlendMode = blend;
+        
+        ID3D11BlendState* pBlendState = NULL;
+        switch (blend) {
+            case BlendMode::None:
+                pBlendState = m_pBlendStateOpaque;
+                break;
+            case BlendMode::Alpha:
+                pBlendState = m_pBlendStateAlpha;
+                break;
+            case BlendMode::Additive:
+                pBlendState = m_pBlendStateAdditive;
+                break;
+            case BlendMode::Multiply:
+                pBlendState = m_pBlendStateMultiply;
+                break;
+        }
+        
+        float blendFactor[4] = { 0, 0, 0, 0 };
+        m_pContext->OMSetBlendState(pBlendState, blendFactor, 0xFFFFFFFF);
+    }
+    
+    // Aplicar escala para resolución
+    float x1 = (float)x * m_fScaleX;
+    float y1 = (float)y * m_fScaleY;
+    float x2 = x1 + (float)width * m_fScaleX;
+    float y2 = y1 + (float)height * m_fScaleY;
+    
+    // Color con alpha
+    XMFLOAT4 color(r, g, b, alpha);
+    
+    // Crear los 4 vértices del quad
+    SpriteVertex vertices[4] = {
+        { XMFLOAT3(x1, y1, 0.0f), XMFLOAT2(0.0f, 0.0f), color },  // Top-left
+        { XMFLOAT3(x2, y1, 0.0f), XMFLOAT2(1.0f, 0.0f), color },  // Top-right
+        { XMFLOAT3(x2, y2, 0.0f), XMFLOAT2(1.0f, 1.0f), color },  // Bottom-right
+        { XMFLOAT3(x1, y2, 0.0f), XMFLOAT2(0.0f, 1.0f), color },  // Bottom-left
+    };
+    
+    // Agregar al batch (2 triángulos = 6 vértices, pero usamos index buffer)
+    for (int i = 0; i < 4; i++) {
+        m_SpriteBatch.push_back(vertices[i]);
+    }
+    
+    // Auto-flush si el batch está lleno
+    if ((int)m_SpriteBatch.size() >= MAX_BATCH_SIZE * 4) {
+        FlushBatch();
+    }
+}
+
+// ==================== MODO HÍBRIDO (DirectDraw -> D3D11) ====================
+
+BOOL Direct3D11Renderer::CreateHybridBackBuffer(int width, int height)
+{
+    if (!m_pDevice) return FALSE;
+    
+    // Liberar textura anterior si existe
+    if (m_pHybridSRV) {
+        m_pHybridSRV->Release();
+        m_pHybridSRV = NULL;
+    }
+    if (m_pHybridTexture) {
+        m_pHybridTexture->Release();
+        m_pHybridTexture = NULL;
+    }
+    
+    // Crear textura para el backbuffer híbrido (BGRA 32-bit)
+    D3D11_TEXTURE2D_DESC texDesc;
+    ZeroMemory(&texDesc, sizeof(texDesc));
+    texDesc.Width = width;
+    texDesc.Height = height;
+    texDesc.MipLevels = 1;
+    texDesc.ArraySize = 1;
+    texDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;  // BGRA para compatibilidad con GDI
+    texDesc.SampleDesc.Count = 1;
+    texDesc.SampleDesc.Quality = 0;
+    texDesc.Usage = D3D11_USAGE_DYNAMIC;  // Para actualización frecuente
+    texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    texDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    
+    HRESULT hr = m_pDevice->CreateTexture2D(&texDesc, NULL, &m_pHybridTexture);
+    if (FAILED(hr)) {
+        OutputDebugStringA("Direct3D11Renderer: Error creando textura híbrida\n");
+        return FALSE;
+    }
+    
+    // Crear shader resource view
+    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+    ZeroMemory(&srvDesc, sizeof(srvDesc));
+    srvDesc.Format = texDesc.Format;
+    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MostDetailedMip = 0;
+    srvDesc.Texture2D.MipLevels = 1;
+    
+    hr = m_pDevice->CreateShaderResourceView(m_pHybridTexture, &srvDesc, &m_pHybridSRV);
+    if (FAILED(hr)) {
+        m_pHybridTexture->Release();
+        m_pHybridTexture = NULL;
+        OutputDebugStringA("Direct3D11Renderer: Error creando SRV híbrida\n");
+        return FALSE;
+    }
+    
+    m_bHybridMode = TRUE;
+    
+    char msg[128];
+    sprintf(msg, "Direct3D11Renderer: Textura híbrida creada (%dx%d)\n", width, height);
+    OutputDebugStringA(msg);
+    
+    return TRUE;
+}
+
+void Direct3D11Renderer::UpdateHybridBackBuffer(WORD* pPixels, int pitch, int width, int height, WORD colorKey)
+{
+    if (!m_pHybridTexture || !m_pContext || !pPixels) return;
+    
+    // Debug: mostrar info una vez
+    static bool bDebugOnce = false;
+    if (!bDebugOnce) {
+        char msg[256];
+        sprintf(msg, "UpdateHybridBackBuffer: %dx%d, pitch=%d\n", width, height, pitch);
+        OutputDebugStringA(msg);
+        bDebugOnce = true;
+    }
+    
+    // Mapear la textura para escribir
+    D3D11_MAPPED_SUBRESOURCE mappedResource;
+    HRESULT hr = m_pContext->Map(m_pHybridTexture, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+    if (FAILED(hr)) {
+        OutputDebugStringA("UpdateHybridBackBuffer: Map fallo\n");
+        return;
+    }
+    
+    // Convertir de 16-bit 565 RGB a 32-bit BGRA
+    BYTE* pDstBase = (BYTE*)mappedResource.pData;
+    int dstRowPitch = mappedResource.RowPitch;  // En bytes
+    int srcPitch = pitch / 2;  // pitch en bytes, convertir a WORDs
+    
+    for (int y = 0; y < height; y++) {
+        WORD* pSrcRow = pPixels + y * srcPitch;
+        DWORD* pDstRow = (DWORD*)(pDstBase + y * dstRowPitch);
+        
+        for (int x = 0; x < width; x++) {
+            WORD pixel = pSrcRow[x];
+            
+            // Convertir 565 RGB a BGRA 8888 (sin color key para backbuffer)
+            // 565: RRRR RGGG GGGB BBBB
+            int r = ((pixel >> 11) & 0x1F) << 3;  // 5 bits -> 8 bits
+            int g = ((pixel >> 5) & 0x3F) << 2;   // 6 bits -> 8 bits
+            int b = (pixel & 0x1F) << 3;          // 5 bits -> 8 bits
+            
+            // Expandir para mejor precisión
+            r |= (r >> 5);
+            g |= (g >> 6);
+            b |= (b >> 5);
+            
+            // BGRA format (siempre opaco)
+            pDstRow[x] = 0xFF000000 | (r << 16) | (g << 8) | b;
+        }
+    }
+    
+    m_pContext->Unmap(m_pHybridTexture, 0);
+}
+
+void Direct3D11Renderer::PresentDirectDrawBackBuffer(void* pBackBufferData, int pitch, int width, int height, WORD colorKey)
+{
+    if (!m_bInitialized) {
+        OutputDebugStringA("PresentDirectDrawBackBuffer: No inicializado\n");
+        return;
+    }
+    
+    if (!pBackBufferData) {
+        OutputDebugStringA("PresentDirectDrawBackBuffer: pBackBufferData es NULL\n");
+        return;
+    }
+    
+    // Crear textura híbrida si no existe
+    if (!m_pHybridTexture) {
+        OutputDebugStringA("PresentDirectDrawBackBuffer: Creando textura hibrida...\n");
+        if (!CreateHybridBackBuffer(width, height)) {
+            OutputDebugStringA("PresentDirectDrawBackBuffer: Fallo al crear textura\n");
+            return;
+        }
+    }
+    
+    // Actualizar textura con datos del backbuffer de DirectDraw
+    UpdateHybridBackBuffer((WORD*)pBackBufferData, pitch, width, height, colorKey);
+    
+    // Limpiar el render target (negro)
+    float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    m_pContext->ClearRenderTargetView(m_pRenderTargetView, clearColor);
+    
+    // Establecer render target
+    m_pContext->OMSetRenderTargets(1, &m_pRenderTargetView, NULL);
+    m_pContext->RSSetViewports(1, &m_Viewport);
+    
+    // Establecer shaders
+    m_pContext->VSSetShader(m_pVertexShader, NULL, 0);
+    m_pContext->PSSetShader(m_pPixelShader, NULL, 0);
+    m_pContext->IASetInputLayout(m_pInputLayout);
+    
+    // Establecer buffers
+    UINT stride = sizeof(SpriteVertex);
+    UINT offset = 0;
+    m_pContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
+    m_pContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+    m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    
+    // Establecer constant buffer con la proyección
+    m_pContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer);
+    
+    // Establecer sampler
+    m_pContext->PSSetSamplers(0, 1, &m_pSamplerPoint);
+    
+    // Establecer blend state (opaco para el backbuffer)
+    float blendFactor[4] = { 0, 0, 0, 0 };
+    m_pContext->OMSetBlendState(m_pBlendStateOpaque, blendFactor, 0xFFFFFFFF);
+    
+    // Establecer la textura del backbuffer
+    m_pContext->PSSetShaderResources(0, 1, &m_pHybridSRV);
+    
+    // Limpiar batch y crear el quad de pantalla completa
+    m_SpriteBatch.clear();
+    
+    // Crear quad de pantalla completa (coordenadas de juego 0,0 a 800,600)
+    float x1 = 0.0f;
+    float y1 = 0.0f;
+    float x2 = (float)m_iGameWidth;
+    float y2 = (float)m_iGameHeight;
+    
+    XMFLOAT4 white(1.0f, 1.0f, 1.0f, 1.0f);
+    
+    SpriteVertex vertices[4] = {
+        { XMFLOAT3(x1, y1, 0.0f), XMFLOAT2(0.0f, 0.0f), white },  // Top-left
+        { XMFLOAT3(x2, y1, 0.0f), XMFLOAT2(1.0f, 0.0f), white },  // Top-right
+        { XMFLOAT3(x2, y2, 0.0f), XMFLOAT2(1.0f, 1.0f), white },  // Bottom-right
+        { XMFLOAT3(x1, y2, 0.0f), XMFLOAT2(0.0f, 1.0f), white },  // Bottom-left
+    };
+    
+    for (int i = 0; i < 4; i++) {
+        m_SpriteBatch.push_back(vertices[i]);
+    }
+    
+    // Dibujar el quad
+    FlushBatch();
+    
+    // Desvincular textura
+    ID3D11ShaderResourceView* nullSRV = NULL;
+    m_pContext->PSSetShaderResources(0, 1, &nullSRV);
+    
+    // Presentar
+    HRESULT hr = m_pSwapChain->Present(m_bVSync ? 1 : 0, 0);
+    if (FAILED(hr)) {
+        char msg[128];
+        sprintf(msg, "PresentDirectDrawBackBuffer: Present fallo 0x%08X\n", hr);
+        OutputDebugStringA(msg);
+    }
 }

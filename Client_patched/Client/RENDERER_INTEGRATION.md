@@ -5,20 +5,55 @@
 Este documento explica cómo integrar el nuevo sistema de renderizado Direct3D 11 
 con el cliente existente de Helbreath.
 
+## Estado Actual (Actualizado)
+
+✅ **MODO HÍBRIDO IMPLEMENTADO**
+
+El cliente ahora soporta renderizado híbrido DirectDraw + D3D11:
+- Los sprites se dibujan en el backbuffer de DirectDraw (compatibilidad total)
+- D3D11 copia el backbuffer y lo presenta en pantalla
+- Permite usar características modernas de D3D11 (VSync, escalado, etc.)
+
 ## Archivos Creados
 
 ```
 IRenderer.h              - Interfaz abstracta
 DirectDrawRenderer.h/cpp - Wrapper del DXC_ddraw
-Direct3D11Renderer.h/cpp - Nuevo renderer D3D11
+Direct3D11Renderer.h/cpp - Nuevo renderer D3D11 (1500+ líneas)
 RendererConfig.h/cpp     - Configuración de video
 RendererBridge.h/cpp     - Puente de integración
+TextureManager.h/cpp     - Conversión de sprites DDraw a texturas D3D11
+SpriteRenderer.h/cpp     - Sistema de renderizado de sprites unificado
 Shaders/SpriteShaders.hlsl - Shaders HLSL
+video.cfg                - Archivo de configuración
 ```
 
-## Cómo Funciona
+## Cómo Usar
 
-### Arquitectura
+### Configuración (video.cfg)
+
+```ini
+# Renderer: 0=Auto, 1=DirectDraw, 2=Direct3D11
+Renderer=2
+
+# Resolución (solo D3D11)
+ScreenWidth=1920
+ScreenHeight=1080
+
+# Pantalla completa
+Fullscreen=0
+
+# VSync (solo D3D11)
+VSync=1
+```
+
+### Activar D3D11
+
+1. Editar `video.cfg` y poner `Renderer=2`
+2. Ejecutar el cliente
+3. El cliente usará D3D11 para presentar (modo híbrido)
+
+## Arquitectura
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -43,9 +78,29 @@ Shaders/SpriteShaders.hlsl - Shaders HLSL
 └─────────────────────────────────────────────────────────────┘
 ```
 
+## Modo Híbrido (Actual)
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    MODO HÍBRIDO                            │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  1. Sprites se dibujan → Backbuffer DirectDraw (16-bit)   │
+│                              │                             │
+│  2. FlipScreen() → Lock backbuffer                        │
+│                              │                             │
+│  3. Copiar píxeles → Textura D3D11 (32-bit BGRA)         │
+│                              │                             │
+│  4. DrawTexturedQuad → Render fullscreen quad             │
+│                              │                             │
+│  5. Present() → Mostrar en pantalla                       │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
 ### Fases de Integración
 
-#### Fase 1: Sin Cambios (Actual) ✅
+#### Fase 1: Sin Cambios ✅
 El cliente funciona exactamente igual que antes. Los nuevos archivos compilan
 pero no se usan activamente.
 

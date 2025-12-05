@@ -32,6 +32,7 @@ using namespace std;
 #include "GlobalDef.h"
 #include "DXC_ddraw.h"
 #include "DXC_dinput.h"
+#include "RendererBridge.h"
 #include "YWSound.h"
 #include "SoundBuffer.h"
 #include "XSocket.h"
@@ -675,6 +676,7 @@ public:
 	void DrawObjects(short sPivotX, short sPivotY, short sDivX, short sDivY, short sModX, short sModY, short msX, short msY);
 	BOOL bSendCommand(DWORD dwMsgID, WORD wCommand, char cDir, int iV1, int iV2, int iV3, char * pString, int iV4 = NULL); // v1.4
 	char cGetNextMoveDir(short sX, short sY, short dstX, short dstY, BOOL bMoveCheck = FALSE, BOOL bMIM = FALSE);
+	HRESULT FlipScreen();  // Usa RendererBridge para soporte D3D11
 	void RestoreSprites();
 	void CommandProcessor(short msX, short msY, short indexX, short indexY, char cLB, char cRB);
 	void OnGameSocketEvent(WPARAM wParam, LPARAM lParam);

@@ -201,6 +201,13 @@ public:
     
     // ===== MÉTODOS ESPECÍFICOS D3D11 =====
     
+    // Dibujar textura directamente (usado por SpriteRenderer)
+    void DrawTexturedQuad(ID3D11ShaderResourceView* pSRV, 
+                          int x, int y, int width, int height,
+                          float alpha = 1.0f, 
+                          float r = 1.0f, float g = 1.0f, float b = 1.0f,
+                          BlendMode blend = BlendMode::Alpha);
+    
     // Convertir coordenadas de juego a pantalla
     void GameToScreen(int& x, int& y);
     
@@ -210,6 +217,24 @@ public:
     // Obtener device D3D11 (para uso avanzado)
     ID3D11Device* GetDevice() { return m_pDevice; }
     ID3D11DeviceContext* GetContext() { return m_pContext; }
+    
+    // ===== MODO HÍBRIDO (DirectDraw + D3D11) =====
+    // Permite usar DirectDraw para renderizar sprites mientras D3D11 presenta
+    
+    // Copiar backbuffer de DirectDraw a textura D3D11 y presentar
+    void PresentDirectDrawBackBuffer(void* pBackBufferData, int pitch, int width, int height, WORD colorKey);
+    
+    // Crear textura para el backbuffer híbrido
+    BOOL CreateHybridBackBuffer(int width, int height);
+    
+    // Actualizar textura del backbuffer desde DirectDraw
+    void UpdateHybridBackBuffer(WORD* pPixels, int pitch, int width, int height, WORD colorKey);
+    
+private:
+    // Textura para modo híbrido (backbuffer de DirectDraw)
+    ID3D11Texture2D* m_pHybridTexture;
+    ID3D11ShaderResourceView* m_pHybridSRV;
+    BOOL m_bHybridMode;
 };
 
 #endif // DIRECT3D11RENDERER_H

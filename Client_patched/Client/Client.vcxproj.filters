@@ -137,6 +137,12 @@
     <ClInclude Include="RendererBridge.h">
       <Filter>Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteRenderer.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="YWSound.cpp">
@@ -224,6 +230,12 @@
       <Filter>Renderer</Filter>
     </ClCompile>
     <ClCompile Include="RendererBridge.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteRenderer.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
   </ItemGroup>
