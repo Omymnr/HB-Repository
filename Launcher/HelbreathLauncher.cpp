@@ -36,7 +36,7 @@
 
 // URL de tu repositorio de GitHub (raw content)
 // Formato: https://raw.githubusercontent.com/USUARIO/REPOSITORIO/RAMA
-#define GITHUB_RAW_URL "https://raw.githubusercontent.com/Omymnr/helbreath-updates/main"
+#define GITHUB_RAW_URL "https://raw.githubusercontent.com/Omymnr/HB-Repository/main"
 
 // Versión actual del cliente instalado (se lee de version.txt)
 #define DEFAULT_VERSION "1.0.0"
@@ -147,52 +147,64 @@ struct FileInfo {
 };
 std::vector<FileInfo> g_filesToUpdate;
 
+// Self-update del launcher
+BOOL g_bLauncherNeedsUpdate = FALSE;
+char g_szNewLauncherHash[33] = "";
+
 // ===== FUNCIONES DE CONFIGURACIÓN =====
+
+// Declaración adelantada
+void SaveVideoConfig();
 
 void LoadVideoConfig()
 {
-    // Cargar video.cfg
+    // Verificar si video.cfg existe
     FILE* fp = fopen("video.cfg", "r");
-    if (fp) {
-        char line[256];
-        while (fgets(line, sizeof(line), fp)) {
-            if (line[0] == '#' || line[0] == '\n' || line[0] == '\r') continue;
+    if (!fp) {
+        // No existe, crear uno con valores por defecto
+        SaveVideoConfig();
+        return;
+    }
+    
+    // Cargar video.cfg existente
+    char line[256];
+    while (fgets(line, sizeof(line), fp)) {
+        if (line[0] == '#' || line[0] == '\n' || line[0] == '\r') continue;
+        
+        char key[64], value[64];
+        if (sscanf(line, "%63[^=]=%63s", key, value) == 2) {
+            // Limpiar espacios
+            char* k = key;
+            while (*k == ' ') k++;
+            char* end = k + strlen(k) - 1;
+            while (end > k && (*end == ' ' || *end == '\t' || *end == '\r' || *end == '\n')) {
+                *end = '\0';
+                end--;
+            }
             
-            char key[64], value[64];
-            if (sscanf(line, "%63[^=]=%63s", key, value) == 2) {
-                // Limpiar espacios
-                char* k = key;
-                while (*k == ' ') k++;
-                char* end = k + strlen(k) - 1;
-                while (end > k && (*end == ' ' || *end == '\t' || *end == '\r' || *end == '\n')) {
-                    *end = '\0';
-                    end--;
-                }
-                
-                if (strcmp(k, "Renderer") == 0) {
-                    g_iRenderer = atoi(value);
-                    if (g_iRenderer < 0 || g_iRenderer > 2) g_iRenderer = 2;
-                }
-                else if (strcmp(k, "ScreenWidth") == 0) {
-                    g_iScreenWidth = atoi(value);
-                }
-                else if (strcmp(k, "ScreenHeight") == 0) {
-                    g_iScreenHeight = atoi(value);
-                }
-                else if (strcmp(k, "Fullscreen") == 0) {
-                    g_bFullscreen = (atoi(value) != 0);
-                }
-                else if (strcmp(k, "VSync") == 0) {
-                    g_bVSync = (atoi(value) != 0);
-                }
-                else if (strcmp(k, "ScaleMode") == 0) {
-                    g_iScaleMode = atoi(value);
-                    if (g_iScaleMode < 0 || g_iScaleMode > 2) g_iScaleMode = 1;
-                }
+            if (strcmp(k, "Renderer") == 0) {
+                g_iRenderer = atoi(value);
+                if (g_iRenderer < 0 || g_iRenderer > 2) g_iRenderer = 2;
+            }
+            else if (strcmp(k, "ScreenWidth") == 0) {
+                g_iScreenWidth = atoi(value);
+            }
+            else if (strcmp(k, "ScreenHeight") == 0) {
+                g_iScreenHeight = atoi(value);
+            }
+            else if (strcmp(k, "Fullscreen") == 0) {
+                g_bFullscreen = (atoi(value) != 0);
+            }
+            else if (strcmp(k, "VSync") == 0) {
+                g_bVSync = (atoi(value) != 0);
+            }
+            else if (strcmp(k, "ScaleMode") == 0) {
+                g_iScaleMode = atoi(value);
+                if (g_iScaleMode < 0 || g_iScaleMode > 2) g_iScaleMode = 1;
             }
         }
-        fclose(fp);
     }
+    fclose(fp);
 }
 
 void SaveVideoConfig()
@@ -630,6 +642,90 @@ void StopServerCheck()
     }
 }
 
+// ===== SELF-UPDATE DEL LAUNCHER =====
+// Esta función crea un script batch que:
+// 1. Espera a que el launcher se cierre
+// 2. Reemplaza el exe viejo con el nuevo
+// 3. Reinicia el launcher
+BOOL PerformLauncherSelfUpdate()
+{
+    // Obtener la ruta del launcher actual
+    char currentPath[MAX_PATH];
+    GetModuleFileName(NULL, currentPath, MAX_PATH);
+    
+    // Ruta del archivo descargado temporalmente
+    char tempPath[MAX_PATH];
+    sprintf(tempPath, "%s.new", currentPath);
+    
+    // Verificar que el archivo nuevo existe
+    if (GetFileAttributes(tempPath) == INVALID_FILE_ATTRIBUTES) {
+        return FALSE;
+    }
+    
+    // Crear script batch para hacer el reemplazo
+    char batchPath[MAX_PATH];
+    sprintf(batchPath, "%s.update.bat", currentPath);
+    
+    FILE* fp = fopen(batchPath, "w");
+    if (!fp) return FALSE;
+    
+    // Script batch con reintentos
+    fprintf(fp, "@echo off\n");
+    fprintf(fp, "echo Actualizando Launcher...\n");
+    fprintf(fp, "echo Por favor espere...\n");
+    fprintf(fp, "\n");
+    fprintf(fp, ":wait_loop\n");
+    fprintf(fp, "timeout /t 1 /nobreak >nul\n");
+    fprintf(fp, "del \"%s\" >nul 2>&1\n", currentPath);
+    fprintf(fp, "if exist \"%s\" goto wait_loop\n", currentPath);
+    fprintf(fp, "\n");
+    fprintf(fp, "move /y \"%s\" \"%s\"\n", tempPath, currentPath);
+    fprintf(fp, "if errorlevel 1 (\n");
+    fprintf(fp, "    echo Error al actualizar el launcher.\n");
+    fprintf(fp, "    pause\n");
+    fprintf(fp, "    del \"%%~f0\"\n");
+    fprintf(fp, "    exit /b 1\n");
+    fprintf(fp, ")\n");
+    fprintf(fp, "\n");
+    fprintf(fp, "echo Actualizacion completada!\n");
+    fprintf(fp, "start \"\" \"%s\"\n", currentPath);
+    fprintf(fp, "del \"%%~f0\"\n");
+    
+    fclose(fp);
+    
+    // Ejecutar el batch de forma oculta
+    STARTUPINFO si = {0};
+    PROCESS_INFORMATION pi = {0};
+    si.cb = sizeof(si);
+    si.dwFlags = STARTF_USESHOWWINDOW;
+    si.wShowWindow = SW_HIDE;
+    
+    // Ejecutar con cmd /c para que funcione el batch
+    char cmdLine[MAX_PATH * 2];
+    sprintf(cmdLine, "cmd.exe /c \"%s\"", batchPath);
+    
+    if (CreateProcess(NULL, cmdLine, NULL, NULL, FALSE, 
+        CREATE_NO_WINDOW | DETACHED_PROCESS, NULL, NULL, &si, &pi)) {
+        CloseHandle(pi.hProcess);
+        CloseHandle(pi.hThread);
+        return TRUE;
+    }
+    
+    return FALSE;
+}
+
+// Obtener el nombre del exe actual
+void GetCurrentExeName(char* outName, int maxLen)
+{
+    char path[MAX_PATH];
+    GetModuleFileName(NULL, path, MAX_PATH);
+    const char* fileName = strrchr(path, '\\');
+    if (fileName) fileName++;
+    else fileName = path;
+    strncpy(outName, fileName, maxLen - 1);
+    outName[maxLen - 1] = '\0';
+}
+
 // Thread de actualización
 DWORD WINAPI UpdateThread(LPVOID lpParam)
 {
@@ -695,16 +791,34 @@ DWORD WINAPI UpdateThread(LPVOID lpParam)
     ParsePatchList(patchlistBuf, patchVersion, allFiles);
     delete[] patchlistBuf;
     
+    // Obtener el nombre del exe actual (el launcher)
+    char currentExeName[MAX_PATH];
+    GetCurrentExeName(currentExeName, MAX_PATH);
+    
     // Verificar qué archivos necesitan actualización
     g_filesToUpdate.clear();
+    g_bLauncherNeedsUpdate = FALSE;
+    g_szNewLauncherHash[0] = '\0';
+    
     for (size_t i = 0; i < allFiles.size(); i++) {
-        // Saltar Game.exe - no se puede actualizar a sí mismo
-        if (_stricmp(allFiles[i].path, "Game.exe") == 0) continue;
-        
         char localHash[33];
         CalculateMD5(allFiles[i].path, localHash);
         
+        // Verificar si este archivo necesita actualización
         if (_stricmp(localHash, allFiles[i].hash) != 0) {
+            // Detectar si es el launcher (HelbreathLauncher.exe)
+            const char* fileName = strrchr(allFiles[i].path, '\\');
+            if (!fileName) fileName = allFiles[i].path;
+            else fileName++;
+            
+            if (_stricmp(fileName, currentExeName) == 0 || 
+                _stricmp(fileName, "HelbreathLauncher.exe") == 0) {
+                // El launcher necesita actualizarse - marcarlo para self-update
+                g_bLauncherNeedsUpdate = TRUE;
+                strcpy(g_szNewLauncherHash, allFiles[i].hash);
+            }
+            
+            // Agregar a la lista de archivos a actualizar
             g_filesToUpdate.push_back(allFiles[i]);
         }
     }
@@ -722,6 +836,12 @@ DWORD WINAPI UpdateThread(LPVOID lpParam)
     // Descargar archivos
     g_updateState = STATE_DOWNLOADING;
     g_iProgressTotal = (int)g_filesToUpdate.size();
+    
+    // Obtener el nombre del exe actual (el launcher)
+    char launcherExeName[MAX_PATH];
+    GetCurrentExeName(launcherExeName, MAX_PATH);
+    char currentLauncherPath[MAX_PATH];
+    GetModuleFileName(NULL, currentLauncherPath, MAX_PATH);
     
     for (int i = 0; i < g_iProgressTotal; i++) {
         g_iProgressCurrent = i + 1;
@@ -745,7 +865,19 @@ DWORD WINAPI UpdateThread(LPVOID lpParam)
         char fileUrl[768];
         sprintf(fileUrl, "%s/files/%s", GITHUB_RAW_URL, urlPath);
         
-        if (!DownloadFile(fileUrl, g_filesToUpdate[i].path)) {
+        // Determinar la ruta de descarga
+        char downloadPath[MAX_PATH];
+        BOOL isLauncherFile = (_stricmp(fileName, launcherExeName) == 0 || 
+                               _stricmp(fileName, "HelbreathLauncher.exe") == 0);
+        
+        if (isLauncherFile) {
+            // Descargar launcher a archivo temporal (no podemos sobreescribir el exe en ejecución)
+            sprintf(downloadPath, "%s.new", currentLauncherPath);
+        } else {
+            strcpy(downloadPath, g_filesToUpdate[i].path);
+        }
+        
+        if (!DownloadFile(fileUrl, downloadPath)) {
             g_updateState = STATE_ERROR;
             sprintf(g_szStatusText, "Error descargando: %s", fileName);
             g_bCanPlay = TRUE;
@@ -755,8 +887,21 @@ DWORD WINAPI UpdateThread(LPVOID lpParam)
         }
     }
     
-    // Éxito
+    // Guardar versión
     SaveLocalVersion(remoteVersionBuf);
+    
+    // Si el launcher necesita actualizarse, mostrar mensaje especial
+    if (g_bLauncherNeedsUpdate) {
+        g_updateState = STATE_READY;
+        g_szCurrentFile[0] = '\0';
+        strcpy(g_szStatusText, "Reiniciar para actualizar Launcher");
+        g_bCanPlay = TRUE;  // Permitir jugar o reiniciar
+        g_bUpdateInProgress = FALSE;
+        InvalidateRect(g_hMainWnd, NULL, FALSE);
+        return 0;
+    }
+    
+    // Éxito completo
     g_updateState = STATE_READY;
     g_szCurrentFile[0] = '\0';
     strcpy(g_szStatusText, "Actualizacion completada!");
@@ -1126,7 +1271,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         int btnExitY = height - 35;
         
         RECT rcPlay = {(width - btnWidth) / 2, btnY, (width + btnWidth) / 2, btnY + btnHeight};
-        DrawCustomButton(hdcMem, &rcPlay, "ENTRAR AL REINO", bPlayHover, TRUE, g_bCanPlay);
+        // Cambiar texto del botón si el launcher necesita reiniciarse
+        const char* playButtonText = g_bLauncherNeedsUpdate ? "REINICIAR" : "ENTRAR AL REINO";
+        DrawCustomButton(hdcMem, &rcPlay, playButtonText, bPlayHover, TRUE, g_bCanPlay);
         
         int exitBtnWidth = 100;
         RECT rcExit = {(width - exitBtnWidth) / 2, btnExitY, (width + exitBtnWidth) / 2, btnExitY + 25};
@@ -1175,9 +1322,42 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         int btnExitY = LAUNCHER_HEIGHT - 35;
         int exitBtnWidth = 100;
         
-        // Click en JUGAR
+        // Click en JUGAR (o REINICIAR si hay actualización del launcher pendiente)
         if (g_bCanPlay && x >= (LAUNCHER_WIDTH - btnWidth) / 2 && x <= (LAUNCHER_WIDTH + btnWidth) / 2 && 
             y >= btnY && y <= btnY + btnHeight) {
+            
+            // Si el launcher necesita actualizarse, hacer self-update y reiniciar
+            if (g_bLauncherNeedsUpdate) {
+                // Guardar configuración antes de reiniciar
+                g_iRenderer = (int)SendMessage(hComboRenderer, CB_GETCURSEL, 0, 0);
+                int resSel = (int)SendMessage(hComboResolution, CB_GETCURSEL, 0, 0);
+                if (resSel >= 0 && resSel < g_iNumResolutions) {
+                    g_iScreenWidth = g_Resolutions[resSel].width;
+                    g_iScreenHeight = g_Resolutions[resSel].height;
+                }
+                g_iScaleMode = (int)SendMessage(hComboScaleMode, CB_GETCURSEL, 0, 0);
+                g_bVSync = (SendMessage(hCheckVSync, BM_GETCHECK, 0, 0) == BST_CHECKED);
+                g_bTestServer = (SendMessage(hRadioTest, BM_GETCHECK, 0, 0) == BST_CHECKED);
+                SaveSettings();
+                
+                // Verificar que existe el archivo .new y ejecutar self-update
+                char currentPath[MAX_PATH];
+                GetModuleFileName(NULL, currentPath, MAX_PATH);
+                char newPath[MAX_PATH];
+                sprintf(newPath, "%s.new", currentPath);
+                
+                if (GetFileAttributes(newPath) != INVALID_FILE_ATTRIBUTES) {
+                    if (PerformLauncherSelfUpdate()) {
+                        DestroyWindow(hWnd);
+                        return 0;
+                    } else {
+                        MessageBox(hWnd, "Error al preparar la actualizacion.\nInténtalo de nuevo.", "Error", MB_OK | MB_ICONERROR);
+                    }
+                } else {
+                    MessageBox(hWnd, "Archivo de actualizacion no encontrado.\nReinicia el launcher.", "Error", MB_OK | MB_ICONERROR);
+                }
+                return 0;
+            }
             
             // Leer estado de los controles de servidor
             g_bTestServer = (SendMessage(hRadioTest, BM_GETCHECK, 0, 0) == BST_CHECKED);
@@ -1240,6 +1420,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         return hit;
     }
+    
+    case WM_CLOSE:
+        // Si el launcher necesita actualizarse, ejecutar self-update
+        if (g_bLauncherNeedsUpdate) {
+            // Verificar que existe el archivo .new
+            char currentPath[MAX_PATH];
+            GetModuleFileName(NULL, currentPath, MAX_PATH);
+            char newPath[MAX_PATH];
+            sprintf(newPath, "%s.new", currentPath);
+            
+            if (GetFileAttributes(newPath) != INVALID_FILE_ATTRIBUTES) {
+                if (PerformLauncherSelfUpdate()) {
+                    // El batch se encargará de reiniciar
+                    DestroyWindow(hWnd);
+                    return 0;
+                }
+            }
+        }
+        DestroyWindow(hWnd);
+        return 0;
     
     case WM_DESTROY:
         KillTimer(hWnd, 1);
