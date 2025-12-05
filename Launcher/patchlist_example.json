@@ -1,0 +1,25 @@
+{
+    "version": "1.0.0",
+    "files": [
+        {
+            "path": "Game.exe",
+            "hash": "abc123def456...",
+            "size": 1234567
+        },
+        {
+            "path": "search.dll",
+            "hash": "xyz789...",
+            "size": 12345
+        },
+        {
+            "path": "CONTENTS/LOGIN.CFG",
+            "hash": "hash_aqui...",
+            "size": 1234
+        },
+        {
+            "path": "SPRITES/GameDialog.pak",
+            "hash": "hash_aqui...",
+            "size": 123456
+        }
+    ]
+}

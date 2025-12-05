@@ -5,6 +5,8 @@
 #include <d3d11.h>
 #include <ddraw.h>
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 // Constantes de registro
 const char* CRendererConfig::REGISTRY_KEY = "Software\\Siementech\\Helbreath Xtreme\\Video";
@@ -13,6 +15,106 @@ const char* CRendererConfig::REG_WIDTH = "Width";
 const char* CRendererConfig::REG_HEIGHT = "Height";
 const char* CRendererConfig::REG_FULLSCREEN = "Fullscreen";
 const char* CRendererConfig::REG_VSYNC = "VSync";
+
+// ===== HELPER: Parsear argumento numérico de la línea de comandos =====
+static bool GetCommandLineArg(const char* cmdLine, const char* argName, int* outValue)
+{
+    if (!cmdLine || !argName || !outValue) return false;
+    
+    char searchPattern[64];
+    sprintf(searchPattern, "-%s", argName);
+    
+    const char* found = strstr(cmdLine, searchPattern);
+    if (!found) {
+        // Intentar con /
+        sprintf(searchPattern, "/%s", argName);
+        found = strstr(cmdLine, searchPattern);
+    }
+    
+    if (!found) return false;
+    
+    // Avanzar al valor
+    const char* valueStart = found + strlen(searchPattern);
+    while (*valueStart == ' ' || *valueStart == '=' || *valueStart == ':') valueStart++;
+    
+    if (*valueStart == '\0' || *valueStart == '-' || *valueStart == '/') return false;
+    
+    *outValue = atoi(valueStart);
+    return true;
+}
+
+// ===== CARGAR DESDE LÍNEA DE COMANDOS =====
+bool CRendererConfig::LoadFromCommandLine(const char* cmdLine)
+{
+    if (!cmdLine || strlen(cmdLine) == 0) {
+        OutputDebugStringA("[HB-CONFIG] LoadFromCommandLine: linea de comandos vacia\n");
+        return false;
+    }
+    
+    char msg[512];
+    sprintf(msg, "[HB-CONFIG] LoadFromCommandLine('%s')\n", cmdLine);
+    OutputDebugStringA(msg);
+    
+    bool foundAny = false;
+    int value;
+    
+    // Parsear -renderer X
+    if (GetCommandLineArg(cmdLine, "renderer", &value)) {
+        m_videoSettings.renderer = (RendererType)value;
+        sprintf(msg, "[HB-CONFIG] CLI Renderer = %d\n", value);
+        OutputDebugStringA(msg);
+        foundAny = true;
+    }
+    
+    // Parsear -width X
+    if (GetCommandLineArg(cmdLine, "width", &value)) {
+        m_videoSettings.width = value;
+        sprintf(msg, "[HB-CONFIG] CLI Width = %d\n", value);
+        OutputDebugStringA(msg);
+        foundAny = true;
+    }
+    
+    // Parsear -height X
+    if (GetCommandLineArg(cmdLine, "height", &value)) {
+        m_videoSettings.height = value;
+        sprintf(msg, "[HB-CONFIG] CLI Height = %d\n", value);
+        OutputDebugStringA(msg);
+        foundAny = true;
+    }
+    
+    // Parsear -vsync X
+    if (GetCommandLineArg(cmdLine, "vsync", &value)) {
+        m_videoSettings.vsync = (value != 0);
+        sprintf(msg, "[HB-CONFIG] CLI VSync = %d\n", value);
+        OutputDebugStringA(msg);
+        foundAny = true;
+    }
+    
+    // Parsear -scalemode X
+    if (GetCommandLineArg(cmdLine, "scalemode", &value)) {
+        m_videoSettings.scaleMode = (ScaleMode)value;
+        sprintf(msg, "[HB-CONFIG] CLI ScaleMode = %d\n", value);
+        OutputDebugStringA(msg);
+        foundAny = true;
+    }
+    
+    // Parsear -fullscreen X
+    if (GetCommandLineArg(cmdLine, "fullscreen", &value)) {
+        m_videoSettings.fullscreen = (value != 0);
+        sprintf(msg, "[HB-CONFIG] CLI Fullscreen = %d\n", value);
+        OutputDebugStringA(msg);
+        foundAny = true;
+    }
+    
+    if (foundAny) {
+        sprintf(msg, "[HB-CONFIG] CLI Result: %dx%d, Renderer=%d, VSync=%d, ScaleMode=%d\n",
+                m_videoSettings.width, m_videoSettings.height,
+                m_videoSettings.renderer, m_videoSettings.vsync, m_videoSettings.scaleMode);
+        OutputDebugStringA(msg);
+    }
+    
+    return foundAny;
+}
 
 // ===== CARGAR/GUARDAR ARCHIVO =====
 
@@ -77,7 +179,9 @@ bool CRendererConfig::LoadFromFile(const char* filename)
                 m_videoSettings.quality = atoi(v);
             }
             else if (strcmp(k, "ScaleMode") == 0) {
-                // Reservado para futuro
+                m_videoSettings.scaleMode = (ScaleMode)atoi(v);
+                sprintf(msg, "[HB-CONFIG] ScaleMode = %d\\n", m_videoSettings.scaleMode);
+                OutputDebugStringA(msg);
             }
             else if (strcmp(k, "MaintainAspect") == 0) {
                 // Reservado para futuro
@@ -102,11 +206,13 @@ bool CRendererConfig::SaveToFile(const char* filename)
     
     fprintf(fp, "# Video Configuration\n");
     fprintf(fp, "# Renderer: 0=Auto, 1=DirectDraw, 2=Direct3D11\n");
+    fprintf(fp, "# ScaleMode: 0=Point, 1=Bilinear, 2=Integer\n");
     fprintf(fp, "Renderer=%d\n", (int)m_videoSettings.renderer);
     fprintf(fp, "Width=%d\n", m_videoSettings.width);
     fprintf(fp, "Height=%d\n", m_videoSettings.height);
     fprintf(fp, "Fullscreen=%d\n", m_videoSettings.fullscreen ? 1 : 0);
     fprintf(fp, "VSync=%d\n", m_videoSettings.vsync ? 1 : 0);
+    fprintf(fp, "ScaleMode=%d\n", (int)m_videoSettings.scaleMode);
     fprintf(fp, "Quality=%d\n", m_videoSettings.quality);
     
     fclose(fp);

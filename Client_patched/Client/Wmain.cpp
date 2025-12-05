@@ -24,6 +24,7 @@
 #include "Game.h"
 #include "GlobalDef.h"
 #include "RendererBridge.h"
+#include "RendererConfig.h"
 
 #pragma comment(lib, "comctl32.lib")
 #pragma comment(lib, "gdiplus.lib")

@@ -1,0 +1,179 @@
+============================================================
+   SISTEMA DE ACTUALIZACIONES AUTOMÁTICAS - HELBREATH
+============================================================
+
+Este documento explica cómo configurar el sistema de auto-update
+para que los jugadores siempre tengan la última versión del cliente.
+
+============================================================
+ARQUITECTURA DEL SISTEMA
+============================================================
+
+El sistema funciona así:
+
+1. SERVIDOR WEB (tu hosting):
+   - version.txt          → Versión actual del cliente
+   - patchlist.json       → Lista de archivos con sus hashes MD5
+   - files/               → Carpeta con todos los archivos del cliente
+       ├── Game.exe
+       ├── search.dll
+       ├── CONTENTS/
+       ├── SPRITES/
+       └── ...
+
+2. CLIENTE (jugador):
+   - HelbreathLauncher.exe  → Launcher que verifica updates
+   - version.txt            → Versión local instalada
+   - Game.exe               → Juego
+   - ...archivos del juego
+
+============================================================
+PASO 1: CONFIGURAR EL SERVIDOR WEB
+============================================================
+
+Necesitas un servidor web (Apache, Nginx, IIS) o un hosting.
+También puedes usar servicios gratuitos como:
+- GitHub Pages
+- Netlify
+- Cloudflare Pages
+- Un VPS con nginx
+
+Estructura de carpetas en el servidor:
+
+/tu-servidor.com/updates/
+├── version.txt
+├── patchlist.json
+└── files/
+    ├── Game.exe
+    ├── search.dll
+    ├── CONTENTS/
+    │   ├── LOGIN.CFG
+    │   └── ...
+    ├── FONTS/
+    ├── MAPDATA/
+    ├── MUSIC/
+    ├── SOUNDS/
+    └── SPRITES/
+
+============================================================
+PASO 2: GENERAR EL PATCHLIST
+============================================================
+
+Cada vez que actualices archivos del cliente:
+
+1. Abre una terminal en la carpeta Launcher
+2. Ejecuta:
+   
+   python GenerarPatchList.py 1.0.1
+   
+   (Cambia 1.0.1 por el número de versión)
+
+3. Se generarán:
+   - patchlist.json
+   - version.txt
+
+4. Sube estos archivos junto con los archivos actualizados
+   a tu servidor web.
+
+============================================================
+PASO 3: CONFIGURAR EL LAUNCHER
+============================================================
+
+Edita HelbreathLauncher.py y cambia la URL del servidor:
+
+UPDATE_SERVER_URL = "http://tu-servidor.com/updates"
+
+Por ejemplo:
+- http://mihelbreath.com/updates
+- https://tu-dominio.com/helbreath/updates
+
+============================================================
+PASO 4: COMPILAR EL LAUNCHER (OPCIONAL)
+============================================================
+
+Para distribuir el launcher como .exe:
+
+1. Instala PyInstaller:
+   pip install pyinstaller
+
+2. Compila:
+   pyinstaller --onefile --windowed --icon=helbreath.ico HelbreathLauncher.py
+
+3. El ejecutable estará en la carpeta 'dist/'
+
+============================================================
+PASO 5: ACTUALIZAR EL INSTALADOR
+============================================================
+
+Modifica el script del instalador para incluir:
+- HelbreathLauncher.exe (en lugar de ejecutar Game.exe directamente)
+- version.txt
+
+Los jugadores ejecutarán el Launcher en vez del Game.exe,
+y el Launcher verificará updates antes de iniciar el juego.
+
+============================================================
+EJEMPLO DE USO
+============================================================
+
+ESCENARIO: Actualizaste el Game.exe y un sprite
+
+1. Copia los archivos nuevos a la carpeta Helbreath
+
+2. Ejecuta GenerarPatchList.py con nueva versión:
+   python GenerarPatchList.py 1.0.2
+
+3. Sube al servidor:
+   - version.txt (contendrá "1.0.2")
+   - patchlist.json (con los nuevos hashes)
+   - files/Game.exe
+   - files/SPRITES/archivo_modificado.pak
+
+4. Cuando los jugadores abran el Launcher:
+   - Detectará que hay versión 1.0.2
+   - Comparará hashes de archivos
+   - Descargará solo Game.exe y el sprite modificado
+   - Actualizará version.txt local
+   - Habilitará el botón "JUGAR"
+
+============================================================
+ALTERNATIVAS MÁS SIMPLES
+============================================================
+
+Si no quieres configurar un servidor web completo:
+
+OPCIÓN A: Google Drive / Dropbox
+- Sube version.txt y patchlist.json a una carpeta pública
+- Usa los enlaces directos de descarga
+- Limitado pero funciona para pocos usuarios
+
+OPCIÓN B: GitHub Releases
+- Crea un repositorio público
+- Sube los archivos como "Release"
+- Usa la API de GitHub para verificar versiones
+
+OPCIÓN C: Sin auto-update
+- Simplemente distribuye instaladores nuevos
+- Los jugadores descargan la nueva versión completa
+
+============================================================
+NOTAS DE SEGURIDAD
+============================================================
+
+- Usa HTTPS si es posible
+- Considera firmar los archivos
+- No incluyas información sensible en patchlist.json
+- Los hashes MD5 son para verificar integridad, no seguridad
+
+============================================================
+ARCHIVOS INCLUIDOS
+============================================================
+
+Launcher/
+├── HelbreathLauncher.py      → Código del launcher
+├── GenerarPatchList.py       → Generador de patchlist
+├── version.txt               → Versión actual
+├── patchlist_example.json    → Ejemplo de patchlist
+└── INSTRUCCIONES_UPDATES.txt → Este archivo
+
+============================================================

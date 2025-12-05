@@ -15,6 +15,13 @@ enum RendererType {
     RENDERER_DIRECT3D11 = 2  // Direct3D 11 (moderno, Windows 7+)
 };
 
+// Modos de escalado
+enum ScaleMode {
+    SCALE_POINT = 0,        // Escalado por punto (pixelado)
+    SCALE_BILINEAR = 1,     // Escalado bilinear (suave)
+    SCALE_INTEGER = 2       // Escalado entero (pixel-perfect)
+};
+
 // Configuración de video
 struct VideoSettings {
     int width;              // Ancho de pantalla
@@ -23,14 +30,17 @@ struct VideoSettings {
     bool vsync;             // Sincronización vertical
     RendererType renderer;  // Tipo de renderer
     int quality;            // Calidad gráfica (0-3)
+    ScaleMode scaleMode;    // Modo de escalado
     
+    // Valores por defecto - modernos para hardware actual
     VideoSettings() :
-        width(800),
-        height(600),
+        width(1920),         // Full HD por defecto
+        height(1080),
         fullscreen(true),
         vsync(true),
-        renderer(RENDERER_AUTO),
-        quality(2) {}
+        renderer(RENDERER_DIRECT3D11),  // D3D11 por defecto
+        quality(2),
+        scaleMode(SCALE_BILINEAR) {}
 };
 
 // Clase para manejar la configuración del renderer
@@ -49,6 +59,9 @@ public:
     // Cargar desde registro de Windows
     bool LoadFromRegistry();
     bool SaveToRegistry();
+    
+    // Cargar desde argumentos de línea de comandos
+    bool LoadFromCommandLine(const char* cmdLine);
     
     // Obtener/Establecer settings
     VideoSettings& GetVideoSettings() { return m_videoSettings; }
@@ -70,6 +83,9 @@ public:
     
     bool IsVsyncEnabled() const { return m_videoSettings.vsync; }
     void SetVsync(bool vsync) { m_videoSettings.vsync = vsync; }
+    
+    ScaleMode GetScaleMode() const { return m_videoSettings.scaleMode; }
+    void SetScaleMode(ScaleMode mode) { m_videoSettings.scaleMode = mode; }
     
     // Detectar capacidades del sistema
     static bool IsD3D11Available();

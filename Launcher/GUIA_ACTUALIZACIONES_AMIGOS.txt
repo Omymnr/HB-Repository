@@ -1,0 +1,286 @@
+============================================================
+   GUÍA: SISTEMA DE AUTO-ACTUALIZACIONES VIA GITHUB
+            LAUNCHER C++ (HelbreathLauncher.exe)
+============================================================
+
+Esta guía te explica cómo hacer que tus amigos reciban
+actualizaciones automáticas del cliente de Helbreath usando
+el nuevo Launcher en C++ con interfaz idéntica al juego.
+
+============================================================
+VENTAJAS DEL LAUNCHER C++
+============================================================
+
+• Mismo estilo visual que el launcher del Game.exe
+• No requiere Python instalado
+• Ejecutable pequeño y rápido
+• Descarga solo archivos que cambiaron (verificación MD5)
+• Funciona offline si no hay conexión
+
+============================================================
+PASO 1: CREAR REPOSITORIO EN GITHUB
+============================================================
+
+1. Ve a https://github.com y crea una cuenta (gratis)
+2. Crea un nuevo repositorio:
+   - Nombre: "helbreath-updates" (o el que quieras)
+   - Público (necesario para descargas gratis)
+   - NO inicialices con README
+
+============================================================
+PASO 2: PREPARAR LOS ARCHIVOS
+============================================================
+
+En tu PC, crea esta estructura de carpetas:
+
+helbreath-updates/
+├── version.txt          ← Archivo con "1.0.0"
+├── patchlist.json       ← Lo genera el script Python
+└── files/               ← Contenido del cliente
+    ├── search.dll
+    ├── CONTENTS/
+    │   ├── LOGIN.CFG
+    │   └── ...
+    ├── FONTS/
+    ├── MAPDATA/
+    ├── MUSIC/
+    ├── SAVE/
+    ├── SOUNDS/
+    └── SPRITES/
+
+IMPORTANTE: 
+- NO incluyas Game.exe en files/ (el launcher no se puede actualizar a sí mismo)
+- Game.exe se distribuye con el instalador inicial
+
+============================================================
+PASO 3: GENERAR EL PATCHLIST
+============================================================
+
+1. Abre PowerShell en la carpeta Helbreath\Launcher
+2. Asegúrate de tener Python instalado
+3. Ejecuta:
+   
+   python GenerarPatchList.py 1.0.0 "C:\ruta\a\helbreath-updates\files"
+
+4. El script generará:
+   - version.txt (versión actual)
+   - patchlist.json (lista de archivos con hashes MD5)
+
+5. Copia ambos archivos a la carpeta helbreath-updates/
+
+============================================================
+PASO 4: SUBIR A GITHUB
+============================================================
+
+1. Abre Git Bash o terminal en la carpeta helbreath-updates
+2. Ejecuta estos comandos:
+
+   git init
+   git add .
+   git commit -m "Version 1.0.0"
+   git branch -M main
+   git remote add origin https://github.com/TU_USUARIO/helbreath-updates.git
+   git push -u origin main
+
+NOTA: Si hay archivos grandes (>100MB), usa Git LFS:
+   git lfs install
+   git lfs track "*.pak"
+   git lfs track "SPRITES/*"
+
+============================================================
+PASO 5: CONFIGURAR Y COMPILAR EL LAUNCHER
+============================================================
+
+OPCIÓN A: Usar Visual Studio (Recomendado)
+------------------------------------------
+1. Abre Helbreath\Launcher\HelbreathLauncher.sln con Visual Studio
+
+2. Abre HelbreathLauncher.cpp y busca la línea (cerca del inicio):
+   
+   #define GITHUB_RAW_URL "https://raw.githubusercontent.com/TU_USUARIO/helbreath-updates/main"
+
+3. Cambia TU_USUARIO por tu nombre de usuario de GitHub
+
+4. Compila en modo Release (Win32 o x64)
+
+5. El ejecutable estará en: Launcher\Release\HelbreathLauncher.exe
+
+
+OPCIÓN B: Usar línea de comandos (cl.exe)
+------------------------------------------
+1. Abre "Developer Command Prompt for VS" 
+
+2. Navega a la carpeta Launcher:
+   cd "d:\HelbreathServer-main - copia\Helbreath\Launcher"
+
+3. Edita HelbreathLauncher.cpp y cambia GITHUB_RAW_URL
+
+4. Ejecuta el script:
+   compilar_launcher.bat
+
+5. El ejecutable se genera como HelbreathLauncher.exe
+
+============================================================
+PASO 6: CREAR EL INSTALADOR COMPLETO
+============================================================
+
+El instalador debe incluir:
+- HelbreathLauncher.exe (el launcher compilado)
+- Game.exe
+- Todos los archivos del cliente
+- version.txt (con la versión inicial)
+
+Modifica HelbreathInstaller.nsi para incluir el launcher:
+
+1. En la sección de archivos, añade:
+   SetOutPath "$INSTDIR"
+   File "..\..\Launcher\Release\HelbreathLauncher.exe"
+
+2. Crea acceso directo al Launcher en vez de Game.exe:
+   CreateShortcut "$DESKTOP\Helbreath.lnk" "$INSTDIR\HelbreathLauncher.exe"
+
+============================================================
+PASO 7: DISTRIBUIR A TUS AMIGOS
+============================================================
+
+Para la instalación inicial:
+1. Compila el instalador NSIS con todo incluido
+2. Tus amigos ejecutan el instalador
+3. Usan el acceso directo "Helbreath" que abre el Launcher
+
+El flujo de actualización:
+1. Amigo abre HelbreathLauncher.exe
+2. Launcher verifica version.txt en GitHub
+3. Si hay nueva versión, descarga patchlist.json
+4. Compara hashes MD5 de archivos locales
+5. Descarga solo archivos que cambiaron
+6. Actualiza version.txt local
+7. Click en "ENTRAR AL REINO" para jugar
+
+============================================================
+CUANDO QUIERAS ACTUALIZAR EL CLIENTE
+============================================================
+
+1. Modifica los archivos que necesites en files/
+
+2. Regenera el patchlist con nueva versión:
+   python GenerarPatchList.py 1.0.1 "C:\ruta\helbreath-updates\files"
+
+3. Copia version.txt y patchlist.json a helbreath-updates/
+
+4. Sube los cambios a GitHub:
+   cd helbreath-updates
+   git add .
+   git commit -m "Version 1.0.1 - descripción de cambios"
+   git push
+
+5. La próxima vez que tus amigos abran el Launcher,
+   descargará automáticamente solo los archivos nuevos.
+
+============================================================
+CARACTERÍSTICAS DEL LAUNCHER
+============================================================
+
+Interfaz:
+- Estilo medieval idéntico al launcher del Game.exe
+- Selector de servidor (Principal/Pruebas)
+- Opción de modo ventana
+- Configuración guardada en registro de Windows
+
+Auto-Update:
+- Verifica versión al iniciar
+- Barra de progreso durante descargas
+- Funciona offline (permite jugar sin conexión)
+- Muestra errores si falla la descarga
+
+Ejecución:
+- Lanza Game.exe con parámetro -nolauncher
+- Salta el launcher interno del juego
+- Pasa configuración de borderless si está activado
+
+============================================================
+ARCHIVOS DEL PROYECTO
+============================================================
+
+Helbreath\Launcher\
+├── HelbreathLauncher.cpp      ← Código fuente C++
+├── HelbreathLauncher.rc       ← Recursos (icono)
+├── resource.h                 ← Definiciones de recursos
+├── helbreath.ico              ← Icono del launcher
+├── HelbreathLauncher.sln      ← Solución Visual Studio
+├── HelbreathLauncher.vcxproj  ← Proyecto Visual Studio
+├── compilar_launcher.bat      ← Script compilación
+├── GenerarPatchList.py        ← Genera patchlist.json
+└── GUIA_ACTUALIZACIONES_AMIGOS.txt ← Esta guía
+
+============================================================
+NOTAS IMPORTANTES
+============================================================
+
+• GitHub tiene límite de 100MB por archivo
+  - Usa Git LFS para sprites/mapas grandes
+  - O divide archivos .pak en partes más pequeñas
+
+• El launcher guarda configuración en:
+  HKEY_CURRENT_USER\SOFTWARE\HelbreathApocalypse\Launcher
+
+• Para actualizar Game.exe, es mejor distribuir nuevo
+  instalador completo (el exe no puede actualizarse a sí mismo)
+
+• Las IPs de servidor están hardcodeadas en:
+  - HelbreathLauncher.cpp (ONLINE_SERVER_IP, TEST_SERVER_IP)
+  - Recompila si cambian las IPs
+
+• El launcher escribe LOGIN.CFG según el servidor seleccionado
+
+============================================================
+ESTRUCTURA EN GITHUB
+============================================================
+
+https://github.com/TU_USUARIO/helbreath-updates/
+│
+├── version.txt         → "1.0.1" (versión actual)
+│
+├── patchlist.json      → Lista de archivos:
+│   {
+│     "version": "1.0.1",
+│     "files": [
+│       {"path": "CONTENTS/LOGIN.CFG", "hash": "abc123...", "size": 1234},
+│       {"path": "SPRITES/GameDialog2.pak", "hash": "def456...", "size": 567890}
+│     ]
+│   }
+│
+└── files/              → Archivos del cliente
+    ├── search.dll
+    ├── CONTENTS/
+    │   └── LOGIN.CFG
+    ├── FONTS/
+    ├── MAPDATA/
+    ├── MUSIC/
+    ├── SAVE/
+    ├── SOUNDS/
+    └── SPRITES/
+        └── GameDialog2.pak
+
+============================================================
+SOLUCIÓN DE PROBLEMAS
+============================================================
+
+"Sin conexión - Modo offline"
+- El launcher no pudo conectar a GitHub
+- Revisa tu conexión a internet
+- Verifica que la URL de GitHub sea correcta
+
+"Error al obtener lista de archivos"
+- patchlist.json no existe o tiene formato inválido
+- Regenera con GenerarPatchList.py
+
+"Error descargando: archivo.ext"
+- El archivo no existe en la carpeta files/ de GitHub
+- Verifica que subiste todos los archivos
+
+"No se pudo iniciar Game.exe"
+- Game.exe no está en la misma carpeta que el launcher
+- Verifica que existe y no está corrupto
+
+============================================================
