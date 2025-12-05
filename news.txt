@@ -1,0 +1,8 @@
+[2025-12-05] LAUNCHER | Indicador de Estado del Servidor
+Se ha añadido un indicador visual de estado en el launcher que muestra si el servidor está online u offline. Verde = Online, Rojo = Offline. El estado se actualiza cada 5 segundos.
+
+[2025-12-05] SERVER | Fix: Ragnaros ya no ataca a sus Demon-Elite
+Se ha corregido un bug donde el boss Ragnaros atacaba a los Demon-Elite que él mismo invocaba. Ahora luchan juntos contra los jugadores.
+
+[2025-12-05] LAUNCHER | Panel de Noticias Integrado
+El launcher ahora muestra las noticias directamente en un panel integrado, similar a juegos como World of Warcraft. Las noticias se descargan automáticamente desde el servidor.

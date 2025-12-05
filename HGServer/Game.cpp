@@ -4586,6 +4586,12 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, DWORD dw
 	char cKey;
 	int iTemp3,iTemp,iTemp2;
 	
+	// Para eventos de daño, guardar el daño real en sV3 antes de limitar sV1
+	// Esto permite al cliente mostrar daño mayor a 255
+	if ((wMsgType == DEF_OBJECTDAMAGE) || (wMsgType == DEF_OBJECTDYING) || (wMsgType == DEF_OBJECTDAMAGEMOVE)) {
+		if (sV3 == 0) sV3 = sV1; // Si sV3 no está siendo usado, copiar sV1 para enviar daño completo
+	}
+	
 	// Limitar valores para evitar overflow y desconexiones
 	// El protocolo usa unsigned char (0-255) para enviar daño al cliente
 	if (sV1 > 255) sV1 = 255;
@@ -4715,6 +4721,11 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, DWORD dw
 		*cp_s = (unsigned char)sV2;
 		cp_s++;
 
+		// OhmyWeed - Añadir sV3 para daño real (permite daños > 255)
+		sp  = (short *)cp_s;
+		*sp = sV3;
+		cp_s += 2;
+
 		sp  = (short *)cp_s;
 		sX  = m_pClientList[sOwnerH]->m_sX;
 		*sp = sX;
@@ -4824,8 +4835,6 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, DWORD dw
 										break;
 
 									case DEF_OBJECTMAGIC:
-									case DEF_OBJECTDAMAGE:
-									case DEF_OBJECTDAMAGEMOVE:
 										if (cOwnerSend == TRUE) 
 											iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);
 										else
@@ -4833,12 +4842,21 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, DWORD dw
 												iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);
 										break;
 
-									case DEF_OBJECTDYING:
+									case DEF_OBJECTDAMAGE:
+									case DEF_OBJECTDAMAGEMOVE:
 										if (cOwnerSend == TRUE) 
-											iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 15, cKey);
+											iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 13, cKey);
 										else
 											if (i != sOwnerH)
-												iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 15, cKey);
+												iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 13, cKey);
+										break;
+
+									case DEF_OBJECTDYING:
+										if (cOwnerSend == TRUE) 
+											iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 17, cKey);
+										else
+											if (i != sOwnerH)
+												iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 17, cKey);
 										break;
 
 									default:
@@ -4872,8 +4890,6 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, DWORD dw
 									break;
 
 								case DEF_OBJECTMAGIC:
-								case DEF_OBJECTDAMAGE:
-								case DEF_OBJECTDAMAGEMOVE:
 									if (cOwnerSend == TRUE) 
 										iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);
 									else
@@ -4881,12 +4897,21 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, DWORD dw
 											iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);
 									break;
 
-								case DEF_OBJECTDYING:
+								case DEF_OBJECTDAMAGE:
+								case DEF_OBJECTDAMAGEMOVE:
 									if (cOwnerSend == TRUE) 
-										iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 15, cKey);
+										iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 13, cKey);
 									else
 										if (i != sOwnerH)
-											iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 15, cKey);
+											iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 13, cKey);
+									break;
+
+								case DEF_OBJECTDYING:
+									if (cOwnerSend == TRUE) 
+										iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 17, cKey);
+									else
+										if (i != sOwnerH)
+											iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 17, cKey);
 									break;
 
 								default:
@@ -4958,6 +4983,11 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, DWORD dw
 		*cp_s = (unsigned char)sV2;
 		cp_s++;
 
+		// OhmyWeed - Añadir sV3 para daño real (permite daños > 255)
+		sp  = (short *)cp_s;
+		*sp = sV3;
+		cp_s += 2;
+
 		sp  = (short *)cp_s;
 		sX  = m_pNpcList[sOwnerH]->m_sX;
 		*sp = sX;
@@ -5015,12 +5045,12 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, DWORD dw
 							break;
 
 						case DEF_OBJECTDYING:
-							iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 15, cKey);
+							iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 17, cKey);
 							break;
 
 						case DEF_OBJECTDAMAGE:
 						case DEF_OBJECTDAMAGEMOVE:
-							iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);
+							iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 13, cKey);
 							break;
 
 						case DEF_OBJECTATTACK:
@@ -5043,12 +5073,12 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, DWORD dw
 							break;
 
 						case DEF_OBJECTDYING:
-							iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 15, cKey);
+							iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 17, cKey);
 							break;
 
 						case DEF_OBJECTDAMAGE:
 						case DEF_OBJECTDAMAGEMOVE:
-							iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);
+							iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 13, cKey);
 							break;
 
 						case DEF_OBJECTATTACK:
@@ -10586,6 +10616,13 @@ GET_VALIDLOC_SUCCESS:;
 		case 64:
 			m_pMapList[iMapIndex]->bAddCropsTotalSum();
 			break;
+		}
+		
+		// Special flag for Ragnaros (fire boss visual effect) - 0x00000200
+		// Also 0x80000000 to mark as hostile/attackable enemy (shows sword cursor on client)
+		if (memcmp(m_pNpcList[i]->m_cNpcName, "Ragnaros", 8) == 0) {
+			m_pNpcList[i]->m_iStatus = m_pNpcList[i]->m_iStatus | 0x00000200 | 0x80000000;
+			m_pNpcList[i]->m_cSide = 100; // Lado especial para Ragnaros y sus secuaces
 		}
 		
 		SendEventToNearClient_TypeA(i, DEF_OWNERTYPE_NPC, MSGID_EVENT_LOG, DEF_MSGTYPE_CONFIRM, NULL, NULL, NULL);
@@ -31050,6 +31087,11 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 		if (m_pNpcList[sTargetH]->m_iHP <= 0) return;
 		if ((m_bIsCrusadeMode == TRUE) && (cAttackerSide == m_pNpcList[sTargetH]->m_cSide)) return;
 		
+		// Evitar fuego amigo entre NPCs del mismo lado (Ragnaros y sus Demon-Elite)
+		if ((cAttackerType == DEF_OWNERTYPE_NPC) && (m_pNpcList[sAttackerH] != NULL) &&
+			(m_pNpcList[sAttackerH]->m_cSide == m_pNpcList[sTargetH]->m_cSide) &&
+			(m_pNpcList[sAttackerH]->m_cSide != 0)) return;
+		
 		sTgtX = m_pNpcList[sTargetH]->m_sX;
 		sTgtY = m_pNpcList[sTargetH]->m_sY;
 
@@ -32069,6 +32111,11 @@ EDSD_SKIPDAMAGEMOVE:
 		if (m_pNpcList[sTargetH] == NULL) return;
 		if (m_pNpcList[sTargetH]->m_iHP <= 0) return;
 		if ((m_bIsCrusadeMode == TRUE) && (cAttackerSide == m_pNpcList[sTargetH]->m_cSide)) return;
+		
+		// Evitar fuego amigo entre NPCs del mismo lado (Ragnaros y sus Demon-Elite)
+		if ((cAttackerType == DEF_OWNERTYPE_NPC) && (m_pNpcList[sAttackerH] != NULL) &&
+			(m_pNpcList[sAttackerH]->m_cSide == m_pNpcList[sTargetH]->m_cSide) &&
+			(m_pNpcList[sAttackerH]->m_cSide != 0)) return;
 		
 		switch (m_pNpcList[sTargetH]->m_cActionLimit) {
 		case 1:
@@ -33339,9 +33386,92 @@ void CGame::DynamicObjectEffectProcessor()
 			}
 			break;
 		
+		case DEF_DYNAMICOBJECT_FIRE_INTENSE: // Ragnaros intense fire - uses m_iV1 for damage
+			// Fuego intenso de Ragnaros con daño configurable
+			if (m_pDynamicObjectList[i]->m_iCount == 1) {
+				CheckFireBluring(m_pDynamicObjectList[i]->m_cMapIndex, m_pDynamicObjectList[i]->m_sX, m_pDynamicObjectList[i]->m_sY);
+			}
+			m_pDynamicObjectList[i]->m_iCount++;
+			if (m_pDynamicObjectList[i]->m_iCount > 10) m_pDynamicObjectList[i]->m_iCount = 10;
+
+			for (ix = m_pDynamicObjectList[i]->m_sX -1; ix <= m_pDynamicObjectList[i]->m_sX+1; ix++)
+			for (iy = m_pDynamicObjectList[i]->m_sY -1; iy <= m_pDynamicObjectList[i]->m_sY+1; iy++) {
+				
+				m_pMapList[m_pDynamicObjectList[i]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
+				if (sOwnerH != NULL) {
+					switch (cOwnerType) {
+					case DEF_OWNERTYPE_PLAYER:
+						if (m_pClientList[sOwnerH] == NULL) break;
+						if (m_pClientList[sOwnerH]->m_bIsKilled == TRUE) break;
+						
+						// Usar daño de m_iV1 (300 para Ragnaros)
+						iDamage = m_pDynamicObjectList[i]->m_iV1;
+						if (iDamage <= 0) iDamage = 300; // Default 300 si no está configurado
+						
+						if (m_pClientList[sOwnerH]->m_iAdminUserLevel == 0)
+							m_pClientList[sOwnerH]->m_iHP -= iDamage;
+						
+						if (m_pClientList[sOwnerH]->m_iHP <= 0) {
+							ClientKilledHandler(sOwnerH, sOwnerH, cOwnerType, iDamage);
+						}
+						else {
+							if (iDamage > 0) {
+								SendNotifyMsg(NULL, sOwnerH, DEF_NOTIFY_HP, NULL, NULL, NULL, NULL);
+								if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] != 0) {
+									SendNotifyMsg(NULL, sOwnerH, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_HOLDOBJECT, m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ], NULL, NULL);
+									m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] = NULL;
+									bRemoveFromDelayEventList(sOwnerH, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_HOLDOBJECT);
+								}
+							}
+						}
+						break;
+
+					case DEF_OWNERTYPE_NPC:
+						if (m_pNpcList[sOwnerH] == NULL) break;
+						
+						// No dañar NPCs con atributo fuego (aliados de Ragnaros como Demon-Elite)
+						if (m_pNpcList[sOwnerH]->m_cAttribute == 1) break;
+						
+						iDamage = m_pDynamicObjectList[i]->m_iV1;
+						if (iDamage <= 0) iDamage = 300;
+						
+						switch (m_pNpcList[sOwnerH]->m_sType) {
+						case 40: // ESG
+						case 41: // GMG
+						case 67: // McGaffin
+						case 68: // Perry
+						case 69: // Devlin
+							iDamage = 0;
+							break;
+						}
+						
+						switch (m_pNpcList[sOwnerH]->m_cActionLimit) {
+						case 0:
+						case 3:
+						case 5:
+							m_pNpcList[sOwnerH]->m_iHP -= iDamage;
+							break;
+						}
+						
+						if (m_pNpcList[sOwnerH]->m_iHP <= 0) {
+							NpcKilledHandler(sOwnerH, cOwnerType, sOwnerH, 0);
+						}
+						else {
+							if (iDice(1,3) == 2)
+								m_pNpcList[sOwnerH]->m_dwTime = dwTime;
+							if (m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] != 0) {
+								m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] = NULL;
+								bRemoveFromDelayEventList(sOwnerH, DEF_OWNERTYPE_NPC, DEF_MAGICTYPE_HOLDOBJECT);
+							}
+						}
+						break;
+					}
+				}
+			}
+			break;
+
 		case DEF_DYNAMICOBJECT_FIRE3:
 		case DEF_DYNAMICOBJECT_FIRE:
-		case DEF_DYNAMICOBJECT_FIRE_INTENSE: // Ragnaros intense fire - same damage behavior
 			// Fire-Wall·ùÀÇ Å¸´Â ºÒ²É
 			if (m_pDynamicObjectList[i]->m_iCount == 1) {
 				// ±ÙÃ³¿¡ Å¸´Â ¹°°ÇÀÌ ÀÖ´Ù¸é ¹øÁø´Ù. 
@@ -33394,6 +33524,9 @@ void CGame::DynamicObjectEffectProcessor()
 
 					case DEF_OWNERTYPE_NPC:
 						if (m_pNpcList[sOwnerH] == NULL) break;
+						
+						// No dañar NPCs con atributo fuego (aliados de Ragnaros como Demon-Elite)
+						if (m_pNpcList[sOwnerH]->m_cAttribute == 1) break;
 						
 						iDamage = iDice(1,6);
 
@@ -57540,6 +57673,11 @@ DWORD CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAtt
 		if (m_pNpcList[sTargetH] == NULL) return 0;
 		if (m_pNpcList[sTargetH]->m_iHP <= 0) return 0;
 
+		// Evitar fuego amigo entre NPCs del mismo lado (Ragnaros y sus Demon-Elite)
+		if ((cAttackerType == DEF_OWNERTYPE_NPC) && (m_pNpcList[sAttackerH] != NULL) &&
+			(m_pNpcList[sAttackerH]->m_cSide == m_pNpcList[sTargetH]->m_cSide) &&
+			(m_pNpcList[sAttackerH]->m_cSide != 0)) return 0;
+
 		if ((m_pNpcList[sTargetH]->m_sX != tdX) || (m_pNpcList[sTargetH]->m_sY != tdY)) return 0;
 
 		cTargetDir = m_pNpcList[sTargetH]->m_cDir;
@@ -61915,8 +62053,20 @@ void CGame::NpcBehavior_Ragnaros(int iNpcH)
 	DWORD dwCurrentTime = timeGetTime();
 	
 	// ========== SISTEMA DE ZONAS DE FUEGO TELEGRAFIADAS ==========
-	// Chequear umbrales de HP cada tick - activará zonas de advertencia
+	// Chequear umbrales de HP cada tick - solo para zonas de fuego
 	Ragnaros_CheckHPThresholds(iNpcH);
+	
+	// ========== AURA DE FUEGO CADA 10 SEGUNDOS ==========
+	if (dwCurrentTime - m_stRagnarosThresholds[iNpcH].dwLastFireAuraTime >= DEF_RAGNAROS_FIRE_AURA_INTERVAL) {
+		m_stRagnarosThresholds[iNpcH].dwLastFireAuraTime = dwCurrentTime;
+		Ragnaros_FireAura(iNpcH);
+	}
+	
+	// ========== SUMMON DEMON ELITES CADA 20 SEGUNDOS ==========
+	if (dwCurrentTime - m_stRagnarosThresholds[iNpcH].dwLastDemonSummonTime >= DEF_RAGNAROS_DEMON_SUMMON_INTERVAL) {
+		m_stRagnarosThresholds[iNpcH].dwLastDemonSummonTime = dwCurrentTime;
+		Ragnaros_SummonDemonElites(iNpcH);
+	}
 	
 	// m_iV1 almacena: bit 0 = fase2 activada, bits 1-31 = último tiempo de Wrath
 	BOOL bPhase2Activated = (m_pNpcList[iNpcH]->m_iV1 & 0x01) != 0;
@@ -61926,9 +62076,6 @@ void CGame::NpcBehavior_Ragnaros(int iNpcH)
 		// Activar fase 2
 		m_pNpcList[iNpcH]->m_iV1 |= 0x01;
 		bPhase2Activated = TRUE;
-		
-		// Invocar Sons of Flame
-		Ragnaros_SummonSonsOfFlame(iNpcH);
 		
 		// Mensaje global a todos los jugadores en el mapa
 		int iMapIndex = m_pNpcList[iNpcH]->m_cMapIndex;
@@ -62135,50 +62282,160 @@ void CGame::Ragnaros_SulfurasSmash(int iNpcH, short dX, short dY)
 	}
 }
 
-// Invocar Sons of Flame (Hellhounds mejorados)
-void CGame::Ragnaros_SummonSonsOfFlame(int iNpcH)
+// Invocar 4 Demon Elites con Berserk
+void CGame::Ragnaros_SummonDemonElites(int iNpcH)
 {
 	if (m_pNpcList[iNpcH] == NULL) return;
 	
-	int iNumSons = DEF_RAGNAROS_SONS_MIN + (iDice(1, DEF_RAGNAROS_SONS_MAX - DEF_RAGNAROS_SONS_MIN + 1) - 1);
+	int iNumDemons = 4; // Siempre 4 Demon Elites
 	
 	short sCenterX = m_pNpcList[iNpcH]->m_sX;
 	short sCenterY = m_pNpcList[iNpcH]->m_sY;
 	int iMapIndex = m_pNpcList[iNpcH]->m_cMapIndex;
 	char* cMapName = m_pMapList[iMapIndex]->m_cName;
 	
-	int iSonsSpawned = 0;
+	int iDemonsSpawned = 0;
 	
-	for (int i = 0; i < iNumSons; i++) {
-		int pX = sCenterX + iDice(1, 7) - 4;
-		int pY = sCenterY + iDice(1, 7) - 4;
+	// Mensaje de advertencia
+	SendNpcChatToNearbyPlayers(iNpcH, "RISE, MY SERVANTS! DESTROY THEM ALL!", 20);
+	
+	// Obtener el side de Ragnaros para pasarlo a los Demons
+	char cRagnarosSide = m_pNpcList[iNpcH]->m_cSide;
+	
+	for (int i = 0; i < iNumDemons; i++) {
+		int pX = sCenterX + iDice(1, 9) - 5;
+		int pY = sCenterY + iDice(1, 9) - 5;
 		
-		// Invocar Hellhound como "Son of Flame"
-		int iSonH = bCreateNewNpc("Hellbound", "Son-of-Flame", cMapName, 
+		// Invocar Demon como "Demon-Elite" con el mismo side que Ragnaros
+		int iDemonH = bCreateNewNpc("Demon", "Demon-Elite", cMapName, 
 			0, 7, DEF_MOVETYPE_RANDOM, &pX, &pY, 
-			NULL, NULL, NULL, -1, FALSE, TRUE, TRUE);
+			NULL, NULL, NULL, cRagnarosSide, FALSE, TRUE, TRUE);
 		
-		if (iSonH != FALSE && m_pNpcList[iSonH] != NULL) {
-			// Mejorar stats del Son of Flame
-			m_pNpcList[iSonH]->m_iMaxHP *= 2;
-			m_pNpcList[iSonH]->m_iHP = m_pNpcList[iSonH]->m_iMaxHP;
-			m_pNpcList[iSonH]->m_iHitRatio *= 2;
-			m_pNpcList[iSonH]->m_cAttribute = 1; // Atributo fuego
-			m_pNpcList[iSonH]->m_cSpecialAbility = 7; // Explosive
-			iSonsSpawned++;
+		if (iDemonH != FALSE && m_pNpcList[iDemonH] != NULL) {
+			// Mejorar stats del Demon Elite
+			m_pNpcList[iDemonH]->m_iMaxHP = (int)(m_pNpcList[iDemonH]->m_iMaxHP * 2.5);
+			m_pNpcList[iDemonH]->m_iHP = m_pNpcList[iDemonH]->m_iMaxHP;
+			m_pNpcList[iDemonH]->m_iHitRatio = (int)(m_pNpcList[iDemonH]->m_iHitRatio * 2);
+			m_pNpcList[iDemonH]->m_iDefenseRatio = (int)(m_pNpcList[iDemonH]->m_iDefenseRatio * 1.5);
+			m_pNpcList[iDemonH]->m_cAttribute = 1; // Atributo fuego
+			m_pNpcList[iDemonH]->m_cSpecialAbility = 3; // Berserk! (habilidad especial)
+			m_pNpcList[iDemonH]->m_bIsSummoned = TRUE; // Marcar como invocado
+			
+			// Hacer que el Demon sea más agresivo
+			m_pNpcList[iDemonH]->m_cBehavior = DEF_BEHAVIOR_ATTACK;
+			m_pNpcList[iDemonH]->m_iAttackRange = 1;
+			
+			// Efecto visual de spawn (fuego)
+			SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, iMapIndex,
+				pX, pY, pX, pY, (short)5, (short)m_pNpcList[iDemonH]->m_sType);
+			
+			iDemonsSpawned++;
 		}
 	}
 	
-	wsprintf(G_cTxt, "(!) RAGNAROS: Summoned %d Sons of Flame!", iSonsSpawned);
+	wsprintf(G_cTxt, "(!) RAGNAROS: Summoned %d Demon Elites with Berserk!", iDemonsSpawned);
 	PutLogList(G_cTxt);
 	
 	// Notificar a jugadores
 	for (int i = 1; i < DEF_MAXCLIENTS; i++) {
 		if (m_pClientList[i] != NULL && m_pClientList[i]->m_cMapIndex == iMapIndex) {
 			SendNotifyMsg(NULL, i, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, 
-				"Ragnaros summons Sons of Flame!");
+				"Ragnaros summons Demon Elites!");
 		}
 	}
+}
+
+// Aura de Fuego - Crea mucho fuego alrededor de Ragnaros cada 10 segundos
+void CGame::Ragnaros_FireAura(int iNpcH)
+{
+	if (m_pNpcList[iNpcH] == NULL) return;
+	if (m_pNpcList[iNpcH]->m_bIsKilled == TRUE) return;
+	
+	short sCenterX = m_pNpcList[iNpcH]->m_sX;
+	short sCenterY = m_pNpcList[iNpcH]->m_sY;
+	char cMapIndex = m_pNpcList[iNpcH]->m_cMapIndex;
+	DWORD dwCurrentTime = timeGetTime();
+	
+	// Mensaje de advertencia
+	SendNpcChatToNearbyPlayers(iNpcH, "BY FIRE BE PURGED!", 25);
+	
+	// Notificar a jugadores cercanos
+	for (int i = 1; i < DEF_MAXCLIENTS; i++) {
+		if (m_pClientList[i] != NULL && m_pClientList[i]->m_cMapIndex == cMapIndex) {
+			int iDistX = abs(m_pClientList[i]->m_sX - sCenterX);
+			int iDistY = abs(m_pClientList[i]->m_sY - sCenterY);
+			if (iDistX <= DEF_RAGNAROS_FIRE_AURA_RADIUS + 5 && iDistY <= DEF_RAGNAROS_FIRE_AURA_RADIUS + 5) {
+				SendNotifyMsg(NULL, i, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, 
+					"WARNING: Fire Aura expanding from Ragnaros!");
+			}
+		}
+	}
+	
+	// Crear muchas zonas de fuego intenso alrededor de Ragnaros
+	int iFiresCreated = 0;
+	for (int dx = -DEF_RAGNAROS_FIRE_AURA_RADIUS; dx <= DEF_RAGNAROS_FIRE_AURA_RADIUS; dx++) {
+		for (int dy = -DEF_RAGNAROS_FIRE_AURA_RADIUS; dy <= DEF_RAGNAROS_FIRE_AURA_RADIUS; dy++) {
+			// Solo crear fuego en un patrón circular aproximado
+			if ((dx * dx + dy * dy) > (DEF_RAGNAROS_FIRE_AURA_RADIUS * DEF_RAGNAROS_FIRE_AURA_RADIUS)) continue;
+			
+			// Probabilidad de crear fuego en esta celda (70%)
+			if (iDice(1, 10) > 7) continue;
+			
+			short sFireX = sCenterX + dx;
+			short sFireY = sCenterY + dy;
+			
+			// Verificar que la posición sea válida
+			if (m_pMapList[cMapIndex] == NULL) continue;
+			if (m_pMapList[cMapIndex]->bGetIsMoveAllowedTile(sFireX, sFireY) == FALSE) continue;
+			
+			// Crear fuego intenso (DEF_DYNAMICOBJECT_FIRE_INTENSE = 13)
+			int iFireID = iAddDynamicObjectList(NULL, DEF_DYNAMICOBJECT_FIRE_INTENSE, cMapIndex, 
+				sFireX, sFireY, dwCurrentTime + DEF_RAGNAROS_FIREZONE_DURATION,
+				DEF_RAGNAROS_FIRE_AURA_DAMAGE); // Usar m_iV1 para el daño
+			
+			if (iFireID > 0) {
+				m_pMapList[cMapIndex]->SetDynamicObject(iFireID, DEF_DYNAMICOBJECT_FIRE_INTENSE, sFireX, sFireY, dwCurrentTime);
+				
+				// Enviar efecto visual a clientes cercanos
+				SendEventToNearClient_TypeB(MSGID_DYNAMICOBJECT, DEF_MSGTYPE_CONFIRM, cMapIndex,
+					sFireX, sFireY, DEF_DYNAMICOBJECT_FIRE_INTENSE, iFireID, 0, (short)0);
+				
+				iFiresCreated++;
+			}
+		}
+	}
+	
+	// Hacer daño inmediato a todos los jugadores en el área
+	for (int i = 1; i < DEF_MAXCLIENTS; i++) {
+		if (m_pClientList[i] != NULL && m_pClientList[i]->m_cMapIndex == cMapIndex) {
+			if (m_pClientList[i]->m_bIsKilled == TRUE) continue;
+			
+			int iDistX = abs(m_pClientList[i]->m_sX - sCenterX);
+			int iDistY = abs(m_pClientList[i]->m_sY - sCenterY);
+			
+			if (iDistX <= DEF_RAGNAROS_FIRE_AURA_RADIUS && iDistY <= DEF_RAGNAROS_FIRE_AURA_RADIUS) {
+				// Aplicar daño del aura de fuego
+				int iDamage = DEF_RAGNAROS_FIRE_AURA_DAMAGE;
+				
+				// El daño ignora defensa parcialmente
+				m_pClientList[i]->m_iHP -= iDamage;
+				
+				if (m_pClientList[i]->m_iHP <= 0) {
+					m_pClientList[i]->m_iHP = 0;
+					ClientKilledHandler(i, iNpcH, DEF_OWNERTYPE_NPC, iDamage);
+				} else {
+					SendNotifyMsg(NULL, i, DEF_NOTIFY_HP, NULL, NULL, NULL, NULL);
+					
+					// Efecto de daño de fuego
+					SendEventToNearClient_TypeA(i, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, 
+						DEF_OBJECTDAMAGE, iDamage, 0, NULL);
+				}
+			}
+		}
+	}
+	
+	wsprintf(G_cTxt, "(!) RAGNAROS: Fire Aura created %d fire tiles, dealing %d damage!", iFiresCreated, DEF_RAGNAROS_FIRE_AURA_DAMAGE);
+	PutLogList(G_cTxt);
 }
 
 // Evento cuando Ragnaros muere
@@ -62233,6 +62490,7 @@ void CGame::Ragnaros_ResetThresholds(int iNpcH)
 {
 	if (iNpcH < 0 || iNpcH >= DEF_MAXNPCS) return;
 	
+	// Reset todos los umbrales de 10%
 	m_stRagnarosThresholds[iNpcH].bTriggered90 = FALSE;
 	m_stRagnarosThresholds[iNpcH].bTriggered80 = FALSE;
 	m_stRagnarosThresholds[iNpcH].bTriggered70 = FALSE;
@@ -62242,6 +62500,8 @@ void CGame::Ragnaros_ResetThresholds(int iNpcH)
 	m_stRagnarosThresholds[iNpcH].bTriggered30 = FALSE;
 	m_stRagnarosThresholds[iNpcH].bTriggered20 = FALSE;
 	m_stRagnarosThresholds[iNpcH].bTriggered10 = FALSE;
+	m_stRagnarosThresholds[iNpcH].dwLastFireAuraTime = 0;
+	m_stRagnarosThresholds[iNpcH].dwLastDemonSummonTime = 0;
 	
 	// También limpiar zonas pendientes de este NPC
 	for (int i = 0; i < DEF_RAGNAROS_MAX_PENDING_ZONES; i++) {
@@ -62270,7 +62530,7 @@ void CGame::Ragnaros_ResetThresholds(int iNpcH)
 	PutLogList(G_cTxt);
 }
 
-// Chequea si algún umbral de HP ha sido cruzado y dispara las zonas de fuego
+// Chequea si algún umbral de HP ha sido cruzado - solo spawna zonas de fuego (cada 10%)
 void CGame::Ragnaros_CheckHPThresholds(int iNpcH)
 {
 	if (m_pNpcList[iNpcH] == NULL) return;
@@ -62281,7 +62541,7 @@ void CGame::Ragnaros_CheckHPThresholds(int iNpcH)
 	BOOL bTriggerFireZones = FALSE;
 	int iThresholdCrossed = 0;
 	
-	// Chequear cada umbral de 10% - Solo se activa una vez por combate
+	// Chequear cada umbral de 10% - Solo spawna zonas de fuego
 	if (iHPPercent <= 90 && !m_stRagnarosThresholds[iNpcH].bTriggered90) {
 		m_stRagnarosThresholds[iNpcH].bTriggered90 = TRUE;
 		bTriggerFireZones = TRUE;
@@ -62328,7 +62588,7 @@ void CGame::Ragnaros_CheckHPThresholds(int iNpcH)
 		iThresholdCrossed = 10;
 	}
 	
-	// Si cruzamos un umbral, spawnear zonas de advertencia
+	// Si cruzamos un umbral, spawnear zonas de fuego
 	if (bTriggerFireZones) {
 		wsprintf(G_cTxt, "(!) RAGNAROS: HP crossed %d%% threshold - spawning fire zones!", iThresholdCrossed);
 		PutLogList(G_cTxt);
@@ -62346,6 +62606,7 @@ void CGame::Ragnaros_CheckHPThresholds(int iNpcH)
 			}
 		}
 		
+		// Spawnear zonas de fuego
 		Ragnaros_SpawnFireZoneWarnings(iNpcH);
 	}
 }
@@ -62465,6 +62726,7 @@ void CGame::Ragnaros_ProcessPendingFireZones()
 			short sY = m_stPendingFireZones[i].sY;
 			char cMapIndex = m_stPendingFireZones[i].cMapIndex;
 			int iWarningObjID = m_stPendingFireZones[i].iWarningObjectID;
+			short sOwnerNpcH = m_stPendingFireZones[i].sOwnerNpcH;
 			
 			// 1. Eliminar el objeto de advertencia
 			if (iWarningObjID > 0 && m_pDynamicObjectList[iWarningObjID] != NULL) {
@@ -62477,37 +62739,67 @@ void CGame::Ragnaros_ProcessPendingFireZones()
 				m_pDynamicObjectList[iWarningObjID] = NULL;
 			}
 			
-			// 2. Crear el área de fuego real con daño
-			// Usamos DEF_DYNAMICOBJECT_FIRE3 que causa daño periódico
-			int iFireObjID = iAddDynamicObjectList(
-				m_stPendingFireZones[i].sOwnerNpcH,
-				DEF_OWNERTYPE_NPC,
-				DEF_DYNAMICOBJECT_FIRE3,    // Fuego real con daño
-				cMapIndex,
-				sX, sY,
-				DEF_RAGNAROS_FIREZONE_DURATION,  // 10 segundos
-				DEF_RAGNAROS_FIREZONE_DAMAGE     // Daño por tick en iV1
-			);
-			
-			if (iFireObjID != NULL) {
-				wsprintf(G_cTxt, "(!) RAGNAROS: Fire zone ACTIVATED at (%d, %d) - Fase 2!", sX, sY);
-				PutLogList(G_cTxt);
+			// 2. Aplicar Protection from Arrow a jugadores cercanos al BOSS (no a la zona de fuego)
+			// Buscar la posición del boss Ragnaros
+			if (sOwnerNpcH > 0 && m_pNpcList[sOwnerNpcH] != NULL) {
+				short sBossX = m_pNpcList[sOwnerNpcH]->m_sX;
+				short sBossY = m_pNpcList[sOwnerNpcH]->m_sY;
+				int iPFARadius = 15; // Radio amplio alrededor del boss
 				
-				// Notificar a jugadores muy cercanos a la zona (están en peligro)
+				// El boss anuncia Protection from Arrow como chat local
+				SendNpcChatToNearbyPlayers(sOwnerNpcH, "SIENTAN MI PODER! Protection from Arrow!", 20);
+				
 				for (int j = 1; j < DEF_MAXCLIENTS; j++) {
 					if (m_pClientList[j] != NULL && m_pClientList[j]->m_cMapIndex == cMapIndex) {
-						int iDistX = abs(m_pClientList[j]->m_sX - sX);
-						int iDistY = abs(m_pClientList[j]->m_sY - sY);
-						if (iDistX <= 1 && iDistY <= 1) {
-							// El jugador está muy cerca de la explosión
-							SendNotifyMsg(NULL, j, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, 
-								"FIRE ERUPTS BENEATH YOU!");
+						int iDistX = abs(m_pClientList[j]->m_sX - sBossX);
+						int iDistY = abs(m_pClientList[j]->m_sY - sBossY);
+						if (iDistX <= iPFARadius && iDistY <= iPFARadius) {
+							// Aplicar Protection from Arrow al jugador cercano al boss
+								if (m_pClientList[j]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 0) {
+									m_pClientList[j]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] = 1; // PFA value
+									SetProtectionFromArrowFlag(j, DEF_OWNERTYPE_PLAYER, TRUE);
+									
+									// Enviar efecto visual 52 (Protect Ring) en la posición del jugador
+									SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, cMapIndex,
+										m_pClientList[j]->m_sX, m_pClientList[j]->m_sY, 
+										m_pClientList[j]->m_sX, m_pClientList[j]->m_sY, (short)52, (short)0);
+									
+									// Programar la eliminación del efecto después de 10 segundos
+								bRegisterDelayEvent(DEF_DELAYEVENTTYPE_MAGICRELEASE, DEF_MAGICTYPE_PROTECT, dwCurrentTime + 10000, 
+									j, DEF_OWNERTYPE_PLAYER, NULL, NULL, NULL, 1, NULL, NULL);
+								SendNotifyMsg(NULL, j, DEF_NOTIFY_MAGICEFFECTON, DEF_MAGICTYPE_PROTECT, 1, NULL, NULL);
+							}
 						}
 					}
 				}
 			}
 			
-			// 3. Marcar la zona pendiente como inactiva
+			// 3. Lanzar Meteor Strike REAL usando NpcMagicHandler (ID 81 = Meteor Strike)
+			if (sOwnerNpcH > 0 && m_pNpcList[sOwnerNpcH] != NULL) {
+				// El boss anuncia Meteor Strike como chat local
+				SendNpcChatToNearbyPlayers(sOwnerNpcH, "LLUVIA DE FUEGO! Meteor Strike!", 20);
+				
+				// Ejecutar el Meteor Strike real con daño
+				NpcMagicHandler(sOwnerNpcH, sX, sY, 81); // 81 = Meteor Strike
+			}
+			
+			// 4. Crear el área de fuego real con daño de 300
+			int iFireObjID = iAddDynamicObjectList(
+				sOwnerNpcH,
+				DEF_OWNERTYPE_NPC,
+				DEF_DYNAMICOBJECT_FIRE_INTENSE,  // Fuego intenso de Ragnaros
+				cMapIndex,
+				sX, sY,
+				DEF_RAGNAROS_FIREZONE_DURATION,  // 10 segundos
+				300                               // Daño de 300 por tick
+			);
+			
+			if (iFireObjID != NULL) {
+				wsprintf(G_cTxt, "(!) RAGNAROS: Fire zone ACTIVATED at (%d, %d) - Real Meteor Strike + PFA on boss area + 300 damage!", sX, sY);
+				PutLogList(G_cTxt);
+			}
+			
+			// 5. Marcar la zona pendiente como inactiva
 			m_stPendingFireZones[i].bActive = FALSE;
 			m_stPendingFireZones[i].sOwnerNpcH = 0;
 			m_stPendingFireZones[i].iWarningObjectID = 0;
@@ -62515,3 +62807,72 @@ void CGame::Ragnaros_ProcessPendingFireZones()
 	}
 }
 
+// Función para enviar mensajes de chat como si fueran del NPC (boss)
+// El mensaje se muestra a los jugadores cercanos como si fuera un chat local
+void CGame::SendNpcChatToNearbyPlayers(int iNpcH, char * pMsg, int iRange)
+{
+	if (m_pNpcList[iNpcH] == NULL) return;
+	if (pMsg == NULL) return;
+	
+	char cMapIndex = m_pNpcList[iNpcH]->m_cMapIndex;
+	short sNpcX = m_pNpcList[iNpcH]->m_sX;
+	short sNpcY = m_pNpcList[iNpcH]->m_sY;
+	
+	// Construir el paquete de chat similar a MSGID_COMMAND_CHATMSG
+	char cBuffer[256];
+	DWORD * dwp;
+	WORD * wp;
+	char * cp;
+	int iMsgLen = strlen(pMsg);
+	if (iMsgLen > 80) iMsgLen = 80;
+	
+	ZeroMemory(cBuffer, sizeof(cBuffer));
+	
+	dwp = (DWORD *)cBuffer;
+	*dwp = MSGID_COMMAND_CHATMSG;
+	
+	wp = (WORD *)(cBuffer + DEF_INDEX2_MSGTYPE);
+	*wp = (WORD)(iNpcH + 10000); // ObjectID del NPC (índice + 10000 para NPCs)
+	
+	cp = (char *)(cBuffer + DEF_INDEX2_MSGTYPE + 2);
+	short * sp = (short *)cp;
+	*sp = (short)sNpcX; // Posición X del NPC
+	cp += 2;
+	
+	sp = (short *)cp;
+	*sp = (short)sNpcY; // Posición Y del NPC
+	cp += 2;
+	
+	// Copiar nombre del NPC (hasta 10 caracteres)
+	char cNpcName[11];
+	ZeroMemory(cNpcName, sizeof(cNpcName));
+	if (m_pNpcList[iNpcH]->m_cNpcName[0] != 0) {
+		strncpy(cNpcName, m_pNpcList[iNpcH]->m_cNpcName, 10);
+	} else {
+		strncpy(cNpcName, "BOSS", 10);
+	}
+	memcpy(cp, cNpcName, 10);
+	cp += 10;
+	
+	*cp = (char)0; // cSendMode = 0 (chat local)
+	cp++;
+	
+	memcpy(cp, pMsg, iMsgLen);
+	cp += iMsgLen;
+	*cp = 0; // Null terminator
+	
+	DWORD dwMsgSize = (cp - cBuffer) + 1;
+	
+	// Enviar a todos los jugadores dentro del rango
+	for (int i = 1; i < DEF_MAXCLIENTS; i++) {
+		if (m_pClientList[i] != NULL && m_pClientList[i]->m_bIsInitComplete == TRUE) {
+			if (m_pClientList[i]->m_cMapIndex == cMapIndex) {
+				int iDistX = abs(m_pClientList[i]->m_sX - sNpcX);
+				int iDistY = abs(m_pClientList[i]->m_sY - sNpcY);
+				if (iDistX <= iRange && iDistY <= iRange) {
+					m_pClientList[i]->m_pXSock->iSendMsg(cBuffer, dwMsgSize);
+				}
+			}
+		}
+	}
+}

@@ -590,6 +590,9 @@
 // CLEROTH - NEW MONSTERS
 #define NPC_NAME_AIRLEMENTAL			"Air Elemental"
 
+// OhmyWeed - RAGNAROS BOSS
+#define NPC_NAME_RAGNAROS			"Ragnaros"
+
 #define	DRAW_OBJECT_NAME50	" Berserked"
 #define	DRAW_OBJECT_NAME51	" Frozen"
 #define	DRAW_OBJECT_NAME52	"Clairvoyant"

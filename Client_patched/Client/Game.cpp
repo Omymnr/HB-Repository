@@ -4562,7 +4562,12 @@ void CGame::bItemDrop_ExternalScreen(char cItemID, short msX, short msY)
 				if (sType < 10)
 					memcpy(m_stDialogBoxInfo[17].cStr, cName, 10);
 				else
-				{	GetNpcName(sType, m_stDialogBoxInfo[17].cStr);
+				{	// OhmyWeed - Ragnaros: Show correct name when fire boss flag is set
+					if ((sType == 30) && ((iStatus & 0x00000200) != 0)) {
+						strcpy(m_stDialogBoxInfo[17].cStr, NPC_NAME_RAGNAROS);
+					} else {
+						GetNpcName(sType, m_stDialogBoxInfo[17].cStr);
+					}
 				}
 				EnableDialogBox(17, cItemID, m_pItemList[cItemID]->m_dwCount, NULL);
 			}else
@@ -7006,12 +7011,11 @@ void CGame::DrawEffects()
 			break;
 
 
-		case 52: // Protection Ring commente par siementec, a voir
-		/*			cTempFrame = m_pEffectList[i]->m_cFrame;
+		case 52: // Protection Ring (PFA/PFM effect)
+			cTempFrame = m_pEffectList[i]->m_cFrame;
 			dX  = (m_pEffectList[i]->m_mX)  - m_sViewPointX;
 			dY  = (m_pEffectList[i]->m_mY)  - m_sViewPointY;
 			m_pEffectSpr[24]->PutTransSprite(dX, dY, cTempFrame, dwTime);
-		*/
 			break;
 
 
@@ -11767,6 +11771,9 @@ BOOL   CGame::DrawObject_OnMove(int indexX, int indexY, int sX, int sY, BOOL bTr
 
 			if (_tmp_sOwnerType == 81) // Abaddon
 			{	m_pSprite[iBodyIndex + (_tmp_cDir - 1)]->PutTransSprite(fix_x, fix_y, _tmp_cFrame, dwTime);
+			}else if ((_tmp_iStatus & 0x00000200) != 0) // Ragnaros special fire boss flag - Red fire tint
+			{	// Draw with red/orange fire tint to make it look like a fire lord (only Ragnaros, not all Liches)
+				m_pSprite[iBodyIndex + (_tmp_cDir - 1)]->PutSpriteRGB(fix_x, fix_y, _tmp_cFrame, 60, -30, -50, dwTime);
 			}else if (bInv == TRUE)
 				 //m_pSprite[iBodyIndex + (_tmp_cDir - 1)]->PutTransSprite2(sX+dx, sY+dy, _tmp_cFrame, dwTime);
 				 m_pSprite[iBodyIndex + (_tmp_cDir - 1)]->PutTransSprite(fix_x, fix_y, _tmp_cFrame, dwTime);
@@ -29363,7 +29370,14 @@ void CGame::DrawNpcName(short sX, short sY, short sOwnerType, int iStatus)
 {	char cTxt[32], cTxt2[64];
 	ZeroMemory(cTxt, sizeof(cTxt));
 	ZeroMemory(cTxt2, sizeof(cTxt2));
-	GetNpcName(sOwnerType, cTxt);
+	
+	// OhmyWeed - Ragnaros Boss: Show "Ragnaros" name when fire boss flag (0x200) is set and type is Liche (30)
+	if ((sOwnerType == 30) && ((iStatus & 0x00000200) != 0)) {
+		strcpy(cTxt, NPC_NAME_RAGNAROS);
+	} else {
+		GetNpcName(sOwnerType, cTxt);
+	}
+	
 	if ((iStatus & 0x20) != 0) strcat(cTxt, DRAW_OBJECT_NAME50);//" Berserk"
 	if ((iStatus & 0x40) != 0) strcat(cTxt, DRAW_OBJECT_NAME51);//" Frozen"
 	PutString2(sX, sY, cTxt, 255,255,255);
@@ -30374,6 +30388,9 @@ void CGame::GetNpcName(short sType, char *pName)
 
 	// OhmyWeed - NEW MONSTERS
 	case 110: strcpy(pName, NPC_NAME_AIRLEMENTAL); break;
+
+	// OhmyWeed - RAGNAROS BOSS (uses Liche sprite, type 30)
+	case 92: strcpy(pName, NPC_NAME_RAGNAROS); break;
 	}
 }
 
@@ -32620,9 +32637,11 @@ MOTION_COMMAND_PROCESS:;
 			for (i = 1; i < DEF_MAXCHATMSGS; i++)
 			if (m_pChatMsgList[i] == NULL)
 			{	ZeroMemory(cTxt, sizeof(cTxt));
+				// Always show actual damage value instead of "Critical!"
 				if (m_sDamageMoveAmount > 0)
 					wsprintf(cTxt, "-%dPts", m_sDamageMoveAmount); //pts
-				else strcpy(cTxt, "Critical!");
+				else
+					wsprintf(cTxt, "-0Pts"); // Show 0 instead of Critical!
 
 				int iFontType;
 				if ((m_sDamageMoveAmount >= 0) && (m_sDamageMoveAmount < 12))		iFontType = 21;
@@ -40704,23 +40723,43 @@ void CGame::MotionEventHandler(char * pData)
 	}else
 	{	switch (wEventType) {
 		case DEF_OBJECTMAGIC:
-		case DEF_OBJECTDAMAGEMOVE:
-		case DEF_OBJECTDAMAGE:
 			cDir = *cp;
 			cp++;
-			sV1 = (short)*cp; //Damage
+			sV1 = (short)*cp; //Magic ID
 			cp++;
 			sV2 = (short)*cp; //
 			cp++;
   			break;
 
+		case DEF_OBJECTDAMAGEMOVE:
+		case DEF_OBJECTDAMAGE:
+			cDir = *cp;
+			cp++;
+			sV1 = (unsigned char)*cp; //Damage (0-255)
+			cp++;
+			sV2 = (unsigned char)*cp; //
+			cp++;
+			sp  = (short *)cp;
+			sV3 = *sp; // Daño real completo (para daños > 255) - viene antes de sX/sY
+			cp += 2;
+			sp  = (short *)cp;
+			sX = *sp;
+			cp += 2;
+			sp  = (short *)cp;
+			sY = *sp;
+			cp += 2;
+  			break;
+
 		case DEF_OBJECTDYING:
 			cDir = *cp;
 			cp++;
-			sV1 = (short)*cp; //Damage
+			sV1 = (unsigned char)*cp; //Damage (0-255)
 			cp++;
-			sV2 = (short)*cp; //
+			sV2 = (unsigned char)*cp; //
 			cp++;
+			sp  = (short *)cp;
+			sV3 = *sp; // Daño real completo (para daños > 255) - viene antes de sX/sY
+			cp += 2;
 			sp  = (short *)cp;
 			sX = *sp;
 			cp += 2;
@@ -40792,13 +40831,16 @@ void CGame::MotionEventHandler(char * pData)
 		for (i = 1; i < DEF_MAXCHATMSGS; i++)
 		if (m_pChatMsgList[i] == NULL)
 		{	ZeroMemory(cTxt, sizeof(cTxt));
-			if (sV1 > 0)
-				wsprintf(cTxt, "-%dPts!", sV1); //pts
-			else strcpy(cTxt, "Critical!");
+			// Usar sV3 para daño real si está disponible (para daños > 255)
+			int iDisplayDamage = (sV3 > 0) ? sV3 : sV1;
+			if (iDisplayDamage > 0)
+				wsprintf(cTxt, "-%dPts!", iDisplayDamage); //pts
+			else
+				wsprintf(cTxt, "-0Pts!"); // Mostrar 0 en lugar de Critical!
 			int iFontType;
-			if ((sV1 >= 0) && (sV1 < 12))		iFontType = 21;
-			else if ((sV1 >= 12) && (sV1 < 40)) iFontType = 22;
-			else if ((sV1 >= 40) || (sV1 < 0))	iFontType = 23;
+			if ((iDisplayDamage >= 0) && (iDisplayDamage < 12))		iFontType = 21;
+			else if ((iDisplayDamage >= 12) && (iDisplayDamage < 40)) iFontType = 22;
+			else if ((iDisplayDamage >= 40) || (iDisplayDamage < 0))	iFontType = 23;
 			m_pChatMsgList[i] = new class CMsg(iFontType, cTxt, m_dwCurTime);
 			m_pChatMsgList[i]->m_iObjectID = wObjectID - 30000;
 			if (m_pMapData->bSetChatMsgOwner(wObjectID - 30000, -10, -10, i) == FALSE)
@@ -40822,14 +40864,14 @@ void CGame::MotionEventHandler(char * pData)
 		for (i = 1; i < DEF_MAXCHATMSGS; i++)
 		if (m_pChatMsgList[i] == NULL)
 		{	ZeroMemory(cTxt, sizeof(cTxt));
-			if (sV1 != 0)
-			{	if (sV1 > 0)
-					wsprintf(cTxt, "-%dPts", sV1); //pts
-				else strcpy(cTxt, "Critical!");
+			// Usar sV3 para daño real si está disponible (para daños > 255)
+			int iDisplayDamage = (sV3 > 0) ? sV3 : sV1;
+			if (iDisplayDamage != 0)
+			{	wsprintf(cTxt, "-%dPts", iDisplayDamage); //pts
 				int iFontType;
-				if ((sV1 >= 0) && (sV1 < 12))		iFontType = 21;
-				else if ((sV1 >= 12) && (sV1 < 40)) iFontType = 22;
-				else if ((sV1 >= 40) || (sV1 < 0))	iFontType = 23;
+				if ((iDisplayDamage >= 0) && (iDisplayDamage < 12))		iFontType = 21;
+				else if ((iDisplayDamage >= 12) && (iDisplayDamage < 40)) iFontType = 22;
+				else if ((iDisplayDamage >= 40) || (iDisplayDamage < 0))	iFontType = 23;
 
 				m_pChatMsgList[i] = new class CMsg(iFontType, cTxt, m_dwCurTime);
 			}else

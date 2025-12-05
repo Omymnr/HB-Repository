@@ -91,20 +91,23 @@
 
 // ========== RAGNAROS BOSS CONSTANTS ==========
 #define DEF_RAGNAROS_PHASE2_HP_PERCENT      30      // Fase 2 al 30% HP
-#define DEF_RAGNAROS_WRATH_INTERVAL         15000   // 15 segundos entre Wrath
-#define DEF_RAGNAROS_PHASE2_WRATH_INTERVAL  10000   // 10 segundos en fase 2
-#define DEF_RAGNAROS_SONS_MIN               2       // Mínimo Sons of Flame
-#define DEF_RAGNAROS_SONS_MAX               4       // Máximo Sons of Flame
+#define DEF_RAGNAROS_WRATH_INTERVAL         10000   // 10 segundos entre Wrath (fuego periódico)
+#define DEF_RAGNAROS_PHASE2_WRATH_INTERVAL  8000    // 8 segundos en fase 2
+#define DEF_RAGNAROS_DEMON_SUMMON_INTERVAL  20000   // 20 segundos entre summon de Demon Elites
+#define DEF_RAGNAROS_DEMON_COUNT            4       // Siempre 4 Demon Elites
 #define DEF_RAGNAROS_KNOCKBACK_DIST         3       // Distancia de knockback
+#define DEF_RAGNAROS_FIRE_AURA_INTERVAL     10000   // 10 segundos entre aura de fuego
+#define DEF_RAGNAROS_FIRE_AURA_RADIUS       8       // Radio del aura de fuego
+#define DEF_RAGNAROS_FIRE_AURA_DAMAGE       300     // Daño del aura de fuego
 
 // ========== TELEGRAPHED FIRE ZONES SYSTEM ==========
 #define DEF_RAGNAROS_FIREZONE_WARNING_TIME  3000    // 3 segundos de advertencia
-#define DEF_RAGNAROS_FIREZONE_DURATION      10000   // 10 segundos de fuego activo
-#define DEF_RAGNAROS_FIREZONE_MIN_COUNT     3       // Mínimo zonas por umbral
-#define DEF_RAGNAROS_FIREZONE_MAX_COUNT     5       // Máximo zonas por umbral
-#define DEF_RAGNAROS_FIREZONE_RADIUS        6       // Radio en tiles
-#define DEF_RAGNAROS_FIREZONE_DAMAGE        25      // Daño por tick
-#define DEF_RAGNAROS_MAX_PENDING_ZONES      50      // Max zonas pendientes
+#define DEF_RAGNAROS_FIREZONE_DURATION      15000   // 15 segundos de fuego activo
+#define DEF_RAGNAROS_FIREZONE_MIN_COUNT     6       // Mínimo zonas por umbral (más fuego)
+#define DEF_RAGNAROS_FIREZONE_MAX_COUNT     10      // Máximo zonas por umbral (más fuego)
+#define DEF_RAGNAROS_FIREZONE_RADIUS        8       // Radio en tiles (más grande)
+#define DEF_RAGNAROS_FIREZONE_DAMAGE        150     // Daño por tick (mucho más daño)
+#define DEF_RAGNAROS_MAX_PENDING_ZONES      100     // Max zonas pendientes
 
 // Estructura para zonas de fuego pendientes (advertencia -> ejecución)
 struct stPendingFireZone {
@@ -116,9 +119,9 @@ struct stPendingFireZone {
 	int     iWarningObjectID;   // ID del dynamic object de advertencia
 };
 
-// Estructura para flags de umbrales de HP (uno por cada 10%)
+// Estructura para flags de umbrales de HP y timers de Ragnaros
 struct stRagnarosHPThresholds {
-	BOOL bTriggered90;
+	BOOL bTriggered90;  // Para zonas de fuego
 	BOOL bTriggered80;
 	BOOL bTriggered70;
 	BOOL bTriggered60;
@@ -127,6 +130,8 @@ struct stRagnarosHPThresholds {
 	BOOL bTriggered30;
 	BOOL bTriggered20;
 	BOOL bTriggered10;
+	DWORD dwLastFireAuraTime;    // Último tiempo de aura de fuego
+	DWORD dwLastDemonSummonTime; // Último tiempo de summon de Demon Elites
 };
 
 #define DEF_CHARPOINTLIMIT		1000		// ������ Ư��ġ�� �ִ밪 
@@ -839,17 +844,19 @@ public:
 	// ========== RAGNAROS BOSS SYSTEM ==========
 	void NpcBehavior_Ragnaros(int iNpcH);
 	void Ragnaros_WrathOfRagnaros(int iNpcH);
-	void Ragnaros_SummonSonsOfFlame(int iNpcH);
+	void Ragnaros_SummonDemonElites(int iNpcH);           // Summonea 4 Demon Elites con berserk
 	void Ragnaros_SulfurasSmash(int iNpcH, short dX, short dY);
+	void Ragnaros_FireAura(int iNpcH);                    // Aura de fuego cada 10 segundos
 	BOOL Ragnaros_IsInPhase2(int iNpcH);
 	void Ragnaros_OnDeath(int iNpcH, short sAttackerH, char cAttackerType);
 	
 	// ========== TELEGRAPHED FIRE ZONES SYSTEM ==========
-	void Ragnaros_CheckHPThresholds(int iNpcH);           // Detecta cruce de umbrales HP
+	void Ragnaros_CheckHPThresholds(int iNpcH);           // Detecta cruce de umbrales HP (cada 5%)
 	void Ragnaros_SpawnFireZoneWarnings(int iNpcH);       // Fase 1: Spawnea markers de advertencia
 	void Ragnaros_ProcessPendingFireZones();              // Chequea y ejecuta Fase 2
 	void Ragnaros_ResetThresholds(int iNpcH);             // Reset al morir/respawn
 	int  Ragnaros_GetHPPercentage(int iNpcH);             // Obtener % HP actual
+	void SendNpcChatToNearbyPlayers(int iNpcH, char * pMsg, int iRange = 15); // Enviar chat como NPC
 	
 	// Invasion System
 	void InvasionProcessor();

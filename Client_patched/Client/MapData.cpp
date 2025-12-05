@@ -2406,6 +2406,14 @@ int CMapData::iObjectFrameCounter(char * cPlayerName, short sViewPointX, short s
 						}
 						break;
 
+					case 30: // Liche - Fire effect only for Ragnaros (flag 0x00000200)
+						if ((m_pData[dX][dY].m_cOwnerFrame == 2) && ((m_pData[dX][dY].m_iStatus & 0x00000200) != 0))
+						{	// Add Warrior Hero fire effect (243) when Ragnaros attacks
+							m_pGame->bAddNewEffect(243, m_sPivotX + dX, m_sPivotY + dY
+								, m_sPivotX + dX , m_sPivotY + dY, 0, 1);
+						}
+						break;
+
 					default:
 						if (m_pData[dX][dY].m_cOwnerFrame == 2)
 						{	if  (m_pData[dX][dY].m_sV3 == 2 ) // Arrow flying...
