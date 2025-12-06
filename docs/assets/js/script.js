@@ -104,3 +104,28 @@ function populateHeroBox(){
 }
 
 document.addEventListener('DOMContentLoaded', () => { populateHeroBox(); });
+
+// Render news page with cards (splits news.txt by blank line)
+function renderNewsPage(){
+  const newsList = document.getElementById('newsList');
+  if(!newsList) return;
+  fetch('https://raw.githubusercontent.com/Omymnr/HB-Repository/main/updates/news.txt')
+    .then(r => { if(!r.ok) throw new Error('no news'); return r.text(); })
+    .then(txt => {
+      const entries = txt.split(/\n\s*\n/).map(e => e.trim()).filter(Boolean);
+      newsList.innerHTML = '';
+      entries.forEach(e => {
+        const lines = e.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+        const title = lines[0] || 'Noticia';
+        const body = lines.slice(1).join(' ');
+        const card = document.createElement('article');
+        card.className = 'news-card';
+        card.innerHTML = `<h3>${escapeHtml(title)}</h3><div class="news-meta">${new Date().toLocaleDateString()}</div><p class="news-excerpt">${escapeHtml(body)}</p>`;
+        newsList.appendChild(card);
+      });
+    }).catch(_ => { newsList.innerHTML = '<div class="news-card">No hay noticias disponibles.</div>'; });
+}
+
+function escapeHtml(s){ return s.replace(/[&<>\"]/g, c=> ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+document.addEventListener('DOMContentLoaded', () => { renderNewsPage(); });

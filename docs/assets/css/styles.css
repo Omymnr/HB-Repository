@@ -6,6 +6,9 @@
   --accent: #b48c3c;
   --accent-dark: #9a6d2a;
   --muted: rgba(255,255,255,0.6);
+  --max-width: 1200px;
+  --header-height: 78px;
+  --radius: 10px;
 }
 
 *{box-sizing:border-box}
@@ -36,6 +39,34 @@ body{
 .hero-title{margin:0;font-family:'Cinzel',serif;color:var(--accent);font-size:42px;line-height:1}
 .hero-sub{margin:12px 0 18px;color:var(--muted);font-size:16px}
 .hero-ctas{display:flex;gap:12px;margin-top:8px}
+
+/* --- New Professional Layout --- */
+.site-wrapper{max-width:var(--max-width);margin:0 auto;padding:0 20px}
+
+.top-border{height:28px;background-image:url('../img/hero-bg.svg');background-size:cover;background-repeat:no-repeat}
+
+.main-layout{display:grid;grid-template-columns:1fr 360px;gap:28px;margin-top:28px}
+.main-left{min-width:0}
+.main-right{min-width:0}
+
+.news-card{background:rgba(255,255,255,0.02);padding:18px;border-radius:var(--radius);margin-bottom:16px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 8px 18px rgba(0,0,0,0.45)}
+.news-card h3{margin:0 0 6px 0;color:var(--accent)}
+.news-meta{font-size:13px;color:var(--muted);margin-bottom:8px}
+.news-excerpt{color:rgba(255,255,255,0.9)}
+
+.sidebar-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.22));padding:16px;border-radius:10px;margin-bottom:16px}
+.stat-list{list-style:none;padding:0;margin:0}
+.stat-list li{padding:6px 0;border-bottom:1px dashed rgba(255,255,255,0.03);color:var(--muted)}
+
+.btn-large{padding:12px 20px;font-size:15px;border-radius:12px}
+
+@media(max-width:1000px){
+  .main-layout{grid-template-columns:1fr 320px}
+}
+@media(max-width:820px){
+  .main-layout{grid-template-columns:1fr;}
+  .hero-inner{flex-direction:column}
+}
 
 .btn{display:inline-block;padding:10px 16px;border-radius:8px;background:transparent;color:var(--text);text-decoration:none;border:1px solid rgba(255,255,255,0.04);font-weight:600}
 .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent-dark));color:#111;border-color:rgba(0,0,0,0.35)}

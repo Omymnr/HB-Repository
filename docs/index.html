@@ -43,28 +43,40 @@
     <main id="home">
       <section id="hero" class="hero">
         <div class="hero-overlay"></div>
-        <div class="container hero-inner">
-          <div class="hero-left">
-            <h1 class="hero-title">Helbreath Apocalypse</h1>
-            <p class="hero-sub">Un servidor clásico reimaginado — combates, eventos y comunidad activa.</p>
-            <div class="hero-ctas">
-              <a id="download" class="btn primary" href="downloads.html">Descargas</a>
-              <a class="btn ghost" href="gallery.html">Galería</a>
-            </div>
-              <div class="hero-meta">
-                Visita las secciones para más información:
-                <ul>
-                  <li><a href="features.html">Características</a></li>
-                  <li><a href="news.html">Noticias</a></li>
-                  <li><a href="status.html">Estado del servidor</a></li>
-                </ul>
+        <div class="top-border"></div>
+        <div class="site-wrapper">
+          <div class="hero-inner">
+            <div class="hero-left">
+              <h1 class="hero-title">Helbreath Apocalypse</h1>
+              <p class="hero-sub">Un servidor clásico reimaginado — combates, eventos y comunidad activa.</p>
+              <div class="hero-ctas">
+                <a id="download" class="btn primary btn-large" href="downloads.html">Descargas</a>
+                <a class="btn ghost btn-large" href="gallery.html">Galería</a>
               </div>
-
               <div class="hero-info-box" aria-live="polite">
                 <div class="info-row"><strong>Launcher:</strong> <span id="launcherVersion">Cargando...</span></div>
                 <div class="info-row"><strong>Última noticia:</strong> <span id="latestNews">Cargando...</span></div>
                 <div class="info-row"><strong>Servidor:</strong> <span id="smallServerStatus">Comprobando...</span> • <strong>Jugadores:</strong> <span id="smallPlayers">-</span></div>
               </div>
+            </div>
+
+            <div class="hero-aside">
+              <div class="server-card sidebar-card">
+                <div class="server-title">Estado</div>
+                <div class="server-status" id="serverBadge"><span class="dot"></span> <span id="serverText">Comprobando...</span></div>
+                <div class="news-meta">IP: <strong>89.7.69.125</strong> • Puerto: <strong>2500</strong></div>
+                <div style="height:12px"></div>
+                <a class="btn btn-large primary" href="downloads.html">Descargar Launcher</a>
+              </div>
+              <div class="sidebar-card">
+                <h4>Top quicklinks</h4>
+                <ul class="stat-list">
+                  <li><a href="features.html">Características</a></li>
+                  <li><a href="news.html">Noticias</a></li>
+                  <li><a href="gallery.html">Galería</a></li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </section>
