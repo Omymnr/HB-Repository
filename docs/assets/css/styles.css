@@ -32,12 +32,13 @@ body{
 .hero-inner{display:flex;gap:28px;align-items:stretch}
 .hero-left{flex:1}
 .hero-aside{width:320px}
-.hero h3{margin:0;font-family:'Cinzel',serif;color:var(--accent);font-size:30px}
-.lead{margin:12px 0 18px;color:var(--muted);font-size:15px}
+.hero-title{margin:0;font-family:'Cinzel',serif;color:var(--accent);font-size:42px;line-height:1}
+.hero-sub{margin:12px 0 18px;color:var(--muted);font-size:16px}
 .hero-ctas{display:flex;gap:12px;margin-top:8px}
 
 .btn{display:inline-block;padding:10px 16px;border-radius:8px;background:transparent;color:var(--text);text-decoration:none;border:1px solid rgba(255,255,255,0.04);font-weight:600}
 .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent-dark));color:#111;border-color:rgba(0,0,0,0.35)}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
 
 .panel{background:var(--panel);padding:18px;border-radius:8px;margin-bottom:18px;border:1px solid rgba(255,255,255,0.03)}
 .panel-title{margin:0 0 12px 0;color:var(--accent)}
@@ -64,3 +65,25 @@ footer{padding:28px 0;text-align:center;color:var(--muted);margin-top:28px}
   .two-col{flex-direction:column}
   .main-nav{display:flex;flex-wrap:wrap}
 }
+
+/* --- Professional additions --- */
+.hero{position:relative;min-height:420px;display:flex;align-items:center}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.6));pointer-events:none;border-bottom:1px solid rgba(255,255,255,0.02)}
+.hero-inner{position:relative;z-index:2;display:flex;gap:28px;align-items:stretch;padding:40px 20px}
+.server-card{padding:18px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.3));box-shadow:0 6px 24px rgba(0,0,0,0.5)}
+.hero-meta{margin-top:14px;color:var(--muted);font-size:13px}
+.server-message{font-size:12px;color:var(--muted);margin-top:6px}
+.features{padding:36px 0}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+.feature{background:rgba(255,255,255,0.02);padding:18px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.45)}
+.section-title{font-family:'Cinzel',serif;color:var(--accent);margin-bottom:16px;font-size:22px}
+.download-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.community-actions{margin-top:12px}
+.server-text-wrap{display:flex;flex-direction:column}
+
+/* subtle animations */
+.feature, .download-card, .server-card{transition:transform .22s ease, box-shadow .22s ease}
+.feature:hover, .download-card:hover, .server-card:hover{transform:translateY(-6px);box-shadow:0 18px 36px rgba(0,0,0,0.6)}
+
+/* footer */
+footer .legal{font-size:13px;color:rgba(255,255,255,0.45)}

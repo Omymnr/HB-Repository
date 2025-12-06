@@ -5,33 +5,42 @@ fetch('https://raw.githubusercontent.com/Omymnr/HB-Repository/main/updates/news.
   .then(txt => { newsEl.textContent = txt; })
   .catch(_ => { newsEl.textContent = 'No hay noticias disponibles.'; });
 
-// Estado del servidor (intenta leer updates/status.json en GH Pages)
+// Estado del servidor: usa updates/status.json si está disponible
 const serverText = document.getElementById('serverText');
 const serverBadge = document.getElementById('serverBadge');
-const playersCount = document.getElementById('playersCount');
+const serverMessage = document.getElementById('serverMessage');
+const livePlayers = document.getElementById('livePlayers');
+const currentVersion = document.getElementById('currentVersion');
 
-function setServerStatus(online, players){
+function applyStatus(js){
   const dot = serverBadge.querySelector('.dot');
-  if(online){
+  if(js && js.online){
     dot.style.background = '#2ecc71';
     serverText.textContent = 'Online';
-    playersCount.textContent = players != null ? players : '-';
+    livePlayers.textContent = js.players != null ? js.players : '-';
+    serverMessage.textContent = js.message || '';
   } else {
     dot.style.background = '#e74c3c';
     serverText.textContent = 'Offline';
-    playersCount.textContent = '-';
+    livePlayers.textContent = '-';
+    serverMessage.textContent = js && js.message ? js.message : '';
   }
 }
 
+// intenta leer status.json desde GH Pages site (relativo)
 fetch('/updates/status.json').then(r => {
   if(!r.ok) throw new Error('no status');
   return r.json();
-}).then(js => {
-  setServerStatus(js.online === true, js.players || 0);
-}).catch(_ => {
-  // Fallback: no status endpoint — intenta leer versión para comprobar conexión a GH
+}).then(js => { applyStatus(js); }).catch(_ => {
+  // fallback: intenta leer raw GH version y set online=true si accesible
   fetch('https://raw.githubusercontent.com/Omymnr/HB-Repository/main/updates/version.txt')
-    .then(r => { if (!r.ok) throw new Error('no v'); return r.text(); })
-    .then(v => { setServerStatus(true, null); })
-    .catch(__ => { setServerStatus(false, null); });
+    .then(r => { if(!r.ok) throw new Error('no v'); return r.text(); })
+    .then(v => { currentVersion.textContent = v.trim(); applyStatus({online:true,players:null}); })
+    .catch(__ => { applyStatus({online:false}); });
 });
+
+// Lee version actual para hero (mejor experiencia)
+fetch('https://raw.githubusercontent.com/Omymnr/HB-Repository/main/updates/version.txt')
+  .then(r => { if(!r.ok) throw new Error('no v'); return r.text(); })
+  .then(v => { currentVersion.textContent = v.trim(); })
+  .catch(_ => { currentVersion.textContent = '?'; });

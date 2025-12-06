@@ -21,6 +21,8 @@
       </div>
 
       <nav class="main-nav">
+        <a href="#home">Inicio</a>
+        <a href="#features">Características</a>
         <a href="#news">Noticias</a>
         <a href="#status">Estado</a>
         <a href="#download">Descargas</a>
@@ -30,52 +32,99 @@
   </header>
 
   <main class="container">
-    <section id="hero" class="hero">
-      <div class="hero-inner">
-        <div class="hero-left">
-          <h3>Un servidor clásico con mejoras modernas</h3>
-          <p class="lead">Únete a Helbreath Apocalypse — experiencia PvP retro, eventos y comunidad activa.</p>
-          <div class="hero-ctas">
-            <a id="download" class="btn primary" href="/updates/files/HelbreathLauncher.exe">Descargar Launcher</a>
-            <a class="btn" href="#news">Ver noticias</a>
+    <main id="home">
+      <section id="hero" class="hero">
+        <div class="hero-overlay"></div>
+        <div class="container hero-inner">
+          <div class="hero-left">
+            <h1 class="hero-title">Helbreath Apocalypse</h1>
+            <p class="hero-sub">Un servidor clásico reimaginado — combates, eventos y comunidad activa.</p>
+            <div class="hero-ctas">
+              <a id="download" class="btn primary" href="/updates/files/HelbreathLauncher.exe">Descargar Launcher</a>
+              <a class="btn ghost" href="#downloadPanel">Descargas</a>
+            </div>
+            <div class="hero-meta">
+              <span id="livePlayers">--</span> jugadores online • Versión <span id="currentVersion">?</span>
+            </div>
+          </div>
+          <aside class="hero-aside">
+            <div class="server-card">
+              <div class="server-title">Estado del Servidor</div>
+              <div class="server-status" id="serverBadge"><span class="dot"></span> <div class="server-text-wrap"><div id="serverText">Comprobando...</div><div id="serverMessage" class="server-message"></div></div></div>
+              <ul class="server-meta">
+                <li>IP: <strong>89.7.69.125</strong></li>
+                <li>Puerto: <strong>2500</strong></li>
+              </ul>
+              <div class="server-actions"><a class="btn" href="/updates/files/HelbreathLauncher.exe">Conectar / Descargar</a></div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="features" class="panel features">
+        <div class="container">
+          <h2 class="section-title">Características</h2>
+          <div class="features-grid">
+            <div class="feature">
+              <h3>PvP Clásico</h3>
+              <p>Combates estratégicos y balance clásico, con mejoras para la experiencia moderna.</p>
+            </div>
+            <div class="feature">
+              <h3>Eventos & Torneos</h3>
+              <p>Eventos semanales con recompensas y rankings activos.</p>
+            </div>
+            <div class="feature">
+              <h3>Servidor Estable</h3>
+              <p>Monitoreo continuo y actualizaciones regulares para rendimiento.</p>
+            </div>
+            <div class="feature">
+              <h3>Comunidad</h3>
+              <p>Soporte, guías y canal de Discord para nuevos jugadores.</p>
+            </div>
           </div>
         </div>
-        <aside class="hero-aside">
-          <div class="server-box">
-            <div class="server-title">Servidor Principal</div>
-            <div class="server-status" id="serverBadge"><span class="dot"></span> <span id="serverText">Comprobando...</span></div>
-            <div class="server-info">IP: <strong>89.7.69.125</strong> &nbsp; Puerto: <strong>2500</strong></div>
-            <a class="btn" href="/updates/files/HelbreathLauncher.exe">Conectar / Descargar</a>
+      </section>
+
+      <section id="news" class="panel">
+        <div class="container">
+          <h2 class="section-title">Noticias</h2>
+          <div id="newsContent" class="news-content">Cargando noticias...</div>
+        </div>
+      </section>
+
+      <section id="downloadPanel" class="panel download-panel">
+        <div class="container">
+          <h2 class="section-title">Descargas</h2>
+          <div class="download-grid">
+            <div class="download-card">
+              <h4>Launcher (recomendado)</h4>
+              <p>Actualiza automáticamente y administra los archivos del cliente.</p>
+              <a class="btn primary" href="/updates/files/HelbreathLauncher.exe">Descargar Launcher</a>
+            </div>
+            <div class="download-card">
+              <h4>Cliente (manual)</h4>
+              <p>Descarga completa del cliente para instalaciones avanzadas.</p>
+              <a class="btn" href="/updates/files/Game.exe">Descargar Cliente</a>
+            </div>
           </div>
-        </aside>
-      </div>
-    </section>
+        </div>
+      </section>
 
-    <section id="news" class="panel">
-      <h3 class="panel-title">Noticias</h3>
-      <div id="newsContent" class="news-content">Cargando noticias...</div>
-    </section>
+      <section id="community" class="panel">
+        <div class="container">
+          <h2 class="section-title">Comunidad</h2>
+          <p>Únete a nuestro Discord y foro para noticias, ayuda y organización de eventos.</p>
+          <div class="community-actions"><a class="btn" href="#contact">Contacto / Discord</a></div>
+        </div>
+      </section>
 
-    <section id="status" class="panel two-col">
-      <div>
-        <h3>Estado del servidor</h3>
-        <p id="serverStatus">Comprobando...</p>
-        <ul class="status-list">
-          <li>IP: <strong>89.7.69.125</strong></li>
-          <li>Puerto: <strong>2500</strong></li>
-          <li>Jugadores: <span id="playersCount">-</span></li>
-        </ul>
-      </div>
-      <div>
-        <h3>Características</h3>
-        <ul>
-          <li>PvP clásico</li>
-          <li>Eventos semanales</li>
-          <li>Mejoras balanceadas</li>
-          <li>Soporte y comunidad</li>
-        </ul>
-      </div>
-    </section>
+      <section id="contact" class="panel">
+        <div class="container">
+          <h2 class="section-title">Contacto</h2>
+          <p>Para soporte y preguntas: <a href="mailto:admin@helbreath.example">admin@helbreath.example</a></p>
+        </div>
+      </section>
+    </main>
 
     <section id="downloadPanel" class="panel download-panel">
       <h3>Descargas</h3>
