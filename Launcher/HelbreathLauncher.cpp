@@ -1325,12 +1325,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // Centrar la imagen en el panel izquierdo
             int imgWidth = g_pLogoImage->GetWidth();
             int imgHeight = g_pLogoImage->GetHeight();
-            // Escalar para usar un ancho máximo de 350px
-            int maxWidth = 350;
+            // Escalar para usar un ancho máximo de 380px (50% más grande)
+            int maxWidth = 380;
             int drawWidth = min((int)imgWidth, maxWidth);
             int drawHeight = (int)(imgHeight * ((float)drawWidth / imgWidth));
             int imgX = (LEFT_PANEL_WIDTH - drawWidth) / 2;
-            int imgY = 10;
+            int imgY = 5;
             graphics.DrawImage(g_pLogoImage, imgX, imgY, drawWidth, drawHeight);
         }
         
