@@ -44,3 +44,24 @@ fetch('https://raw.githubusercontent.com/Omymnr/HB-Repository/main/updates/versi
   .then(r => { if(!r.ok) throw new Error('no v'); return r.text(); })
   .then(v => { currentVersion.textContent = v.trim(); })
   .catch(_ => { currentVersion.textContent = '?'; });
+
+// --- Simple gallery/lightbox ---
+const galleryItems = document.querySelectorAll('.gallery-item');
+let lightbox;
+function createLightbox(){
+  lightbox = document.createElement('div');
+  lightbox.className = 'lightbox';
+  lightbox.innerHTML = '<img src="" alt="">';
+  lightbox.addEventListener('click', () => { lightbox.classList.remove('open'); });
+  document.body.appendChild(lightbox);
+}
+createLightbox();
+
+galleryItems.forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const img = lightbox.querySelector('img');
+    img.src = a.href;
+    lightbox.classList.add('open');
+  });
+});

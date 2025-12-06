@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="600" viewBox="0 0 1600 600">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1">
+      <stop offset="0%" stop-color="#2b1d0f" />
+      <stop offset="100%" stop-color="#0a0806" />
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#g)" />
+  <g fill-opacity="0.06" fill="#b48c3c">
+    <circle cx="1200" cy="80" r="220" />
+    <circle cx="300" cy="420" r="360" />
+  </g>
+  <text x="80" y="120" font-family="Cinzel, serif" font-size="48" fill="#b48c3c">Helbreath Apocalypse</text>
+</svg>
