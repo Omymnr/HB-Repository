@@ -64,7 +64,8 @@
 #define COLOR_BUTTON RGB(60, 45, 30)
 #define COLOR_BUTTON_HOVER RGB(180, 140, 60)
 #define COLOR_BORDER RGB(100, 75, 45)
-#define COLOR_SUCCESS RGB(255, 220, 0)  // Amarillo para verificar update
+#define COLOR_SUCCESS RGB(80, 180, 80)   // Verde para servidor online
+#define COLOR_CLIENT_READY RGB(255, 220, 0)  // Amarillo para cliente actualizado
 #define COLOR_ERROR RGB(200, 80, 80)
 #define COLOR_PROGRESS_BG RGB(40, 30, 20)
 
@@ -1338,7 +1339,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         DrawText(hdcMem, "- Seleccionar Servidor -", -1, &rcServerLabel, DT_CENTER | DT_SINGLELINE);
         
         // ===== INDICADORES DE ESTADO DE SERVIDORES =====
-        int contentY = 120;
+        int contentY = 135;  // Bajado para no pisar el texto de "Seleccionar Servidor"
         int statusX = LEFT_PANEL_WIDTH / 2 + 95;  // A la derecha de los radio buttons
         SelectObject(hdcMem, g_hFontSmall);
         
@@ -1458,7 +1459,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         SelectObject(hdcMem, g_hFontNormal);
         COLORREF statusColor = COLOR_TEXT;
         if (g_updateState == STATE_READY) {
-            statusColor = COLOR_SUCCESS;
+            statusColor = COLOR_CLIENT_READY;  // Amarillo para cliente actualizado
         }
         else if (g_updateState == STATE_ERROR) statusColor = COLOR_ERROR;
         else if (g_updateState == STATE_OFFLINE) statusColor = RGB(180, 160, 100);
