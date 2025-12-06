@@ -65,3 +65,42 @@ galleryItems.forEach(a => {
     lightbox.classList.add('open');
   });
 });
+
+// Populate hero info box: launcher version, latest news line, small server status
+function populateHeroBox(){
+  const launcherEl = document.getElementById('launcherVersion');
+  const newsElSmall = document.getElementById('latestNews');
+  const smallServer = document.getElementById('smallServerStatus');
+  const smallPlayers = document.getElementById('smallPlayers');
+
+  // launcher version
+  fetch('https://raw.githubusercontent.com/Omymnr/HB-Repository/main/updates/version.txt')
+    .then(r => r.ok ? r.text() : Promise.reject())
+    .then(t => { if(launcherEl) launcherEl.textContent = t.trim(); })
+    .catch(_ => { if(launcherEl) launcherEl.textContent = '?'; });
+
+  // latest news first non-empty line
+  fetch('https://raw.githubusercontent.com/Omymnr/HB-Repository/main/updates/news.txt')
+    .then(r => r.ok ? r.text() : Promise.reject())
+    .then(tx => {
+      if(!newsElSmall) return;
+      const lines = tx.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+      newsElSmall.textContent = lines.length ? lines[0] : 'Sin noticias recientes.';
+    }).catch(_ => { if(newsElSmall) newsElSmall.textContent = 'Sin noticias.'; });
+
+  // server status small (from updates/status.json)
+  fetch('/updates/status.json').then(r => {
+    if(!r.ok) throw new Error('no status');
+    return r.json();
+  }).then(js => {
+    if(smallServer) smallServer.textContent = js.online ? 'Online' : 'Offline';
+    if(smallPlayers) smallPlayers.textContent = js.players != null ? js.players : '-';
+  }).catch(_ => {
+    // fallback: try raw GH version presence
+    fetch('https://raw.githubusercontent.com/Omymnr/HB-Repository/main/updates/version.txt')
+      .then(r=> r.ok ? r.text() : Promise.reject()).then(_=> { if(smallServer) smallServer.textContent = 'Online (GH)'; if(smallPlayers) smallPlayers.textContent = '-'; })
+      .catch(__ => { if(smallServer) smallServer.textContent = 'Desconocido'; if(smallPlayers) smallPlayers.textContent = '-'; });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => { populateHeroBox(); });
