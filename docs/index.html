@@ -7,15 +7,19 @@
   <link rel="stylesheet" href="assets/css/styles.css">
   <link rel="icon" href="assets/img/logo.png">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <img src="assets/img/logo.png" alt="Logo" class="logo" id="siteLogo">
-      <div class="title-wrap">
-        <h1>Helbreath</h1>
-        <h2>Apocalypse</h2>
+      <div class="brand">
+        <img src="assets/img/logo.png" alt="Logo" class="logo" id="siteLogo">
+        <div class="title-wrap">
+          <h1>Helbreath</h1>
+          <h2>Apocalypse</h2>
+        </div>
       </div>
+
       <nav class="main-nav">
         <a href="#news">Noticias</a>
         <a href="#status">Estado</a>
@@ -27,9 +31,24 @@
 
   <main class="container">
     <section id="hero" class="hero">
-      <h3>Un servidor clásico con mejoras modernas</h3>
-      <p class="lead">Únete a Helbreath Apocalypse — experiencia PvP retro, eventos y comunidad activa.</p>
-      <a id="download" class="btn primary" href="#">Descargar cliente</a>
+      <div class="hero-inner">
+        <div class="hero-left">
+          <h3>Un servidor clásico con mejoras modernas</h3>
+          <p class="lead">Únete a Helbreath Apocalypse — experiencia PvP retro, eventos y comunidad activa.</p>
+          <div class="hero-ctas">
+            <a id="download" class="btn primary" href="/updates/files/HelbreathLauncher.exe">Descargar Launcher</a>
+            <a class="btn" href="#news">Ver noticias</a>
+          </div>
+        </div>
+        <aside class="hero-aside">
+          <div class="server-box">
+            <div class="server-title">Servidor Principal</div>
+            <div class="server-status" id="serverBadge"><span class="dot"></span> <span id="serverText">Comprobando...</span></div>
+            <div class="server-info">IP: <strong>89.7.69.125</strong> &nbsp; Puerto: <strong>2500</strong></div>
+            <a class="btn" href="/updates/files/HelbreathLauncher.exe">Conectar / Descargar</a>
+          </div>
+        </aside>
+      </div>
     </section>
 
     <section id="news" class="panel">
@@ -41,21 +60,37 @@
       <div>
         <h3>Estado del servidor</h3>
         <p id="serverStatus">Comprobando...</p>
+        <ul class="status-list">
+          <li>IP: <strong>89.7.69.125</strong></li>
+          <li>Puerto: <strong>2500</strong></li>
+          <li>Jugadores: <span id="playersCount">-</span></li>
+        </ul>
       </div>
       <div>
         <h3>Características</h3>
         <ul>
           <li>PvP clásico</li>
           <li>Eventos semanales</li>
+          <li>Mejoras balanceadas</li>
           <li>Soporte y comunidad</li>
         </ul>
       </div>
     </section>
 
-    <section id="downloadPanel" class="panel">
+    <section id="downloadPanel" class="panel download-panel">
       <h3>Descargas</h3>
-      <p>Descarga el launcher y el cliente desde aquí.</p>
-      <a class="btn" href="/updates/files/HelbreathLauncher.exe">Launcher (auto-updater)</a>
+      <div class="download-grid">
+        <div class="download-card">
+          <h4>Launcher</h4>
+          <p>Actualiza automáticamente y descarga el cliente.</p>
+          <a class="btn primary" href="/updates/files/HelbreathLauncher.exe">Descargar Launcher</a>
+        </div>
+        <div class="download-card">
+          <h4>Cliente</h4>
+          <p>Archivos completos del cliente para instalación manual.</p>
+          <a class="btn" href="/updates/files/Game.exe">Descargar Cliente</a>
+        </div>
+      </div>
     </section>
 
     <section id="contact" class="panel">
