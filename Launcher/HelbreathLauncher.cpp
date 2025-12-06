@@ -64,7 +64,7 @@
 #define COLOR_BUTTON RGB(60, 45, 30)
 #define COLOR_BUTTON_HOVER RGB(180, 140, 60)
 #define COLOR_BORDER RGB(100, 75, 45)
-#define COLOR_SUCCESS RGB(80, 180, 80)
+#define COLOR_SUCCESS RGB(255, 220, 0)  // Amarillo para verificar update
 #define COLOR_ERROR RGB(200, 80, 80)
 #define COLOR_PROGRESS_BG RGB(40, 30, 20)
 
