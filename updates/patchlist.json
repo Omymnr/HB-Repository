@@ -1,5 +1,5 @@
 ﻿{
-    "version":  "1.0.7",
+    "version":  "1.0.8",
     "files":  [
                   {
                       "path":  "Game.exe",
@@ -8,8 +8,8 @@
                   },
                   {
                       "path":  "HelbreathLauncher.exe",
-                      "hash":  "233284c70450300e1f59f1087baed963",
-                      "size":  288256
+                      "hash":  "44db7c2ee966a6821a9ebd1b5619d342",
+                      "size":  287744
                   },
                   {
                       "path":  "Contents/badword.txt",

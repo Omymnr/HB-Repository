@@ -1014,7 +1014,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     static HWND hComboRenderer = NULL;
     static HWND hComboResolution = NULL;
     static HWND hComboScaleMode = NULL;
-    static HWND hCheckVSync = NULL;
     static BOOL bPlayHover = FALSE;
     static BOOL bExitHover = FALSE;
     
@@ -1094,13 +1093,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         SendMessage(hComboScaleMode, CB_ADDSTRING, 0, (LPARAM)"Bilinear (Suave)");
         SendMessage(hComboScaleMode, CB_ADDSTRING, 0, (LPARAM)"Integer (Pixel Perfect)");
         SendMessage(hComboScaleMode, CB_SETCURSEL, g_iScaleMode, 0);
-        
-        // Checkbox VSync
-        hCheckVSync = CreateWindow("BUTTON", "  VSync (Sin tearing)",
-            WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
-            comboX, videoY + 95, 180, 20, hWnd, (HMENU)ID_CHECKBOX_VSYNC, NULL, NULL);
-        SendMessage(hCheckVSync, WM_SETFONT, (WPARAM)g_hFontSmall, TRUE);
-        SendMessage(hCheckVSync, BM_SETCHECK, g_bVSync ? BST_CHECKED : BST_UNCHECKED, 0);
         
         // Timer para actualizar UI (menos frecuente para reducir parpadeo)
         SetTimer(hWnd, 1, 250, NULL);
@@ -1424,7 +1416,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     g_iScreenHeight = g_Resolutions[resSel].height;
                 }
                 g_iScaleMode = (int)SendMessage(hComboScaleMode, CB_GETCURSEL, 0, 0);
-                g_bVSync = (SendMessage(hCheckVSync, BM_GETCHECK, 0, 0) == BST_CHECKED);
                 g_bTestServer = (SendMessage(hRadioTest, BM_GETCHECK, 0, 0) == BST_CHECKED);
                 SaveSettings();
                 
@@ -1458,7 +1449,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 g_iScreenHeight = g_Resolutions[resSel].height;
             }
             g_iScaleMode = (int)SendMessage(hComboScaleMode, CB_GETCURSEL, 0, 0);
-            g_bVSync = (SendMessage(hCheckVSync, BM_GETCHECK, 0, 0) == BST_CHECKED);
             
             SaveSettings();
             WriteLoginConfig();
@@ -1489,7 +1479,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 g_iScreenHeight = g_Resolutions[resSel].height;
             }
             g_iScaleMode = (int)SendMessage(hComboScaleMode, CB_GETCURSEL, 0, 0);
-            g_bVSync = (SendMessage(hCheckVSync, BM_GETCHECK, 0, 0) == BST_CHECKED);
             g_bTestServer = (SendMessage(hRadioTest, BM_GETCHECK, 0, 0) == BST_CHECKED);
             
             SaveSettings();
