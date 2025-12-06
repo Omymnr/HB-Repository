@@ -44,9 +44,8 @@
 // ===== FIN CONFIGURACIÓN =====
 
 // ===== LAUNCHER CONFIGURATION =====
-#define LAUNCHER_WIDTH 800
-#define LAUNCHER_HEIGHT 600
-#define LEFT_PANEL_WIDTH 400
+#define LAUNCHER_WIDTH 520
+#define LAUNCHER_HEIGHT 580
 #define ID_CHECKBOX_BORDERLESS 1001
 #define ID_RADIO_ONLINE 1004
 #define ID_RADIO_TEST 1005
@@ -120,7 +119,6 @@ enum UpdateState {
     STATE_IDLE,
     STATE_CHECKING,
     STATE_DOWNLOADING,
-    STATE_INSTALLING,
     STATE_READY,
     STATE_ERROR,
     STATE_OFFLINE
@@ -134,10 +132,6 @@ int g_iProgressTotal = 0;
 BOOL g_bCanPlay = FALSE;
 BOOL g_bUpdateInProgress = FALSE;
 HANDLE g_hUpdateThread = NULL;
-
-// Progreso de instalación
-int g_iInstallCurrent = 0;
-int g_iInstallTotal = 0;
 
 // Progreso de descarga de archivo actual (en bytes)
 DWORD g_dwDownloadedBytes = 0;
@@ -163,14 +157,6 @@ char g_szNewLauncherHash[33] = "";
 
 // Logo del servidor
 Gdiplus::Image* g_pLogoImage = NULL;
-
-// Noticias del servidor
-#define MAX_NEWS_LINES 50
-#define MAX_NEWS_LINE_LENGTH 256
-char g_szNewsLines[MAX_NEWS_LINES][MAX_NEWS_LINE_LENGTH];
-int g_iNewsLineCount = 0;
-int g_iNewsScrollPos = 0;
-BOOL g_bNewsLoaded = FALSE;
 
 // ===== FUNCIONES DE CONFIGURACIÓN =====
 
@@ -318,69 +304,6 @@ void WriteLoginConfig()
         fprintf(fp, "game-server-port    = 9907\n");
         fprintf(fp, "game-server-mode    = LAN\n");
         fclose(fp);
-    }
-}
-
-// ===== FUNCIONES DE NOTICIAS =====
-
-void LoadNewsFromFile()
-{
-    g_iNewsLineCount = 0;
-    g_bNewsLoaded = FALSE;
-    
-    FILE* fp = fopen("news.txt", "r");
-    if (!fp) {
-        // Crear archivo de noticias por defecto si no existe
-        fp = fopen("news.txt", "w");
-        if (fp) {
-            fprintf(fp, "=== HELBREATH APOCALYPSE ===\n");
-            fprintf(fp, "\n");
-            fprintf(fp, "Bienvenido al servidor!\n");
-            fprintf(fp, "\n");
-            fprintf(fp, "--- ULTIMAS ACTUALIZACIONES ---\n");
-            fprintf(fp, "\n");
-            fprintf(fp, "[v1.0.6] Launcher con logo\n");
-            fprintf(fp, "- Logo del servidor en launcher\n");
-            fprintf(fp, "- Deteccion inmediata servidor\n");
-            fprintf(fp, "\n");
-            fprintf(fp, "[v1.0.5] Recursos actualizables\n");
-            fprintf(fp, "- Contents, Mapdata, Music\n");
-            fprintf(fp, "- Sounds, Sprites\n");
-            fprintf(fp, "\n");
-            fprintf(fp, "[v1.0.4] Fix Alt+F4\n");
-            fprintf(fp, "- Alt+F4 vuelve al menu\n");
-            fprintf(fp, "\n");
-            fprintf(fp, "[v1.0.3] Version personalizada\n");
-            fprintf(fp, "\n");
-            fprintf(fp, "[v1.0.2] Volumen guardado\n");
-            fprintf(fp, "- Sonido y musica se guardan\n");
-            fprintf(fp, "\n");
-            fprintf(fp, "[v1.0.1] Barra de progreso\n");
-            fprintf(fp, "- Muestra KB/MB descargados\n");
-            fprintf(fp, "\n");
-            fprintf(fp, "[v1.0.0] Sistema Auto-Update\n");
-            fprintf(fp, "- Actualizaciones automaticas\n");
-            fprintf(fp, "- Descarga desde GitHub\n");
-            fclose(fp);
-            fp = fopen("news.txt", "r");
-        }
-    }
-    
-    if (fp) {
-        char line[MAX_NEWS_LINE_LENGTH];
-        while (fgets(line, sizeof(line), fp) && g_iNewsLineCount < MAX_NEWS_LINES) {
-            // Eliminar salto de línea
-            char* newline = strchr(line, '\n');
-            if (newline) *newline = '\0';
-            newline = strchr(line, '\r');
-            if (newline) *newline = '\0';
-            
-            strncpy(g_szNewsLines[g_iNewsLineCount], line, MAX_NEWS_LINE_LENGTH - 1);
-            g_szNewsLines[g_iNewsLineCount][MAX_NEWS_LINE_LENGTH - 1] = '\0';
-            g_iNewsLineCount++;
-        }
-        fclose(fp);
-        g_bNewsLoaded = TRUE;
     }
 }
 
@@ -960,16 +883,9 @@ DWORD WINAPI UpdateThread(LPVOID lpParam)
         return 0;
     }
     
-    // Crear carpeta temporal para descargas
-    char tempDir[MAX_PATH];
-    GetCurrentDirectory(MAX_PATH, tempDir);
-    strcat(tempDir, "\\update_temp");
-    CreateDirectory(tempDir, NULL);
-    
-    // Descargar archivos a carpeta temporal
+    // Descargar archivos
     g_updateState = STATE_DOWNLOADING;
     g_iProgressTotal = (int)g_filesToUpdate.size();
-    g_iInstallTotal = g_iProgressTotal;
     
     // Obtener el nombre del exe actual (el launcher)
     char launcherExeName[MAX_PATH];
@@ -977,15 +893,11 @@ DWORD WINAPI UpdateThread(LPVOID lpParam)
     char currentLauncherPath[MAX_PATH];
     GetModuleFileName(NULL, currentLauncherPath, MAX_PATH);
     
-    // Vector para guardar rutas temporales
-    std::vector<std::string> tempPaths;
-    
     for (int i = 0; i < g_iProgressTotal; i++) {
         g_iProgressCurrent = i + 1;
         
         // Obtener solo el nombre del archivo
         const char* fileName = strrchr(g_filesToUpdate[i].path, '\\');
-        if (!fileName) fileName = strrchr(g_filesToUpdate[i].path, '/');
         if (!fileName) fileName = g_filesToUpdate[i].path;
         else fileName++;
         
@@ -1003,12 +915,19 @@ DWORD WINAPI UpdateThread(LPVOID lpParam)
         char fileUrl[768];
         sprintf(fileUrl, "%s/files/%s", GITHUB_RAW_URL, urlPath);
         
-        // Descargar a carpeta temporal
-        char tempPath[MAX_PATH];
-        sprintf(tempPath, "%s\\%d_%s", tempDir, i, fileName);
-        tempPaths.push_back(tempPath);
+        // Determinar la ruta de descarga
+        char downloadPath[MAX_PATH];
+        BOOL isLauncherFile = (_stricmp(fileName, launcherExeName) == 0 || 
+                               _stricmp(fileName, "HelbreathLauncher.exe") == 0);
         
-        if (!DownloadFile(fileUrl, tempPath)) {
+        if (isLauncherFile) {
+            // Descargar launcher a archivo temporal (no podemos sobreescribir el exe en ejecución)
+            sprintf(downloadPath, "%s.new", currentLauncherPath);
+        } else {
+            strcpy(downloadPath, g_filesToUpdate[i].path);
+        }
+        
+        if (!DownloadFile(fileUrl, downloadPath)) {
             g_updateState = STATE_ERROR;
             sprintf(g_szStatusText, "Error descargando: %s", fileName);
             g_bCanPlay = TRUE;
@@ -1017,82 +936,6 @@ DWORD WINAPI UpdateThread(LPVOID lpParam)
             return 0;
         }
     }
-    
-    // Fase de instalación - copiar de temp a destino
-    g_updateState = STATE_INSTALLING;
-    g_iInstallCurrent = 0;
-    strcpy(g_szStatusText, "Instalando archivos...");
-    InvalidateRect(g_hMainWnd, NULL, FALSE);
-    
-    for (int i = 0; i < g_iProgressTotal; i++) {
-        g_iInstallCurrent = i + 1;
-        
-        // Obtener solo el nombre del archivo para mostrar
-        const char* fileName = strrchr(g_filesToUpdate[i].path, '\\');
-        if (!fileName) fileName = strrchr(g_filesToUpdate[i].path, '/');
-        if (!fileName) fileName = g_filesToUpdate[i].path;
-        else fileName++;
-        
-        sprintf(g_szStatusText, "Instalando %d/%d", g_iInstallCurrent, g_iInstallTotal);
-        strncpy(g_szCurrentFile, fileName, sizeof(g_szCurrentFile) - 1);
-        InvalidateRect(g_hMainWnd, NULL, FALSE);
-        
-        // Determinar ruta de destino
-        char destPath[MAX_PATH];
-        BOOL isLauncherFile = (_stricmp(fileName, launcherExeName) == 0 || 
-                               _stricmp(fileName, "HelbreathLauncher.exe") == 0);
-        
-        if (isLauncherFile) {
-            sprintf(destPath, "%s.new", currentLauncherPath);
-        } else {
-            strcpy(destPath, g_filesToUpdate[i].path);
-            // Convertir / a \ para Windows
-            for (char* p = destPath; *p; p++) {
-                if (*p == '/') *p = '\\';
-            }
-            
-            // Crear directorios si no existen
-            char dirPath[MAX_PATH];
-            strcpy(dirPath, destPath);
-            char* lastSlash = strrchr(dirPath, '\\');
-            if (lastSlash) {
-                *lastSlash = '\0';
-                // Crear directorios recursivamente
-                char* p = dirPath;
-                while (*p) {
-                    if (*p == '\\') {
-                        *p = '\0';
-                        CreateDirectory(dirPath, NULL);
-                        *p = '\\';
-                    }
-                    p++;
-                }
-                CreateDirectory(dirPath, NULL);
-            }
-        }
-        
-        // Copiar archivo de temp a destino
-        if (!CopyFile(tempPaths[i].c_str(), destPath, FALSE)) {
-            // Si falla, intentar mover
-            if (!MoveFileEx(tempPaths[i].c_str(), destPath, MOVEFILE_REPLACE_EXISTING)) {
-                g_updateState = STATE_ERROR;
-                sprintf(g_szStatusText, "Error instalando: %s", fileName);
-                g_bCanPlay = TRUE;
-                g_bUpdateInProgress = FALSE;
-                InvalidateRect(g_hMainWnd, NULL, FALSE);
-                return 0;
-            }
-        } else {
-            // Eliminar archivo temporal
-            DeleteFile(tempPaths[i].c_str());
-        }
-        
-        // Pequeña pausa para que se vea el progreso
-        Sleep(50);
-    }
-    
-    // Limpiar carpeta temporal
-    RemoveDirectory(tempDir);
     
     // Guardar versión
     SaveLocalVersion(remoteVersionBuf);
@@ -1195,26 +1038,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         g_hBrushBG = CreateSolidBrush(COLOR_BG);
         g_hBrushBGLight = CreateSolidBrush(COLOR_BG_LIGHT);
         
-        // Cargar noticias
-        LoadNewsFromFile();
-        
-        int centerX = LEFT_PANEL_WIDTH / 2;
+        int centerX = LAUNCHER_WIDTH / 2;
         int contentY = 120;
         
-        // Radio buttons (panel izquierdo)
+        // Radio buttons
         hRadioOnline = CreateWindow("BUTTON", "  Servidor Principal",
             WS_VISIBLE | WS_CHILD | BS_AUTORADIOBUTTON | WS_GROUP,
-            centerX - 100, contentY, 190, 25, hWnd, (HMENU)ID_RADIO_ONLINE, NULL, NULL);
+            centerX - 100, contentY, 200, 25, hWnd, (HMENU)ID_RADIO_ONLINE, NULL, NULL);
         SendMessage(hRadioOnline, WM_SETFONT, (WPARAM)g_hFontNormal, TRUE);
         
         hRadioTest = CreateWindow("BUTTON", "  Servidor de Pruebas",
             WS_VISIBLE | WS_CHILD | BS_AUTORADIOBUTTON,
-            centerX - 100, contentY + 28, 190, 25, hWnd, (HMENU)ID_RADIO_TEST, NULL, NULL);
+            centerX - 100, contentY + 28, 200, 25, hWnd, (HMENU)ID_RADIO_TEST, NULL, NULL);
         SendMessage(hRadioTest, WM_SETFONT, (WPARAM)g_hFontNormal, TRUE);
         
         SendMessage(g_bTestServer ? hRadioTest : hRadioOnline, BM_SETCHECK, BST_CHECKED, 0);
         
-        // ===== SECCIÓN DE VIDEO D3D11 (panel izquierdo) =====
+        // ===== SECCIÓN DE VIDEO D3D11 =====
         int videoY = 225;
         int labelWidth = 100;
         int comboWidth = 160;
@@ -1329,33 +1169,32 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // Logo del servidor (imagen en lugar de texto)
         if (g_pLogoImage) {
             Gdiplus::Graphics graphics(hdcMem);
-            graphics.SetInterpolationMode(Gdiplus::InterpolationModeHighQualityBicubic);
-            // Centrar la imagen en el panel izquierdo
+            // Centrar la imagen
             int imgWidth = g_pLogoImage->GetWidth();
             int imgHeight = g_pLogoImage->GetHeight();
-            // Escalar para usar un ancho máximo de 350px
-            int maxWidth = 350;
-            int drawWidth = min((int)imgWidth, maxWidth);
-            int drawHeight = (int)(imgHeight * ((float)drawWidth / imgWidth));
-            int imgX = (LEFT_PANEL_WIDTH - drawWidth) / 2;
-            int imgY = 10;
+            // Escalar si es necesario (máximo 200px de alto)
+            int maxHeight = 80;
+            int drawHeight = min((int)imgHeight, maxHeight);
+            int drawWidth = (int)(imgWidth * ((float)drawHeight / imgHeight));
+            int imgX = (width - drawWidth) / 2;
+            int imgY = 15;
             graphics.DrawImage(g_pLogoImage, imgX, imgY, drawWidth, drawHeight);
         }
         
-        // Línea decorativa (panel izquierdo)
+        // Línea decorativa
         SelectObject(hdcMem, hPenGold);
         int lineY = 100;
-        MoveToEx(hdcMem, 20, lineY, NULL);
-        LineTo(hdcMem, LEFT_PANEL_WIDTH - 20, lineY);
+        MoveToEx(hdcMem, 30, lineY, NULL);
+        LineTo(hdcMem, width - 30, lineY);
         
-        // Etiqueta servidor (panel izquierdo)
+        // Etiqueta servidor
         SetTextColor(hdcMem, COLOR_ACCENT);
-        RECT rcServerLabel = {0, 105, LEFT_PANEL_WIDTH, 125};
+        RECT rcServerLabel = {0, 105, width, 125};
         DrawText(hdcMem, "- Seleccionar Servidor -", -1, &rcServerLabel, DT_CENTER | DT_SINGLELINE);
         
         // ===== INDICADORES DE ESTADO DE SERVIDORES =====
         int contentY = 120;
-        int statusX = LEFT_PANEL_WIDTH / 2 + 95;  // A la derecha de los radio buttons
+        int statusX = width / 2 + 105;  // A la derecha de los radio buttons
         SelectObject(hdcMem, g_hFontSmall);
         
         // Estado Servidor Principal
@@ -1380,14 +1219,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             DrawText(hdcMem, "[OFFLINE]", -1, &rcTestStatus, DT_LEFT | DT_SINGLELINE);
         }
         
-        // Línea opciones (panel izquierdo)
+        // Línea opciones
         int optionsLineY = 200;
-        MoveToEx(hdcMem, 20, optionsLineY, NULL);
-        LineTo(hdcMem, LEFT_PANEL_WIDTH - 20, optionsLineY);
+        MoveToEx(hdcMem, 30, optionsLineY, NULL);
+        LineTo(hdcMem, width - 30, optionsLineY);
         
-        // Etiqueta opciones (panel izquierdo)
+        // Etiqueta opciones
         SetTextColor(hdcMem, COLOR_ACCENT);  // Asegurar color dorado
-        RECT rcOptionsLabel = {0, 205, LEFT_PANEL_WIDTH, 225};
+        RECT rcOptionsLabel = {0, 205, width, 225};
         DrawText(hdcMem, "- Opciones de Video -", -1, &rcOptionsLabel, DT_CENTER | DT_SINGLELINE);
         
         // ===== ETIQUETAS DE VIDEO =====
@@ -1405,69 +1244,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         RECT rcLblScale = {labelX, videoY + 63, labelX + 100, videoY + 80};
         DrawText(hdcMem, "Escalado:", -1, &rcLblScale, DT_LEFT | DT_SINGLELINE);
         
-        // Línea separadora antes del status de update (panel izquierdo)
+        // Línea separadora antes del status de update
         SelectObject(hdcMem, hPenGold);
         int updateLineY = 345;
-        MoveToEx(hdcMem, 20, updateLineY, NULL);
-        LineTo(hdcMem, LEFT_PANEL_WIDTH - 20, updateLineY);
+        MoveToEx(hdcMem, 30, updateLineY, NULL);
+        LineTo(hdcMem, width - 30, updateLineY);
         
-        // Etiqueta actualizaciones (panel izquierdo)
+        // Etiqueta actualizaciones
         SetTextColor(hdcMem, COLOR_ACCENT);
-        RECT rcUpdateLabel = {0, 350, LEFT_PANEL_WIDTH, 370};
+        RECT rcUpdateLabel = {0, 350, width, 370};
         DrawText(hdcMem, "- Estado -", -1, &rcUpdateLabel, DT_CENTER | DT_SINGLELINE);
-        
-        // ===== PANEL DE NOTICIAS (lado derecho) =====
-        int newsX = LEFT_PANEL_WIDTH + 10;
-        int newsY = 15;
-        int newsWidth = width - LEFT_PANEL_WIDTH - 25;
-        int newsHeight = height - 30;
-        
-        // Borde del panel de noticias
-        RECT rcNewsPanel = {newsX, newsY, newsX + newsWidth, newsY + newsHeight};
-        HBRUSH hBrushNews = CreateSolidBrush(RGB(20, 16, 12));
-        FillRect(hdcMem, &rcNewsPanel, hBrushNews);
-        DeleteObject(hBrushNews);
-        
-        SelectObject(hdcMem, hPenGold);
-        Rectangle(hdcMem, newsX, newsY, newsX + newsWidth, newsY + newsHeight);
-        
-        // Título de noticias
-        SetTextColor(hdcMem, COLOR_ACCENT);
-        SelectObject(hdcMem, g_hFontNormal);
-        RECT rcNewsTitle = {newsX, newsY + 5, newsX + newsWidth, newsY + 25};
-        DrawText(hdcMem, "- NOTICIAS -", -1, &rcNewsTitle, DT_CENTER | DT_SINGLELINE);
-        
-        // Línea bajo el título
-        MoveToEx(hdcMem, newsX + 10, newsY + 28, NULL);
-        LineTo(hdcMem, newsX + newsWidth - 10, newsY + 28);
-        
-        // Contenido de noticias
-        SelectObject(hdcMem, g_hFontSmall);
-        int newsLineY = newsY + 35;
-        int newsLineHeight = 14;
-        int maxVisibleLines = (newsHeight - 45) / newsLineHeight;
-        
-        for (int i = 0; i < g_iNewsLineCount && i < maxVisibleLines; i++) {
-            const char* line = g_szNewsLines[i];
-            
-            // Colorear según el tipo de línea
-            if (line[0] == '=' || line[0] == '-') {
-                SetTextColor(hdcMem, COLOR_ACCENT);  // Títulos en dorado
-            } else if (line[0] == '[') {
-                SetTextColor(hdcMem, COLOR_SUCCESS);  // Versiones en verde
-            } else {
-                SetTextColor(hdcMem, COLOR_TEXT);  // Texto normal
-            }
-            
-            RECT rcNewsLine = {newsX + 10, newsLineY, newsX + newsWidth - 10, newsLineY + newsLineHeight};
-            DrawText(hdcMem, line, -1, &rcNewsLine, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS);
-            newsLineY += newsLineHeight;
-        }
         
         DeleteObject(hPenBorder);
         DeleteObject(hPenGold);
         
-        // ===== SECCIÓN DE ACTUALIZACIONES (panel izquierdo) =====
+        // ===== SECCIÓN DE ACTUALIZACIONES =====
         int updateY = 375;
         
         // Estado de actualización
@@ -1480,15 +1271,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         else if (g_updateState == STATE_OFFLINE) statusColor = RGB(180, 160, 100);
         
         SetTextColor(hdcMem, statusColor);
-        RECT rcStatus = {10, updateY, LEFT_PANEL_WIDTH - 10, updateY + 20};
+        RECT rcStatus = {20, updateY, width - 20, updateY + 20};
         DrawText(hdcMem, g_szStatusText, -1, &rcStatus, DT_CENTER | DT_SINGLELINE);
         
         // Barra de progreso (si está descargando)
         if (g_updateState == STATE_DOWNLOADING && g_iProgressTotal > 0) {
             int barY = updateY + 25;
-            int barWidth = LEFT_PANEL_WIDTH - 80;
+            int barWidth = width - 100;
             int barHeight = 16;  // Más alta para mejor visibilidad
-            int barX = (LEFT_PANEL_WIDTH - barWidth) / 2;
+            int barX = (width - barWidth) / 2;
             
             // Fondo de la barra
             RECT rcBarBG = {barX, barY, barX + barWidth, barY + barHeight};
@@ -1547,90 +1338,33 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             
             // Nombre archivo debajo de la barra
             SetTextColor(hdcMem, RGB(150, 130, 100));
-            RECT rcFile = {10, barY + barHeight + 5, LEFT_PANEL_WIDTH - 10, barY + barHeight + 20};
+            RECT rcFile = {20, barY + barHeight + 5, width - 20, barY + barHeight + 20};
             char fileInfo[256];
             sprintf(fileInfo, "%s (%d/%d)", g_szCurrentFile, g_iProgressCurrent, g_iProgressTotal);
             DrawText(hdcMem, fileInfo, -1, &rcFile, DT_CENTER | DT_SINGLELINE);
         }
         
-        // Barra de instalación (si está instalando)
-        if (g_updateState == STATE_INSTALLING && g_iInstallTotal > 0) {
-            int barY = updateY + 25;
-            int barWidth = LEFT_PANEL_WIDTH - 80;
-            int barHeight = 16;
-            int barX = (LEFT_PANEL_WIDTH - barWidth) / 2;
-            
-            // Fondo de la barra
-            RECT rcBarBG = {barX, barY, barX + barWidth, barY + barHeight};
-            HBRUSH hBrushBarBG = CreateSolidBrush(COLOR_PROGRESS_BG);
-            FillRect(hdcMem, &rcBarBG, hBrushBarBG);
-            DeleteObject(hBrushBarBG);
-            
-            // Calcular progreso de instalación
-            int progressWidth = 0;
-            if (g_iInstallTotal > 0) {
-                progressWidth = (barWidth * g_iInstallCurrent) / g_iInstallTotal;
-            }
-            
-            // Dibujar barra de progreso
-            if (progressWidth > 0) {
-                RECT rcBar = {barX, barY, barX + progressWidth, barY + barHeight};
-                HBRUSH hBrushBar = CreateSolidBrush(RGB(50, 180, 50)); // Verde para instalación
-                FillRect(hdcMem, &rcBar, hBrushBar);
-                DeleteObject(hBrushBar);
-            }
-            
-            // Borde de la barra
-            HPEN hPenBar = CreatePen(PS_SOLID, 1, COLOR_BORDER);
-            SelectObject(hdcMem, hPenBar);
-            SelectObject(hdcMem, GetStockObject(NULL_BRUSH));
-            Rectangle(hdcMem, barX, barY, barX + barWidth, barY + barHeight);
-            DeleteObject(hPenBar);
-            
-            // Texto de progreso
-            char progressText[128];
-            int percent = 0;
-            if (g_iInstallTotal > 0) {
-                percent = (100 * g_iInstallCurrent) / g_iInstallTotal;
-            }
-            sprintf(progressText, "%d%% - %d / %d archivos", percent, g_iInstallCurrent, g_iInstallTotal);
-            
-            // Dibujar texto del progreso centrado en la barra
-            SelectObject(hdcMem, g_hFontSmall);
-            SetTextColor(hdcMem, RGB(255, 255, 255));
-            SetBkMode(hdcMem, TRANSPARENT);
-            RECT rcProgressText = {barX, barY, barX + barWidth, barY + barHeight};
-            DrawText(hdcMem, progressText, -1, &rcProgressText, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-            
-            // Nombre archivo debajo de la barra
-            SetTextColor(hdcMem, RGB(150, 130, 100));
-            RECT rcFile = {10, barY + barHeight + 5, LEFT_PANEL_WIDTH - 10, barY + barHeight + 20};
-            char fileInfo[256];
-            sprintf(fileInfo, "%s", g_szCurrentFile);
-            DrawText(hdcMem, fileInfo, -1, &rcFile, DT_CENTER | DT_SINGLELINE);
-        }
-        
-        // Versión (panel izquierdo)
+        // Versión
         SelectObject(hdcMem, g_hFontSmall);
         SetTextColor(hdcMem, RGB(100, 80, 60));
         char versionText[64];
         sprintf(versionText, "v%s", GetLocalVersion());
-        RECT rcVersion = {0, height - 25, LEFT_PANEL_WIDTH, height - 10};
+        RECT rcVersion = {0, height - 25, width, height - 10};
         DrawText(hdcMem, versionText, -1, &rcVersion, DT_CENTER | DT_SINGLELINE);
         
-        // Botones (panel izquierdo)
+        // Botones
         int btnWidth = 180;
         int btnHeight = 45;
         int btnY = height - 90;
         int btnExitY = height - 35;
         
-        RECT rcPlay = {(LEFT_PANEL_WIDTH - btnWidth) / 2, btnY, (LEFT_PANEL_WIDTH + btnWidth) / 2, btnY + btnHeight};
+        RECT rcPlay = {(width - btnWidth) / 2, btnY, (width + btnWidth) / 2, btnY + btnHeight};
         // Cambiar texto del botón si el launcher necesita reiniciarse
         const char* playButtonText = g_bLauncherNeedsUpdate ? "REINICIAR" : "ENTRAR AL REINO";
         DrawCustomButton(hdcMem, &rcPlay, playButtonText, bPlayHover, TRUE, g_bCanPlay);
         
         int exitBtnWidth = 100;
-        RECT rcExit = {(LEFT_PANEL_WIDTH - exitBtnWidth) / 2, btnExitY, (LEFT_PANEL_WIDTH + exitBtnWidth) / 2, btnExitY + 25};
+        RECT rcExit = {(width - exitBtnWidth) / 2, btnExitY, (width + exitBtnWidth) / 2, btnExitY + 25};
         DrawCustomButton(hdcMem, &rcExit, "Salir", bExitHover, FALSE, TRUE);
         
         BitBlt(hdc, 0, 0, width, height, hdcMem, 0, 0, SRCCOPY);
@@ -1652,9 +1386,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         int btnExitY = LAUNCHER_HEIGHT - 35;
         int exitBtnWidth = 100;
         
-        BOOL newPlayHover = (x >= (LEFT_PANEL_WIDTH - btnWidth) / 2 && x <= (LEFT_PANEL_WIDTH + btnWidth) / 2 && 
+        BOOL newPlayHover = (x >= (LAUNCHER_WIDTH - btnWidth) / 2 && x <= (LAUNCHER_WIDTH + btnWidth) / 2 && 
                             y >= btnY && y <= btnY + btnHeight);
-        BOOL newExitHover = (x >= (LEFT_PANEL_WIDTH - exitBtnWidth) / 2 && x <= (LEFT_PANEL_WIDTH + exitBtnWidth) / 2 && 
+        BOOL newExitHover = (x >= (LAUNCHER_WIDTH - exitBtnWidth) / 2 && x <= (LAUNCHER_WIDTH + exitBtnWidth) / 2 && 
                             y >= btnExitY && y <= btnExitY + 25);
         
         if (newPlayHover != bPlayHover || newExitHover != bExitHover) {
@@ -1677,7 +1411,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         int exitBtnWidth = 100;
         
         // Click en JUGAR (o REINICIAR si hay actualización del launcher pendiente)
-        if (g_bCanPlay && x >= (LEFT_PANEL_WIDTH - btnWidth) / 2 && x <= (LEFT_PANEL_WIDTH + btnWidth) / 2 && 
+        if (g_bCanPlay && x >= (LAUNCHER_WIDTH - btnWidth) / 2 && x <= (LAUNCHER_WIDTH + btnWidth) / 2 && 
             y >= btnY && y <= btnY + btnHeight) {
             
             // Si el launcher necesita actualizarse, hacer self-update y reiniciar
@@ -1745,7 +1479,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         // Click en Salir
-        else if (x >= (LEFT_PANEL_WIDTH - exitBtnWidth) / 2 && x <= (LEFT_PANEL_WIDTH + exitBtnWidth) / 2 && 
+        else if (x >= (LAUNCHER_WIDTH - exitBtnWidth) / 2 && x <= (LAUNCHER_WIDTH + exitBtnWidth) / 2 && 
                  y >= btnExitY && y <= btnExitY + 25) {
             // Guardar configuración de video antes de salir
             g_iRenderer = (int)SendMessage(hComboRenderer, CB_GETCURSEL, 0, 0);
