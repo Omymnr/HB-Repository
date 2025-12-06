@@ -1318,21 +1318,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         
         SetBkMode(hdcMem, TRANSPARENT);
         
-        // Logo del servidor (imagen en lugar de texto)
-        if (g_pLogoImage) {
-            Gdiplus::Graphics graphics(hdcMem);
-            graphics.SetInterpolationMode(Gdiplus::InterpolationModeHighQualityBicubic);
-            // Centrar la imagen en el panel izquierdo
-            int imgWidth = g_pLogoImage->GetWidth();
-            int imgHeight = g_pLogoImage->GetHeight();
-            // Escalar para usar un ancho máximo de 380px (50% más grande)
-            int maxWidth = 380;
-            int drawWidth = min((int)imgWidth, maxWidth);
-            int drawHeight = (int)(imgHeight * ((float)drawWidth / imgWidth));
-            int imgX = (LEFT_PANEL_WIDTH - drawWidth) / 2;
-            int imgY = 5;
-            graphics.DrawImage(g_pLogoImage, imgX, imgY, drawWidth, drawHeight);
-        }
+        // Título del servidor (texto grande)
+        SelectObject(hdcMem, g_hFontTitle);
+        SetTextColor(hdcMem, COLOR_ACCENT);
+        RECT rcTitle = {0, 25, LEFT_PANEL_WIDTH, 75};
+        DrawText(hdcMem, "HELBREATH", -1, &rcTitle, DT_CENTER | DT_SINGLELINE);
+        RECT rcTitle2 = {0, 55, LEFT_PANEL_WIDTH, 95};
+        DrawText(hdcMem, "APOCALYPSE", -1, &rcTitle2, DT_CENTER | DT_SINGLELINE);
         
         // Línea decorativa (panel izquierdo)
         SelectObject(hdcMem, hPenGold);
